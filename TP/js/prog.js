@@ -372,9 +372,13 @@ function updateGui() {
     paysageFolder.updateDisplay();
     persoFolder.updateDisplay();
 }
-
+let itemp = 0;
 function animations() {
-    imgAnimatedPerso.next_frame();
+    if (itemp == 5) {
+        imgAnimatedPerso.next_frame();
+        itemp = 0;
+    }
+    itemp++;
 }
 
 function updates() {
