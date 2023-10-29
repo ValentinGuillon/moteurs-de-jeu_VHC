@@ -374,7 +374,7 @@ function updateGui() {
 }
 let itemp = 0;
 function animations() {
-    if (itemp == 5) {
+    if (itemp == 4) {
         imgAnimatedPerso.next_frame();
         itemp = 0;
     }
