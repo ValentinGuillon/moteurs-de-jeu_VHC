@@ -305,12 +305,12 @@ paysageFolder.add(imgPaysage, "visible")
 
 //ANIMATED CHARACTER (ANIMATED IMAGE FIX)
 // image
-let imgPersoName = "RedDeath_";
+let imgPersoName = "RedDeathFrame_";
 let spritesPerso = [];
-for (let i = 0; i < 3; i++) {
+for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
-spritesPerso.push(assetsDir + imgPersoName + 2 + pngExt);
+
 let imgAnimatedPerso = new myAnimatedImg(spritesPerso, 100, 100)
 // let hitBoxPerso = new HitBox_Circle(100, 100, 40);
 // let objectPerso = new My_object(imgAnimatedPerso.x, imgAnimatedPerso.y, imgAnimatedPerso, hitBoxPerso, 0, 0);
