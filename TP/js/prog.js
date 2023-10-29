@@ -147,7 +147,7 @@ class HitBox_Circle {
         this.contours = true;
     }
 
-    is_collides(obj) {
+    is_colliding(obj) {
         if (!this.collision) { return false; }
 
         let distanceX = this.x - obj.x;
@@ -183,10 +183,10 @@ class HitBox_Circle {
 
 
 class My_object {
-    constructor(x, y, img, hitBox, velocityX = 1.0, velocityY = 0.0) {
+    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
         this.x = x;
         this.y = y;
-        this.img = img;
+        this.object_image = object_image;
         this.hitBox = hitBox;
 
         this.speed = 10;
@@ -197,7 +197,7 @@ class My_object {
 
         this.stop = false;
     }
-    
+
     static instances = [];
     static id = 0;
     static imgVisible = true;
@@ -206,7 +206,7 @@ class My_object {
     static moving = true;
 
     update_bool() {
-        this.img.visible = My_object.imgVisible;
+        this.object_image.visible = My_object.imgVisible;
         this.hitBox.collision = My_object.collision;
         this.hitBox.contours = My_object.hitBoxVisible;
         this.stop = !My_object.moving;
@@ -226,7 +226,7 @@ class My_object {
 
 
     draw(ctx) {
-        this.img.draw(ctx);
+        this.object_image.draw(ctx);
         this.hitBox.draw_contours(ctx);
     }
 
@@ -236,12 +236,14 @@ class My_object {
         //collision with every objects
         for (const obj of other_objects) {
             if (obj == this) { continue; }
-            if (obj.hitBox.is_collides(this.hitBox)) {
+            if (obj.hitBox.is_colliding(this.hitBox)) {
                 console.log("COLLISION", this.id, obj.id);
                 this.velocityX *= -1;
-                // this.velocityY *= -1;
-                obj.velocityX *= -1;
-                obj.velocityY *= -1;
+                this.velocityY *= -1;
+                // obj.velocityX *= -1;
+                // obj.velocityY *= -1;
+                this.change_color();
+                break;
             }
         }
 
@@ -268,11 +270,44 @@ class My_object {
         }
 
         //update img and hitBox position
-        this.img.x = this.x;
-        this.img.y = this.y;
+        this.object_image.x = this.x;
+        this.object_image.y = this.y;
 
         this.hitBox.x = this.x;
         this.hitBox.y = this.y;
+
+    }
+
+    change_color() {
+
+        "#FA8072FF", "#FFDAB9FF", "#483D8BFF"
+
+
+
+        if (this.object_image.color == "#FA8072FF") {
+            this.object_image.color = "#FA807299";
+        }
+        else if (this.object_image.color == "#FA807299") {
+            this.object_image.color = "#FA8072FF";
+        }
+
+        else if (this.object_image.color == "#FFDAB9FF") {
+            this.object_image.color = "#FFDAB999";
+        }
+        else if (this.object_image.color == "#FFDAB999") {
+            this.object_image.color = "#FFDAB9FF";
+        }
+
+        else if (this.object_image.color == "#483D8BFF") {
+            this.object_image.color = "#483D8B99";
+        }
+        else if (this.object_image.color == "#483D8B99") {
+            this.object_image.color = "#483D8BFF";
+        }
+
+        // else {
+        //     this.object_image.color = "#AAAAAA";
+        // }
 
     }
 
@@ -340,12 +375,12 @@ circlesFolder.add(My_object, "hitBoxVisible")
 circlesFolder.add(My_object, "moving")
 
 
-
+let colors = ["#FA8072FF", "#FFDAB9FF", "#483D8BFF"]
 //generate movingCircles to random position
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 3; i++) {
     let tempX = getRandom(0, cnv.width);
     let tempY = getRandom(0, cnv.height);
-    let rad = 20;
+    let rad = 75;
     let velx = Math.random();
     let vely = Math.random();
     let negative_velx = getRandom(0, 1);
@@ -353,7 +388,7 @@ for (let i = 0; i < 10; i++) {
     if (negative_velx) { velx *= -1; }
     if (negative_vely) { vely *= -1; }
 
-    let circleImg = new My_Circle(tempX, tempY, rad, "#00FF00");
+    let circleImg = new My_Circle(tempX, tempY, rad, colors[i]);
     let hitBox = new HitBox_Circle(tempX, tempY, rad);
 
     let newObj = new My_object(tempX, tempY, circleImg, hitBox, velx, vely);
@@ -362,7 +397,22 @@ for (let i = 0; i < 10; i++) {
 }
 
 
+// let velx = Math.random();
+// let vely = Math.random();
 
+
+// let circleImg = new My_Circle(cnv.width/5, cnv.height/2, 75, "#00FF00");
+// let hitBox = new HitBox_Circle(cnv.width/5, cnv.height/2, 75);
+// let newObj = new My_object(cnv.width/5, cnv.height/2, circleImg, hitBox, 1, 0.1);
+// newObj.addInstance();
+
+
+
+
+// circleImg = new My_Circle((cnv.width/4)*3, cnv.height/2, 75, "#00FF00");
+// hitBox = new HitBox_Circle((cnv.width/4)*3, cnv.height/2, 75);
+// newObj = new My_object((cnv.width/4)*3, cnv.height/2, circleImg, hitBox, -1, -0.2);
+// newObj.addInstance();
 
 
 
@@ -407,6 +457,7 @@ function move() {
 
 
 function update() {
+    console.log("NEW UPDATE")
     animations();
     move();
     draw();
@@ -416,4 +467,4 @@ function update() {
     updateGui();
 }
 
-setInterval(update, 50);
+setInterval(update, 100);
