@@ -183,7 +183,7 @@ class HitBox_Circle {
 
 
 class My_object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
+    constructor(x, y, object_image, hitBox, group = "", velocityX = 1.0, velocityY = 0.0) {
         this.x = x;
         this.y = y;
         this.object_image = object_image;
@@ -193,9 +193,13 @@ class My_object {
         this.velocityX = velocityX; //beween -1 and 1
         this.velocityY = velocityY; //beween -1 and 1
 
+        this.group = group; //"ally", "ennemy", "static"
+
         this.id = -1;
 
         this.stop = false;
+
+        this.addInstance();
     }
 
     static instances = [];
@@ -348,7 +352,7 @@ for (let i = 0; i < 5; i++) {
 
 let imgAnimatedPerso = new myAnimatedImg(spritesPerso, 100, 100)
 // let hitBoxPerso = new HitBox_Circle(100, 100, 40);
-// let objectPerso = new My_object(imgAnimatedPerso.x, imgAnimatedPerso.y, imgAnimatedPerso, hitBoxPerso, 0, 0);
+// let objectPerso = new My_object(imgAnimatedPerso.x, imgAnimatedPerso.y, imgAnimatedPerso, hitBoxPerso, "static", 0, 0);
 // objectPerso.addInstance()
 
 // dat.GUI folder
@@ -391,9 +395,7 @@ for (let i = 0; i < 3; i++) {
     let circleImg = new My_Circle(tempX, tempY, rad, colors[i]);
     let hitBox = new HitBox_Circle(tempX, tempY, rad);
 
-    let newObj = new My_object(tempX, tempY, circleImg, hitBox, velx, vely);
-
-    newObj.addInstance();
+    new My_object(tempX, tempY, circleImg, hitBox, "ally", velx, vely);
 }
 
 
