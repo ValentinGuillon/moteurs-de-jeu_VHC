@@ -274,22 +274,38 @@ class My_Object {
         }
 
         //out of screen
+
+
         if (this.x > limit_right) {
+            if(this.group == "projectile"){
+                this.die()
+            }
             this.x -= limit_right;
             this.object_image.x -= limit_right;
             this.hitBox.x -= limit_right;
         }
         else if (this.x < 0) {
+            if(this.group == "projectile"){
+                this.die()
+            }
             this.x = limit_right + this.x;
             this.object_image.x = limit_right + this.object_image.x;
             this.hitBox.x = limit_right + this.hitBox.x;
+
         }
         if (this.y > limit_down) {
+            if(this.group == "projectile"){
+                this.die()
+            }
             this.y -= limit_down;
             this.object_image.y -= limit_down;
             this.hitBox.y -= limit_down;
+
         }
         else if (this.y < 0) {
+            if(this.group == "projectile"){
+                this.die()
+            }
             this.y = limit_down + this.y;
             this.object_image.y = limit_down + this.object_image.y;
             this.hitBox.y = limit_down + this.hitBox.y;
@@ -331,6 +347,7 @@ class My_Object {
                                 this.rebond();
                                 return 1;
                         }
+
                     case "ennemy_healer":
                         switch (obj.group) {
                             case "ennemy":
@@ -338,6 +355,16 @@ class My_Object {
                                 return 1
                             case "ennemy_healer":
                                 // console.log("Good healing")
+                                return 1;
+                            default:
+                                this.rebond();
+                                return 1;
+                        }
+                    case "projectile":
+                        switch (obj.group){
+                            case "projectile":
+                                return 1;
+                            case "static":
                                 return 1;
                             default:
                                 this.rebond();
@@ -423,75 +450,75 @@ let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, 
 
 
 
-// balls
-// ennemy
-for (let i = 0; i < 7; i++) {
-    let randX = getRandom(0, cnv.width);
-    let randY = getRandom(0, cnv.height);
-    let velX = Math.random();
-    let velY = Math.random();
-    if (getRandom(0, 1)) {
-        velX *= -1;
-    }
-    if (getRandom(0, 1)) {
-        velY *= -1;
-    }
+// // balls
+// // ennemy
+// for (let i = 0; i < 7; i++) {
+//     let randX = getRandom(0, cnv.width);
+//     let randY = getRandom(0, cnv.height);
+//     let velX = Math.random();
+//     let velY = Math.random();
+//     if (getRandom(0, 1)) {
+//         velX *= -1;
+//     }
+//     if (getRandom(0, 1)) {
+//         velY *= -1;
+//     }
 
-    // let imgBall = new My_Circle(randX, randY, 30, "#AAFF00");
+//     // let imgBall = new My_Circle(randX, randY, 30, "#AAFF00");
 
-    let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
-    let sprites_ball_death_src = [];
-    let numbers = [1, 1, 1, 2, 2]
-    for (let i = 0; i < 5; i++) {
-        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
-    }
-    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
-    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
-    // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-    new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", velX, velY);
-}
-// ally
-for (let i = 0; i < 10; i++) {
-    let randX = getRandom(0, cnv.width);
-    let randY = getRandom(0, cnv.height);
-    let velX = Math.random();
-    let velY = Math.random();
-    if (getRandom(0, 1)) {
-        velX *= -1;
-    }
-    if (getRandom(0, 1)) {
-        velY *= -1;
-    }
+//     let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
+//     let sprites_ball_death_src = [];
+//     let numbers = [1, 1, 1, 2, 2]
+//     for (let i = 0; i < 5; i++) {
+//         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+//     }
+//     let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
+//     let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
+//     // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+//     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", velX, velY);
+// }
+// // ally
+// for (let i = 0; i < 10; i++) {
+//     let randX = getRandom(0, cnv.width);
+//     let randY = getRandom(0, cnv.height);
+//     let velX = Math.random();
+//     let velY = Math.random();
+//     if (getRandom(0, 1)) {
+//         velX *= -1;
+//     }
+//     if (getRandom(0, 1)) {
+//         velY *= -1;
+//     }
 
-    // let imgBall = new My_Circle(randX, randY, 30, "#0000FF");
-    let sprite_ball_src = assetsDir + "ball_" + "blue" + pngExt
-    let sprites_ball_death_src = [];
-    let numbers = [1, 1, 1, 2, 2]
-    for (let i = 0; i < 5; i++) {
-        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
-    }
-    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
-    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
-    // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-    new My_Object(randX, randY, imgBall, hitBoxBall, "ally", velX, velY);
-}
-// ennemy healer
-for (let i = 0; i < 2; i++) {
-    let randX = getRandom(0, cnv.width);
-    let randY = getRandom(0, cnv.height);
-    let velX = Math.random();
-    let velY = Math.random();
-    if (getRandom(0, 1)) {
-        velX *= -1;
-    }
-    if (getRandom(0, 1)) {
-        velY *= -1;
-    }
+//     // let imgBall = new My_Circle(randX, randY, 30, "#0000FF");
+//     let sprite_ball_src = assetsDir + "ball_" + "blue" + pngExt
+//     let sprites_ball_death_src = [];
+//     let numbers = [1, 1, 1, 2, 2]
+//     for (let i = 0; i < 5; i++) {
+//         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+//     }
+//     let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
+//     let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
+//     // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+//     new My_Object(randX, randY, imgBall, hitBoxBall, "ally", velX, velY);
+// }
+// // ennemy healer
+// for (let i = 0; i < 2; i++) {
+//     let randX = getRandom(0, cnv.width);
+//     let randY = getRandom(0, cnv.height);
+//     let velX = Math.random();
+//     let velY = Math.random();
+//     if (getRandom(0, 1)) {
+//         velX *= -1;
+//     }
+//     if (getRandom(0, 1)) {
+//         velY *= -1;
+//     }
 
-    let imgBall = new My_Circle(randX, randY, 30, "#AA00AA");
-    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-    new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy_healer", velX, velY);
-}
+//     let imgBall = new My_Circle(randX, randY, 30, "#AA00AA");
+//     let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+//     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy_healer", velX, velY);
+// }
 
 
 
@@ -575,7 +602,39 @@ function execute_inputs() {
 
 
 
+function projectile(x, y){
+    let randX = x;
+    let randY = y;
+    let velX = Math.random();
+    let velY = Math.random();
+    if (getRandom(0, 1)) {
+        velX *= -1;
+    }
+    if (getRandom(0, 1)) {
+        velY *= -1;
+    }
+    let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
+    let sprites_ball_death_src = [];
+    let numbers = [1, 1, 1, 2, 2]
+    for (let i = 0; i < 5; i++) {
+        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+    }
+    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
+    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
+    new My_Object(randX, randY, imgBall, hitBoxBall, "projectile", velX, velY); 
 
+}
+
+let intervale = 0;
+function tirer(x, y){
+    if (intervale == 10){
+
+        projectile(x, y);
+        intervale = 0;
+
+    }
+    intervale++;
+}
 
 
 function updateGui() {
@@ -629,6 +688,9 @@ function move() {
 
 function update() {
     // console.log("NEW UPDATE")
+    let x = objectPerso.x;
+    let y = objectPerso.y;
+    tirer(x, y);
     animations();
     move();
     draw();
