@@ -207,9 +207,9 @@ class My_Object {
             if (this.object_image.dead) {
                 this.dead = true;
             }
-            else {
-                this.dead = true;
-            }
+        }
+        else {
+            this.dead = true;
         }
 
         if (this.dead) {
@@ -742,6 +742,8 @@ function move() {
 
 
 function update() {
+    console.log(My_Object.instances.length);
+    console.log(My_Object.instances_dead.length);
     let x = objectPerso.x - (objectPerso.object_image.width / 2);
     let y = objectPerso.y - (objectPerso.object_image.height / 2);
     tirer(x, y);
