@@ -183,6 +183,7 @@ class My_Object {
         this.id = -1;
 
         this.stop = false;
+        this.dying = false;
         this.dead = false;
 
         this.addInstance();
@@ -190,11 +191,31 @@ class My_Object {
     }
 
     static instances = [];
+    static instances_dead = [];
     static id = 0;
     static imgVisible = true;
     static collision = true;
     static hitBoxVisible = false;
     static moving = true;
+
+
+    update() {
+        if (this.dead) { return; }
+        if (!this.dying) { return; }
+
+        if (this.object_image instanceof My_Img_Animated) {
+            if (this.object_image.dead) {
+                this.dead = true;
+            }
+            else {
+                this.dead = true;
+            }
+        }
+
+        if (this.dead) {
+            My_Object.instances_dead.push(this);
+        }
+    }
 
     update_bool() {
         this.object_image.visible = My_Object.imgVisible;
@@ -217,16 +238,7 @@ class My_Object {
 
 
     draw(ctx) {
-        if (this.dead) { 
-            //pas une image animé
-            if (!this.object_image instanceof My_Img_Animated) { this.destroy(); return; }
-            //l'anim de mort est fini (ou inexistante)
-            if (this.object_image.dead) { this.destroy(); return; }
-            //img animé et anim non fini
-            this.object_image.draw(ctx);
-            this.hitBox.draw_contours(ctx);
-            return;
-        }
+        if (this.dead) { return ; }
         this.object_image.draw(ctx);
         this.hitBox.draw_contours(ctx);
     }
@@ -234,6 +246,7 @@ class My_Object {
 
     move(cnv, other_objects, direction = "") {
         if (this.dead) { return; }
+        if (this.dying) { return; }
 
         //collision with every objects
         let continu = this.check_collisions(other_objects);
@@ -409,20 +422,14 @@ class My_Object {
 
     die() {
         this.collision = false;
-        this.dead = true;
+        this.hitBox.collision = false;
+        this.dying = true;
         if (this.object_image instanceof My_Img_Animated) {
             this.object_image.die();
         }
     }
 
-    destroy() {
-        let i = 0;
-        for (const a of My_Object.instances) {
-            if (this == a) { break; }
-            i++;
-        }
-        delete My_Object.instances[i];
-    }
+
 }
 
 
@@ -686,18 +693,33 @@ function animations() {
     for (const obj of My_Object.instances) {
         if (obj.object_image instanceof My_Img_Animated) {
             let loop = true;
-            if (obj.dead) { loop = false; }
-            let done = obj.object_image.next_frame(loop);
-            if (!done) {
-                this.instances.destroy();
-            }
+            if (obj.dying) { loop = false; }
+            obj.object_image.next_frame(loop);
         }
     }
+}
+
+
+function clear_dead_objects() {
+    for (const dead_obj of My_Object.instances_dead) {
+        let valeurASupprimer = dead_obj;
+
+        let nouvelleListe = My_Object.instances.filter(function(element) {
+            return element !== valeurASupprimer;
+        });
+        My_Object.instances = nouvelleListe;
+    }
+    My_Object.instances_dead = [];
 }
 
 function updates() {
     // console.log(key_map)
     execute_inputs()
+
+    for (const obj of My_Object.instances) {
+        obj.update();
+    }
+    clear_dead_objects();
 }
 
 function draw() {
