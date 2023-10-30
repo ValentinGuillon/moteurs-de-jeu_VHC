@@ -455,14 +455,22 @@ let spritesPerso = [];
 for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
-let imgAnimatedPerso = new My_Img_Animated(spritesPerso, cnv.width / 2, cnv.height / 2, 30, 50)
+let sprites_death_src = [];
+let numbers = [1, 1, 1, 2, 2]
+for (let i = 0; i < 5; i++) {
+    sprites_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+}
+// img anim death
+
+//img animated death
+let imgAnimatedPerso = new My_Img_Animated(spritesPerso, 10, 10, 30, 50, sprites_death_src)
 // hitbox
 let hitBoxPerso = new HitBox_Circle(
     imgAnimatedPerso.x + (imgAnimatedPerso.width / 2),
     imgAnimatedPerso.y + (imgAnimatedPerso.height / 2), 
     (imgAnimatedPerso.width + imgAnimatedPerso.height) / 4)
 //object
-let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ennemy", 0, 0);
+let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ally", 0, 0);
 
 
 
@@ -539,16 +547,18 @@ let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, 
 
 
 // obstacles
-for (let i = 0; i < 15; i++) {
+for (let i = 0; i < 10; i++) {
     let randX = getRandom(0, cnv.width);
     let randY = getRandom(0, cnv.height);
-    let velX = Math.random();
-    let velY = Math.random();
-    if (getRandom(0, 1)) {
-        velX *= -1;
-    }
-    if (getRandom(0, 1)) {
-        velY *= -1;
+
+    let distance = 0;
+    while(distance < 150 || distance > 220) {
+        randX = getRandom(0, cnv.width);
+        randY = getRandom(0, cnv.height);
+
+        let distanceX = cnv.width/2 - randX;
+        let distanceY = cnv.height/2 - randY;
+        distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
     }
 
     let imgBall = new My_Circle(randX, randY, 30, "#111111");
@@ -556,6 +566,20 @@ for (let i = 0; i < 15; i++) {
     new My_Object(randX, randY, imgBall, hitBoxBall, "static", 0, 0);
 }
 
+
+let tourelles = []
+//tourelles
+for (let i = 0; i < 1; i++) {
+    // let randX = getRandom(0, cnv.width);
+    // let randY = getRandom(0, cnv.height);
+    let randX = cnv.width/2;
+    let randY = cnv.height/2;
+
+    let imgBall = new My_Circle(randX, randY, 30, "#EE1532");
+    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+    let tourelle = new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", 0, 0);
+    tourelles.push(tourelle);
+}
 
 
 
@@ -659,15 +683,15 @@ function projectile(laucherX, launcherX){
         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
     }
 
-    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 60, 60, sprites_ball_death_src)
-    let hitBoxBall = new HitBox_Circle(x + 30, y + 30, 25);
+    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 40, 40, sprites_ball_death_src)
+    let hitBoxBall = new HitBox_Circle(x + 20, y + 20, 15);
     new My_Object(hitBoxBall.x, hitBoxBall.y, imgBall, hitBoxBall, "projectile", velX, velY); 
 
 }
 
 let intervale = 0;
 function tirer(x, y){
-    if (intervale == 10){
+    if (intervale == 2){
 
         projectile(x, y);
         intervale = 0;
@@ -744,9 +768,9 @@ function move() {
 function update() {
     console.log(My_Object.instances.length);
     console.log(My_Object.instances_dead.length);
-    let x = objectPerso.x - (objectPerso.object_image.width / 2);
-    let y = objectPerso.y - (objectPerso.object_image.height / 2);
-    tirer(x, y);
+    // let x = objectPerso.x - (objectPerso.object_image.width / 2);
+    // let y = objectPerso.y - (objectPerso.object_image.height / 2);
+    tirer(tourelles[0].x, tourelles[0].y);
     animations();
     move();
     draw();
