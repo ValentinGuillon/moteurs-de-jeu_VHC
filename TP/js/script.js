@@ -82,25 +82,41 @@ class My_Img {
 
 //animated sprite with a SINGLE animation
 class My_Img_Animated extends My_Img {
-    constructor(sprites = [], x = 0, y = 0, width = 25, height = 25) {
+    constructor(sprites, x = 0, y = 0, width = 25, height = 25, sprites_death = []) {
         super(sprites[0], x, y, width, height);
         this.sprites = sprites;
+        this.sprites_death = sprites_death;
+
+        this.dead = false;
 
         //dat.GUI
         this.animated = true;
     }
 
-
-    next_frame() {
+    // return 0 if there is no sprite left
+    next_frame(loop = true) {
+        if (this.sprites.lenght == 0) {
+            this.dead = true;
+            return 0;
+        }
         if (!this.animated) {
             this.img.src = this.imgSrc;
-            return;
+            return 1;
         }
 
         let next = this.sprites.shift(); //remove the first list's element
-        this.sprites.push(next);         //push it at the end
         this.img.src = next;             //update current Img source
+        if (loop) {
+            this.sprites.push(next);     //push it at the end
+        }
+        return 1;
     }
+
+    die() {
+        this.sprites = this.sprites_death;
+        // this.dead = true;
+    }
+
 }
 
 
@@ -114,7 +130,7 @@ class HitBox_Circle {
 
         //dat.GUI
         this.collision = true;
-        this.contours = true;
+        this.contours = false;
     }
 
 
@@ -176,7 +192,7 @@ class My_Object {
     static id = 0;
     static imgVisible = true;
     static collision = true;
-    static hitBoxVisible = true;
+    static hitBoxVisible = false;
     static moving = true;
 
     update_bool() {
@@ -200,7 +216,16 @@ class My_Object {
 
 
     draw(ctx) {
-        if (this.dead) { return; }
+        if (this.dead) { 
+            //pas une image animé
+            if (!this.object_image instanceof My_Img_Animated) { this.destroy(); return; }
+            //l'anim de mort est fini (ou inexistante)
+            if (this.object_image.dead) { this.destroy(); return; }
+            //img animé et anim non fini
+            this.object_image.draw(ctx);
+            this.hitBox.draw_contours(ctx);
+            return;
+        }
         this.object_image.draw(ctx);
         this.hitBox.draw_contours(ctx);
     }
@@ -212,6 +237,7 @@ class My_Object {
         //collision with every objects
         let continu = this.check_collisions(other_objects);
         if (!continu) { return; }
+        if (this.stop) { return; }
 
         let limit_right = cnv.width;
         let limit_down = cnv.height;
@@ -278,59 +304,48 @@ class My_Object {
             // if (obj.group == "static") { continue; }
 
             if (obj.hitBox.is_colliding(this.hitBox)) {
-                console.log("COLLISION", this.group, this.id, obj.group, obj.id);
+                // console.log("COLLISION", this.group, this.id, obj.group, obj.id);
                 switch (this.group) {
                     case "ally":
                         switch(obj.group) {
                             case "ally":
-                                console.log("hi bro")
+                                // console.log("hi bro")
+                                return 1;
                             case "ennemy":
                                 //détruire this
-                                // console.log("\"this\" must die")
-                                // console.log("\"obj\" must die")
-                                this.dead = true;
-                                // this.destroy();
-                                return;
-                                break;
-                            case "ennemy_healer":
-                                    //détruire this
-                                    console.log("\"this\" must die")
-                                    console.log("\"obj\" must die")
-                                    break;
+                                this.die();
+                                return 0;
                             default:
                                 this.rebond();
+                                return 1;
                         }
-                        break;
                     case "ennemy":
                         switch(obj.group) {
                             case "static":
-                                this.velocityX = 0;
-                                this.velocityY = 0;
-                                
-                                break;
+                                this.stop = true;
+                                return 1;
                             case "ennemy_healer":
-                                if (this.velocityX && this.velocityY) { break; }
-                                this.velocityX = Math.random();
-                                this.velocityY = Math.random();
-                                if (getRandom(0, 1)) { this.velocityX *= -1; }
-                                if (getRandom(0, 1)) { this.velocityY *= -1; }
-                                break;
+                                this.stop = false;
+                                return 1;
                             default:
                                 this.rebond();
+                                return 1;
                         }
                     case "ennemy_healer":
                         switch (obj.group) {
                             case "ennemy":
-                                console.log("hi bad bro");
-                                break;
+                                // console.log("hi bad bro");
+                                return 1
                             case "ennemy_healer":
-                                console.log("Good healing")
-                                break;
+                                // console.log("Good healing")
+                                return 1;
                             default:
                                 this.rebond();
+                                return 1;
                         }
                     default:
-                        console.log("does nothing")
+                        // console.log("does nothing");
+                        return 1;
                 }
             }
         }
@@ -353,6 +368,14 @@ class My_Object {
         //         this.velocityX *= -1;
         //         this.velocityY *= -1;
         // }
+    }
+
+    die() {
+        this.collision = false;
+        this.dead = true;
+        if (this.object_image instanceof My_Img_Animated) {
+            this.object_image.die();
+        }
     }
 
     destroy() {
@@ -402,7 +425,7 @@ let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, 
 
 // balls
 // ennemy
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 7; i++) {
     let randX = getRandom(0, cnv.width);
     let randY = getRandom(0, cnv.height);
     let velX = Math.random();
@@ -414,8 +437,17 @@ for (let i = 0; i < 10; i++) {
         velY *= -1;
     }
 
-    let imgBall = new My_Circle(randX, randY, 30, "#AAFF00");
-    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+    // let imgBall = new My_Circle(randX, randY, 30, "#AAFF00");
+
+    let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
+    let sprites_ball_death_src = [];
+    let numbers = [1, 1, 1, 2, 2]
+    for (let i = 0; i < 5; i++) {
+        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+    }
+    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
+    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
+    // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", velX, velY);
 }
 // ally
@@ -431,8 +463,16 @@ for (let i = 0; i < 10; i++) {
         velY *= -1;
     }
 
-    let imgBall = new My_Circle(randX, randY, 30, "#0000FF");
-    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+    // let imgBall = new My_Circle(randX, randY, 30, "#0000FF");
+    let sprite_ball_src = assetsDir + "ball_" + "blue" + pngExt
+    let sprites_ball_death_src = [];
+    let numbers = [1, 1, 1, 2, 2]
+    for (let i = 0; i < 5; i++) {
+        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+    }
+    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
+    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
+    // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
     new My_Object(randX, randY, imgBall, hitBoxBall, "ally", velX, velY);
 }
 // ennemy healer
@@ -462,46 +502,73 @@ backgroundFolder.add(imgBackground, "visible")
 
 // dat.GUI folder
 let persoFolder = gui.addFolder("Perso");
-persoFolder.add(imgAnimatedPerso, "x", 0, cnv.width - imgAnimatedPerso.w, 1);
-persoFolder.add(imgAnimatedPerso, "y", 0, cnv.height - imgAnimatedPerso.h, 1);
+persoFolder.add(imgAnimatedPerso, "x", 0, cnv.width - imgAnimatedPerso.width, 1);
+persoFolder.add(imgAnimatedPerso, "y", 0, cnv.height - imgAnimatedPerso.height, 1);
 persoFolder.add(imgAnimatedPerso, "width", 10, cnv.width, 1);
 persoFolder.add(imgAnimatedPerso, "height", 10, cnv.height, 1);
 persoFolder.add(imgAnimatedPerso, "animated");
 persoFolder.add(imgAnimatedPerso, "visible");
+persoFolder.add(objectPerso.hitBox, "collision")
+persoFolder.add(objectPerso.hitBox, "contours")
+// objectPerso
+// this.collision = true;
+// this.contours = true;
+
 
 // dat.GUI folder
 let objectsFolder = gui.addFolder("Objects")
-objectsFolder.add(My_Object, "imgVisible");
-objectsFolder.add(My_Object, "collision");
-objectsFolder.add(My_Object, "hitBoxVisible");
-objectsFolder.add(My_Object, "moving");
-
-
+objectsFolder.open();
+objectsFolder.add(My_Object, "imgVisible").onChange(val => {
+    for (const obj of My_Object.instances) {
+        obj.update_bool();
+    }
+});
+objectsFolder.add(My_Object, "collision").onChange(val => {
+    for (const obj of My_Object.instances) {
+        obj.update_bool();
+    }
+});
+objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => {
+    for (const obj of My_Object.instances) {
+        obj.update_bool();
+    }
+});
+objectsFolder.add(My_Object, "moving").onChange(val => {
+    for (const obj of My_Object.instances) {
+        obj.update_bool();
+    }
+});
 
 
 
 
 // KEYS DETECTION
-document.addEventListener("keydown", button_pressed);
+var key_map = {};
+onkeydown = onkeyup = function(e){
+    key_map[e.key] = e.type == 'keydown';
+}
 
-function button_pressed(e) {
-    switch (e.key) {
-        case "z":
-            console.log("press z")
-            objectPerso.move(cnv, My_Object.instances, "up")
-            break;
-        case "q":
-            console.log("press q")
-            objectPerso.move(cnv, My_Object.instances, "left")
-            break;
-        case "s":
-            console.log("press s")
-            objectPerso.move(cnv, My_Object.instances, "down")
-            break;
-        case "d":
-            console.log("press d")
-            objectPerso.move(cnv, My_Object.instances, "right")
-            break;
+
+function execute_inputs() {
+    for (const key in key_map) {
+        //touche non pressée
+        if (!key_map[key]) { continue; }
+
+        //touche pressée
+        switch (key) {
+            case "z":
+                objectPerso.move(cnv, My_Object.instances, "up")
+                break;
+            case "q":
+                objectPerso.move(cnv, My_Object.instances, "left")
+                break;
+            case "s":
+                objectPerso.move(cnv, My_Object.instances, "down")
+                break;
+            case "d":
+                objectPerso.move(cnv, My_Object.instances, "right")
+                break;
+        }
     }
 }
 
@@ -523,12 +590,22 @@ function animations() {
         itemp = 0;
     }
     itemp++;
+
+    for (const obj of My_Object.instances) {
+        if (obj.object_image instanceof My_Img_Animated) {
+            let loop = true;
+            if (obj.dead) { loop = false; }
+            let done = obj.object_image.next_frame(loop);
+            if (!done) {
+                this.instances.destroy();
+            }
+        }
+    }
 }
 
 function updates() {
-    for (const obj of My_Object.instances) {
-        obj.update_bool();
-    }
+    // console.log(key_map)
+    execute_inputs()
 }
 
 function draw() {
