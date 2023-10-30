@@ -369,52 +369,41 @@ persoFolder.add(imgAnimatedPerso, "visible");
 
 
 
-// circles
-let circlesFolder = gui.addFolder("Circles");
-circlesFolder.open()
+// // circles
+// let circlesFolder = gui.addFolder("Circles");
+// circlesFolder.open()
 
-circlesFolder.add(My_object, "imgVisible")
-circlesFolder.add(My_object, "collision")
-circlesFolder.add(My_object, "hitBoxVisible")
-circlesFolder.add(My_object, "moving")
-
-
-let colors = ["#FA8072FF", "#FFDAB9FF", "#483D8BFF"]
-//generate movingCircles to random position
-for (let i = 0; i < 3; i++) {
-    let tempX = getRandom(0, cnv.width);
-    let tempY = getRandom(0, cnv.height);
-    let rad = 75;
-    let velx = Math.random();
-    let vely = Math.random();
-    let negative_velx = getRandom(0, 1);
-    let negative_vely = getRandom(0, 1);
-    if (negative_velx) { velx *= -1; }
-    if (negative_vely) { vely *= -1; }
-
-    let circleImg = new My_Circle(tempX, tempY, rad, colors[i]);
-    let hitBox = new HitBox_Circle(tempX, tempY, rad);
-
-    new My_object(tempX, tempY, circleImg, hitBox, "ally", velx, vely);
-}
+// circlesFolder.add(My_object, "imgVisible")
+// circlesFolder.add(My_object, "collision")
+// circlesFolder.add(My_object, "hitBoxVisible")
+// circlesFolder.add(My_object, "moving")
 
 
-// let velx = Math.random();
-// let vely = Math.random();
+// let colors = ["#FA8072FF", "#FFDAB9FF", "#483D8BFF"]
+// //generate movingCircles to random position
+// for (let i = 0; i < 3; i++) {
+//     let tempX = getRandom(0, cnv.width);
+//     let tempY = getRandom(0, cnv.height);
+//     let rad = 75;
+//     let velx = Math.random();
+//     let vely = Math.random();
+//     let negative_velx = getRandom(0, 1);
+//     let negative_vely = getRandom(0, 1);
+//     if (negative_velx) { velx *= -1; }
+//     if (negative_vely) { vely *= -1; }
 
+//     let circleImg = new My_Circle(tempX, tempY, rad, colors[i]);
+//     let hitBox = new HitBox_Circle(tempX, tempY, rad);
 
-// let circleImg = new My_Circle(cnv.width/5, cnv.height/2, 75, "#00FF00");
-// let hitBox = new HitBox_Circle(cnv.width/5, cnv.height/2, 75);
-// let newObj = new My_object(cnv.width/5, cnv.height/2, circleImg, hitBox, 1, 0.1);
-// newObj.addInstance();
+//     new My_object(tempX, tempY, circleImg, hitBox, "ally", velx, vely);
+// }
 
 
 
 
-// circleImg = new My_Circle((cnv.width/4)*3, cnv.height/2, 75, "#00FF00");
-// hitBox = new HitBox_Circle((cnv.width/4)*3, cnv.height/2, 75);
-// newObj = new My_object((cnv.width/4)*3, cnv.height/2, circleImg, hitBox, -1, -0.2);
-// newObj.addInstance();
+
+
+
 
 
 
