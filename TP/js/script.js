@@ -468,7 +468,7 @@ let imgAnimatedPerso = new My_Img_Animated(spritesPerso, 10, 10, 30, 50, sprites
 let hitBoxPerso = new HitBox_Circle(
     imgAnimatedPerso.x + (imgAnimatedPerso.width / 2),
     imgAnimatedPerso.y + (imgAnimatedPerso.height / 2), 
-    (imgAnimatedPerso.width + imgAnimatedPerso.height) / 4)
+    (imgAnimatedPerso.width + imgAnimatedPerso.height) / 5)
 //object
 let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ally", 0, 0);
 
