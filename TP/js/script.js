@@ -186,6 +186,7 @@ class My_Object {
         this.dead = false;
 
         this.addInstance();
+        this.update_bool();
     }
 
     static instances = [];
@@ -279,6 +280,7 @@ class My_Object {
         if (this.x > limit_right) {
             if(this.group == "projectile"){
                 this.die()
+                return;
             }
             this.x -= limit_right;
             this.object_image.x -= limit_right;
@@ -287,6 +289,7 @@ class My_Object {
         else if (this.x < 0) {
             if(this.group == "projectile"){
                 this.die()
+                return;
             }
             this.x = limit_right + this.x;
             this.object_image.x = limit_right + this.object_image.x;
@@ -296,6 +299,7 @@ class My_Object {
         if (this.y > limit_down) {
             if(this.group == "projectile"){
                 this.die()
+                return;
             }
             this.y -= limit_down;
             this.object_image.y -= limit_down;
@@ -305,6 +309,7 @@ class My_Object {
         else if (this.y < 0) {
             if(this.group == "projectile"){
                 this.die()
+                return;
             }
             this.y = limit_down + this.y;
             this.object_image.y = limit_down + this.object_image.y;
@@ -331,41 +336,46 @@ class My_Object {
                                 //détruire this
                                 this.die();
                                 return 0;
+                            case "projectile":
+                                this.die();
+                                return 0;
+                            case "static":
+                                console.log("n'est pas sensé pouvoir avancé");
+                                this.rebond()
+                                return 1;
                             default:
                                 this.rebond();
                                 return 1;
                         }
                     case "ennemy":
                         switch(obj.group) {
-                            case "static":
-                                this.stop = true;
-                                return 1;
-                            case "ennemy_healer":
-                                this.stop = false;
-                                return 1;
-                            default:
-                                this.rebond();
-                                return 1;
-                        }
-
-                    case "ennemy_healer":
-                        switch (obj.group) {
                             case "ennemy":
-                                // console.log("hi bad bro");
-                                return 1
-                            case "ennemy_healer":
-                                // console.log("Good healing")
+                                return 1;
+                            case "ally":
+                                this.die();
+                                return 0;
+                            case "projectile":
+                                return 1;
+                            case "static":
+                                console.log("n'est pas sensé pouvoir avancé");
+                                this.rebond()
                                 return 1;
                             default:
                                 this.rebond();
                                 return 1;
                         }
                     case "projectile":
-                        switch (obj.group){
+                        switch (obj.group) {
                             case "projectile":
                                 return 1;
                             case "static":
+                                this.die();
+                                return 0;
+                            case "ennemy":
                                 return 1;
+                            case "ally":
+                                this.die();
+                                return 0;
                             default:
                                 this.rebond();
                                 return 1;
@@ -445,7 +455,7 @@ let hitBoxPerso = new HitBox_Circle(
     imgAnimatedPerso.y + (imgAnimatedPerso.height / 2), 
     (imgAnimatedPerso.width + imgAnimatedPerso.height) / 4)
 //object
-let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "static", 0, 0);
+let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ennemy", 0, 0);
 
 
 
@@ -519,6 +529,26 @@ let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, 
 //     let hitBoxBall = new HitBox_Circle(randX, randY, 30);
 //     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy_healer", velX, velY);
 // }
+
+
+// obstacles
+for (let i = 0; i < 15; i++) {
+    let randX = getRandom(0, cnv.width);
+    let randY = getRandom(0, cnv.height);
+    let velX = Math.random();
+    let velY = Math.random();
+    if (getRandom(0, 1)) {
+        velX *= -1;
+    }
+    if (getRandom(0, 1)) {
+        velY *= -1;
+    }
+
+    let imgBall = new My_Circle(randX, randY, 30, "#111111");
+    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
+    new My_Object(randX, randY, imgBall, hitBoxBall, "static", 0, 0);
+}
+
 
 
 
@@ -602,9 +632,9 @@ function execute_inputs() {
 
 
 
-function projectile(x, y){
-    let randX = x;
-    let randY = y;
+function projectile(laucherX, launcherX){
+    let x = laucherX;
+    let y = launcherX;
     let velX = Math.random();
     let velY = Math.random();
     if (getRandom(0, 1)) {
@@ -613,15 +643,18 @@ function projectile(x, y){
     if (getRandom(0, 1)) {
         velY *= -1;
     }
+    //img animated
     let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
+    //img animated death
     let sprites_ball_death_src = [];
     let numbers = [1, 1, 1, 2, 2]
     for (let i = 0; i < 5; i++) {
         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
     }
-    let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
-    let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
-    new My_Object(randX, randY, imgBall, hitBoxBall, "projectile", velX, velY); 
+
+    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 60, 60, sprites_ball_death_src)
+    let hitBoxBall = new HitBox_Circle(x + 30, y + 30, 25);
+    new My_Object(hitBoxBall.x, hitBoxBall.y, imgBall, hitBoxBall, "projectile", velX, velY); 
 
 }
 
@@ -687,9 +720,8 @@ function move() {
 
 
 function update() {
-    // console.log("NEW UPDATE")
-    let x = objectPerso.x;
-    let y = objectPerso.y;
+    let x = objectPerso.x - (objectPerso.object_image.width / 2);
+    let y = objectPerso.y - (objectPerso.object_image.height / 2);
     tirer(x, y);
     animations();
     move();
