@@ -350,7 +350,7 @@ for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
 
-let imgAnimatedPerso = new myAnimatedImg(spritesPerso, 100, 100)
+let imgAnimatedPerso = new myAnimatedImg(spritesPerso, 30, 50)
 // let hitBoxPerso = new HitBox_Circle(100, 100, 40);
 // let objectPerso = new My_object(imgAnimatedPerso.x, imgAnimatedPerso.y, imgAnimatedPerso, hitBoxPerso, "static", 0, 0);
 // objectPerso.addInstance()
