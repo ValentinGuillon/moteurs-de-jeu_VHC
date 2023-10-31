@@ -703,7 +703,6 @@ function projectile(laucherX, launcherX){
 
 let intervale = 0;
 function tirer(x, y){
-    console.log(shoot);
     if (!shoot) { return; };
     if (intervale == 2){
 
@@ -751,7 +750,6 @@ function clear_dead_objects() {
 }
 
 function updates() {
-    // console.log(key_map)
     execute_inputs()
 
     for (const obj of My_Object.instances) {
@@ -780,8 +778,6 @@ function move() {
 
 
 function update() {
-    console.log(My_Object.instances.length);
-    console.log(My_Object.instances_dead.length);
     tirer(towers[0].x, towers[0].y);
     animations();
     move();
