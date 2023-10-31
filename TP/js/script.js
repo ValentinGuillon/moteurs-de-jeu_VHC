@@ -234,9 +234,10 @@ class My_Object {
 
     update_bool() {
         this.object_image.visible = My_Object.imgVisible;
-        this.hitBox.collision = My_Object.collision;
-        this.hitBox.contours = My_Object.hitBoxVisible;
         this.stop = !My_Object.moving;
+        this.hitBox.contours = My_Object.hitBoxVisible;
+        if (this.dead || this.dying) { return; }
+        this.hitBox.collision = My_Object.collision;
     }
 
     addInstance() {
