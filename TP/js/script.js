@@ -353,8 +353,7 @@ class My_Object {
                                 this.die();
                                 return 0;
                             case "static":
-                                console.log("n'est pas sensé pouvoir avancé");
-                                this.rebond()
+                                this.recul(obj);
                                 return 1;
                             default:
                                 this.rebond();
@@ -401,6 +400,25 @@ class My_Object {
         }
 
         return 1;
+    }
+
+    recul(obj) {
+        let reculX = this.speed;
+        let reculY = this.speed;
+
+        if (this.x < obj.x) {
+            reculX *= -1;
+        }
+        if (this.y < obj.y) {
+            reculY *= -1;
+        }
+
+        this.x += reculX;
+        this.y += reculY;
+        this.object_image.x += reculX;
+        this.object_image.y += reculY;
+        this.hitBox.x += reculX;
+        this.hitBox.y += reculY;
     }
 
     rebond() {
