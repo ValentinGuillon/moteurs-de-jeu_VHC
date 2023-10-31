@@ -621,8 +621,12 @@ function projectile(laucherX, launcherX){
     if (getRandom(0, 1)) {
         velY *= -1;
     }
+    let sprite_ball_src = [];
     //img animated
-    let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
+    for (let i = 0; i < 4; i++) {
+        sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
+    }
+
     //img animated death
     let sprites_explosion_src = [];
     // let numbers = [1, 1, 1, 2, 2]
@@ -630,8 +634,8 @@ function projectile(laucherX, launcherX){
         sprites_explosion_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
     }
 
-    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 40, 40, sprites_explosion_src)
-    let hitBoxBall = new HitBox_Circle(x + 20, y + 20, 15);
+    let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, sprites_explosion_src)
+    let hitBoxBall = new HitBox_Circle(x + 10, y + 7.5, (imgBall.height + imgBall.width) / 4);
     new My_Object(hitBoxBall.x, hitBoxBall.y, imgBall, hitBoxBall, "projectile", velX, velY); 
 
 }
