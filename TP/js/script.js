@@ -596,7 +596,7 @@ for (let i = 0; i < 6; i+=2)
 
 
 // dat.GUI Folder
-let backgroundFolder = gui.addFolder("Backgroung");
+let backgroundFolder = gui.addFolder("Background");
 backgroundFolder.add(imgBackground, "visible")
 
 // dat.GUI folder
@@ -616,7 +616,7 @@ persoFolder.add(objectPerso.hitBox, "contours")
 
 // dat.GUI folder
 let objectsFolder = gui.addFolder("Objects")
-objectsFolder.open();
+// objectsFolder.open();
 objectsFolder.add(My_Object, "imgVisible").onChange(val => {
     for (const obj of My_Object.instances) {
         obj.update_bool();
