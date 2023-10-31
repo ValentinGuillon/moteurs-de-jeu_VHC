@@ -179,6 +179,9 @@ class My_Object {
         this.velocityY = velocityY; //beween -1 and 1
 
         this.group = group; //"ally", "enemy", "static"
+        this.invincible = false;
+        this.duration = 30;
+        this.timer = 0;
 
         this.id = -1;
 
@@ -195,11 +198,19 @@ class My_Object {
     static id = 0;
     static imgVisible = true;
     static collision = true;
-    static hitBoxVisible = true;
+    static hitBoxVisible = false;
     static moving = true;
 
 
     update() {
+        if (this.invincible) {
+            this.timer++;
+            if (this.timer == this.duration) {
+                this.timer = 0;
+                this.invincible = false;
+            }
+        }
+
         if (this.dead) { return; }
         if (!this.dying) { return; }
 
@@ -241,6 +252,18 @@ class My_Object {
         if (this.dead) { return ; }
         this.object_image.draw(ctx);
         this.hitBox.draw_contours(ctx);
+        if (this.invincible) {
+            this.draw_invincible();
+        }
+    }
+
+    draw_invincible() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.hitBox.radius, 0, 2*Math.PI);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#00FFFF";
+        ctx.stroke();
+        ctx.closePath();
     }
 
 
@@ -342,6 +365,9 @@ class My_Object {
                 switch (this.group) {
                     case "ally":
                         switch(obj.group) {
+                            case "bonus":
+                                this.invincible = true;
+                                return 1;
                             case "ally":
                                 // console.log("hi bro")
                                 return 1;
@@ -392,6 +418,14 @@ class My_Object {
                                 this.rebond();
                                 return 1;
                         }
+                    case "bonus":
+                        switch (obj.group) {
+                            case "ally":
+                                this.die()
+                                return 0;
+                            default:
+                                return 1;
+                        }
                     default:
                         // console.log("does nothing");
                         return 1;
@@ -439,6 +473,7 @@ class My_Object {
     }
 
     die() {
+        if (this.invincible) { return; }
         this.collision = false;
         this.hitBox.collision = false;
         this.dying = true;
@@ -544,6 +579,18 @@ for (let i = 0; i < 1; i++) {
     //object
     let tourelle = new My_Object(X, Y, imgAnimatedTowers, hitBoxTower, "enemy", 0, 0);
     tourelles.push(tourelle);
+}
+
+//bonus
+{
+    let X = cnv.width - 30;
+    let Y = 30;
+
+    let imgBonus = new My_Circle(X, Y, 20, "#00FFFF");
+    let hitBoxBonus = new HitBox_Circle(X, Y, 20);
+        
+    //object
+    new My_Object(X, Y, imgBonus, hitBoxBonus, "bonus", 0, 0);
 }
 
 
