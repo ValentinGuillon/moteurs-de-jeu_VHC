@@ -260,8 +260,8 @@ class My_Object {
     draw_invincible() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.hitBox.radius, 0, 2*Math.PI);
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#00FFFF";
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#9e9e97";
         ctx.stroke();
         ctx.closePath();
     }
