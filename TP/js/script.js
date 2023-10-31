@@ -165,7 +165,7 @@ class HitBox_Circle {
 }
 
 
-
+let shoot = true;
 
 class My_Object {
     constructor(x, y, object_image, hitBox, group = "", velocityX = 1.0, velocityY = 0.0) {
@@ -390,6 +390,7 @@ class My_Object {
                             case "enemy":
                                 return 1;
                             case "ally":
+                                shoot = false;
                                 this.die();
                                 return 0;
                             case "projectile":
@@ -707,6 +708,8 @@ function projectile(laucherX, launcherX){
 
 let intervale = 0;
 function tirer(x, y){
+    console.log(shoot);
+    if (!shoot) { return; };
     if (intervale == 2){
 
         projectile(x, y);
