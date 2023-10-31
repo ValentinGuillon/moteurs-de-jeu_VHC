@@ -251,10 +251,10 @@ class My_Object {
     draw(ctx) {
         if (this.dead) { return ; }
         this.object_image.draw(ctx);
-        this.hitBox.draw_contours(ctx);
         if (this.invincible) {
             this.draw_invincible();
         }
+        this.hitBox.draw_contours(ctx);
     }
 
     draw_invincible() {
