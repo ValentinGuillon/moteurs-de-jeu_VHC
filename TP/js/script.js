@@ -405,16 +405,16 @@ class My_Object {
                         }
                     case "projectile":
                         switch (obj.group) {
-                            case "projectile":
-                                return 1;
                             case "static":
                                 this.die();
                                 return 0;
-                            case "enemy":
-                                return 1;
                             case "ally":
                                 this.die();
                                 return 0;
+                            case "projectile":
+                                return 1;
+                            case "enemy":
+                                return 1;
                             default:
                                 this.rebond();
                                 return 1;
@@ -515,12 +515,12 @@ for (let i = 0; i < 6; i++) {
 }
 
 // génération d'obstacles
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 15; i++) {
     let randX = getRandom(0, cnv.width);
     let randY = getRandom(0, cnv.height);
     
     let distance = 0;
-    while(distance < 150 || distance > 220) {
+    while(distance < 120 || distance > 170) {
         randX = getRandom(0, cnv.width);
         randY = getRandom(0, cnv.height);
         
@@ -585,7 +585,7 @@ for (let i = 0; i < 6; i+=2)
     let X = bonus_pos[i];
     let Y = bonus_pos[i+1];
 
-    let imgBonus = new My_Img_Animated(spritesBonus, X, Y, 30, 30);
+    let imgBonus = new My_Img_Animated(spritesBonus, X - 20, Y - 20, 40, 40);
     let hitBoxBonus = new HitBox_Circle(X, Y, 20);
         
     //object
