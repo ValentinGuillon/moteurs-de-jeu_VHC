@@ -544,13 +544,13 @@ for (let i = 0; i < 8; i++) {
     spritesTowers.push(assetsDir + imgTowersName + numbers[i] + pngExt);
 }
 
-// animation tower/tour
+// animation tower
 
 let imgAnimatedTowers = new My_Img_Animated(spritesTowers, cnv.width/2 - 60/2, cnv.height/2 - 60/2, 60, 60)
 
-// tourelles
+// towers
 
-let tourelles = []
+let towers = []
 for (let i = 0; i < 1; i++) {
     
     let X = cnv.width/2;
@@ -562,11 +562,18 @@ for (let i = 0; i < 1; i++) {
         (imgAnimatedTowers.width + imgAnimatedTowers.height) / 10)
         
     //object
-    let tourelle = new My_Object(X, Y, imgAnimatedTowers, hitBoxTower, "enemy", 0, 0);
-    tourelles.push(tourelle);
+    let tower = new My_Object(X, Y, imgAnimatedTowers, hitBoxTower, "enemy", 0, 0);
+    towers.push(tower);
 }
 
 // BONUS
+
+let imgBonus = "stars_";
+let spritesBonus = [];
+let numbers_ = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 3, 3, 3, 2, 2, 2];
+for (let i = 0; i < numbers_.length; i++) {
+    spritesBonus.push(assetsDir + imgBonus + numbers_[i] + pngExt);
+}
 
 let bonus_pos = [
     cnv.width - 30, 30,
@@ -578,7 +585,7 @@ for (let i = 0; i < 6; i+=2)
     let X = bonus_pos[i];
     let Y = bonus_pos[i+1];
 
-    let imgBonus = new My_Circle(X, Y, 20, "#370804");
+    let imgBonus = new My_Img_Animated(spritesBonus, X, Y, 30, 30);
     let hitBoxBonus = new HitBox_Circle(X, Y, 20);
         
     //object
@@ -775,7 +782,7 @@ function move() {
 function update() {
     console.log(My_Object.instances.length);
     console.log(My_Object.instances_dead.length);
-    tirer(tourelles[0].x, tourelles[0].y);
+    tirer(towers[0].x, towers[0].y);
     animations();
     move();
     draw();
