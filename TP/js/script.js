@@ -583,9 +583,15 @@ for (let i = 0; i < 1; i++) {
 }
 
 //bonus
+let bonus_pos = [
+    cnv.width - 30, 30,
+    30, cnv.height -30,
+    cnv.width - 30, cnv.height -30
+]
+for (let i = 0; i < 6; i+=2)
 {
-    let X = cnv.width - 30;
-    let Y = 30;
+    let X = bonus_pos[i];
+    let Y = bonus_pos[i+1];
 
     let imgBonus = new My_Circle(X, Y, 20, "#00FFFF");
     let hitBoxBonus = new HitBox_Circle(X, Y, 20);
