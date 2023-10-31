@@ -1,3 +1,7 @@
+/* Moteurs de jeu - L3B*/
+/* TP02 */
+/* Valentin GUILLON & Cheïmâa FAKIH */
+
 
 let cnv = document.getElementById("myCanvas");
 let ctx = cnv.getContext("2d");
@@ -175,8 +179,8 @@ class My_Object {
         this.hitBox = hitBox;
 
         this.speed = 10;
-        this.velocityX = velocityX; //beween -1 and 1
-        this.velocityY = velocityY; //beween -1 and 1
+        this.velocityX = velocityX; //between -1 and 1
+        this.velocityY = velocityY; //between -1 and 1
 
         this.group = group; //"ally", "enemy", "static"
         this.invincible = false;
@@ -358,10 +362,8 @@ class My_Object {
         for (const obj of other_objects) {
             if (obj == this) { continue; }
             if (obj.dead) { continue; }
-            // if (obj.group == "static") { continue; }
 
             if (obj.hitBox.is_colliding(this.hitBox)) {
-                // console.log("COLLISION", this.group, this.id, obj.group, obj.id);
                 switch (this.group) {
                     case "ally":
                         switch(obj.group) {
@@ -369,10 +371,8 @@ class My_Object {
                                 this.invincible = true;
                                 return 1;
                             case "ally":
-                                // console.log("hi bro")
                                 return 1;
                             case "enemy":
-                                //détruire this
                                 this.die();
                                 return 0;
                             case "projectile":
@@ -428,7 +428,6 @@ class My_Object {
                                 return 1;
                         }
                     default:
-                        // console.log("does nothing");
                         return 1;
                 }
             }
@@ -457,20 +456,8 @@ class My_Object {
     }
 
     rebond() {
-        //maybe choose in which direction to go (opposite from the cause of the rebond)
         this.velocityX *= -1;
         this.velocityY *= -1;
-        // switch (getRandom(1, 0)) { //temp. Must be 0, 1
-        //     case 0:
-        //         this.velocityX *= -1;
-        //         break;
-        //     case 1:
-        //         this.velocityY *= -1;
-        //         break;
-        //     default:
-        //         this.velocityX *= -1;
-        //         this.velocityY *= -1;
-        // }
     }
 
     die() {
@@ -487,13 +474,6 @@ class My_Object {
 }
 
 
-
-
-
-// 6 7 8 7
-
-
-
 //BACKGROUND (IMAGE FIXE)
 // image
 let imgBackgroundName = "arena";
@@ -503,36 +483,38 @@ let imgBackground = new My_Img(spriteBackground, 0, 0, cnv.width, cnv.height);
 
 
 //ANIMATED CHARACTER
-// image
+// sprites
 let imgPersoName = "RedDeathFrame_";
 let spritesPerso = [];
 for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
 let sprites_death_src = [];
-// let numbers = [1, 1, 1, 2, 2]
 for (let i = 0; i < 12; i++) {
     sprites_death_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
 }
-// img anim death
 
-//img animated death
+//img animated character + death
 let imgAnimatedPerso = new My_Img_Animated(spritesPerso, 10, 10, 30, 50, sprites_death_src)
+
 // hitbox
 let hitBoxPerso = new HitBox_Circle(
     imgAnimatedPerso.x + (imgAnimatedPerso.width / 2),
     imgAnimatedPerso.y + (imgAnimatedPerso.height / 2), 
     (imgAnimatedPerso.width + imgAnimatedPerso.height) / 5)
+
 //object
 let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ally", 0, 0);
 
+// OBSTACLES
+// sprites 
 let imgObstaclesName = "vassels_";
 let spritesObstacles = [];
 for (let i = 0; i < 6; i++) {
     spritesObstacles.push(assetsDir + imgObstaclesName + (i+1) + pngExt);
 }
 
-// obstacles
+// génération d'obstacles
 for (let i = 0; i < 10; i++) {
     let randX = getRandom(0, cnv.width);
     let randY = getRandom(0, cnv.height);
@@ -553,8 +535,8 @@ for (let i = 0; i < 10; i++) {
 }
 
 
-//ANIMATED TOWERS
-// image
+// ANIMATED TOWERS
+// sprites
 let imgTowersName = "towers_";
 let spritesTowers = [];
 let numbers = [6, 6, 7, 7, 8, 8, 7, 7];
@@ -562,11 +544,13 @@ for (let i = 0; i < 8; i++) {
     spritesTowers.push(assetsDir + imgTowersName + numbers[i] + pngExt);
 }
 
-// img anim
+// animation tower/tour
+
 let imgAnimatedTowers = new My_Img_Animated(spritesTowers, cnv.width/2 - 60/2, cnv.height/2 - 60/2, 60, 60)
 
+// tourelles
+
 let tourelles = []
-//tourelles
 for (let i = 0; i < 1; i++) {
     
     let X = cnv.width/2;
@@ -582,7 +566,8 @@ for (let i = 0; i < 1; i++) {
     tourelles.push(tourelle);
 }
 
-//bonus
+// BONUS
+
 let bonus_pos = [
     cnv.width - 30, 30,
     30, cnv.height -30,
@@ -694,14 +679,11 @@ function projectile(laucherX, launcherX){
         velY *= -1;
     }
     let sprite_ball_src = [];
-    //img animated
     for (let i = 0; i < 4; i++) {
         sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
     }
 
-    //img animated death
     let sprites_explosion_src = [];
-    // let numbers = [1, 1, 1, 2, 2]
     for (let i = 0; i < 12; i++) {
         sprites_explosion_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
     }
@@ -793,8 +775,6 @@ function move() {
 function update() {
     console.log(My_Object.instances.length);
     console.log(My_Object.instances_dead.length);
-    // let x = objectPerso.x - (objectPerso.object_image.width / 2);
-    // let y = objectPerso.y - (objectPerso.object_image.height / 2);
     tirer(tourelles[0].x, tourelles[0].y);
     animations();
     move();
@@ -803,10 +783,8 @@ function update() {
     updates();
     
     updateGui();
-    // requestAnimationFrame(update)
 }
 
 
 
 setInterval(update, 100);
-// requestAnimationFrame(update)
