@@ -490,8 +490,8 @@ for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
 let sprites_death_src = [];
-for (let i = 0; i < 12; i++) {
-    sprites_death_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
+for (let i = 0; i < 5; i++) {
+    sprites_death_src.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
 }
 
 //img animated character + death
@@ -691,8 +691,8 @@ function projectile(laucherX, launcherX){
     }
 
     let sprites_explosion_src = [];
-    for (let i = 0; i < 12; i++) {
-        sprites_explosion_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
+    for (let i = 0; i < 8; i++) {
+        sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
     }
 
     let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, sprites_explosion_src)
