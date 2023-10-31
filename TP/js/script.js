@@ -178,7 +178,7 @@ class My_Object {
         this.velocityX = velocityX; //beween -1 and 1
         this.velocityY = velocityY; //beween -1 and 1
 
-        this.group = group; //"ally", "ennemy", "static"
+        this.group = group; //"ally", "enemy", "static"
 
         this.id = -1;
 
@@ -195,7 +195,7 @@ class My_Object {
     static id = 0;
     static imgVisible = true;
     static collision = true;
-    static hitBoxVisible = false;
+    static hitBoxVisible = true;
     static moving = true;
 
 
@@ -345,7 +345,7 @@ class My_Object {
                             case "ally":
                                 // console.log("hi bro")
                                 return 1;
-                            case "ennemy":
+                            case "enemy":
                                 //détruire this
                                 this.die();
                                 return 0;
@@ -360,9 +360,9 @@ class My_Object {
                                 this.rebond();
                                 return 1;
                         }
-                    case "ennemy":
+                    case "enemy":
                         switch(obj.group) {
-                            case "ennemy":
+                            case "enemy":
                                 return 1;
                             case "ally":
                                 this.die();
@@ -384,7 +384,7 @@ class My_Object {
                             case "static":
                                 this.die();
                                 return 0;
-                            case "ennemy":
+                            case "enemy":
                                 return 1;
                             case "ally":
                                 this.die();
@@ -436,7 +436,7 @@ class My_Object {
 
 
 
-
+// 6 7 8 7
 
 
 
@@ -456,9 +456,9 @@ for (let i = 0; i < 5; i++) {
     spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
 }
 let sprites_death_src = [];
-let numbers = [1, 1, 1, 2, 2]
-for (let i = 0; i < 5; i++) {
-    sprites_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+// let numbers = [1, 1, 1, 2, 2]
+for (let i = 0; i < 12; i++) {
+    sprites_death_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
 }
 // img anim death
 
@@ -472,112 +472,59 @@ let hitBoxPerso = new HitBox_Circle(
 //object
 let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ally", 0, 0);
 
-
-
-
-// // balls
-// // ennemy
-// for (let i = 0; i < 7; i++) {
-//     let randX = getRandom(0, cnv.width);
-//     let randY = getRandom(0, cnv.height);
-//     let velX = Math.random();
-//     let velY = Math.random();
-//     if (getRandom(0, 1)) {
-//         velX *= -1;
-//     }
-//     if (getRandom(0, 1)) {
-//         velY *= -1;
-//     }
-
-//     // let imgBall = new My_Circle(randX, randY, 30, "#AAFF00");
-
-//     let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
-//     let sprites_ball_death_src = [];
-//     let numbers = [1, 1, 1, 2, 2]
-//     for (let i = 0; i < 5; i++) {
-//         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
-//     }
-//     let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
-//     let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
-//     // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-//     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", velX, velY);
-// }
-// // ally
-// for (let i = 0; i < 10; i++) {
-//     let randX = getRandom(0, cnv.width);
-//     let randY = getRandom(0, cnv.height);
-//     let velX = Math.random();
-//     let velY = Math.random();
-//     if (getRandom(0, 1)) {
-//         velX *= -1;
-//     }
-//     if (getRandom(0, 1)) {
-//         velY *= -1;
-//     }
-
-//     // let imgBall = new My_Circle(randX, randY, 30, "#0000FF");
-//     let sprite_ball_src = assetsDir + "ball_" + "blue" + pngExt
-//     let sprites_ball_death_src = [];
-//     let numbers = [1, 1, 1, 2, 2]
-//     for (let i = 0; i < 5; i++) {
-//         sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
-//     }
-//     let imgBall = new My_Img_Animated([sprite_ball_src], randX, randY, 60, 60, sprites_ball_death_src)
-//     let hitBoxBall = new HitBox_Circle(randX + 30, randY + 30, 25);
-//     // let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-//     new My_Object(randX, randY, imgBall, hitBoxBall, "ally", velX, velY);
-// }
-// // ennemy healer
-// for (let i = 0; i < 2; i++) {
-//     let randX = getRandom(0, cnv.width);
-//     let randY = getRandom(0, cnv.height);
-//     let velX = Math.random();
-//     let velY = Math.random();
-//     if (getRandom(0, 1)) {
-//         velX *= -1;
-//     }
-//     if (getRandom(0, 1)) {
-//         velY *= -1;
-//     }
-
-//     let imgBall = new My_Circle(randX, randY, 30, "#AA00AA");
-//     let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-//     new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy_healer", velX, velY);
-// }
-
+let imgObstaclesName = "vassels_";
+let spritesObstacles = [];
+for (let i = 0; i < 6; i++) {
+    spritesObstacles.push(assetsDir + imgObstaclesName + (i+1) + pngExt);
+}
 
 // obstacles
 for (let i = 0; i < 10; i++) {
     let randX = getRandom(0, cnv.width);
     let randY = getRandom(0, cnv.height);
-
+    
     let distance = 0;
     while(distance < 150 || distance > 220) {
         randX = getRandom(0, cnv.width);
         randY = getRandom(0, cnv.height);
-
+        
         let distanceX = cnv.width/2 - randX;
         let distanceY = cnv.height/2 - randY;
         distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
     }
-
-    let imgBall = new My_Circle(randX, randY, 30, "#111111");
-    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-    new My_Object(randX, randY, imgBall, hitBoxBall, "static", 0, 0);
+    
+    let imgAnimatedObstacle = new My_Img_Animated(spritesObstacles, randX - 15, randY - 15, 30, 30);
+    let hitBoxObstacle = new HitBox_Circle(randX, randY, (imgAnimatedObstacle.width + imgAnimatedObstacle.height) / 4);
+    new My_Object(randX, randY, imgAnimatedObstacle, hitBoxObstacle, "static", 0, 0);
 }
 
+
+//ANIMATED TOWERS
+// image
+let imgTowersName = "towers_";
+let spritesTowers = [];
+let numbers = [6, 6, 7, 7, 8, 8, 7, 7];
+for (let i = 0; i < 8; i++) {
+    spritesTowers.push(assetsDir + imgTowersName + numbers[i] + pngExt);
+}
+
+// img anim
+let imgAnimatedTowers = new My_Img_Animated(spritesTowers, cnv.width/2 - 60/2, cnv.height/2 - 60/2, 60, 60)
 
 let tourelles = []
 //tourelles
 for (let i = 0; i < 1; i++) {
-    // let randX = getRandom(0, cnv.width);
-    // let randY = getRandom(0, cnv.height);
-    let randX = cnv.width/2;
-    let randY = cnv.height/2;
+    
+    let X = cnv.width/2;
+    let Y = cnv.height/2;
 
-    let imgBall = new My_Circle(randX, randY, 30, "#EE1532");
-    let hitBoxBall = new HitBox_Circle(randX, randY, 30);
-    let tourelle = new My_Object(randX, randY, imgBall, hitBoxBall, "ennemy", 0, 0);
+    let hitBoxTower = new HitBox_Circle(
+        imgAnimatedTowers.x + (imgAnimatedTowers.width / 2),
+        imgAnimatedTowers.y + imgAnimatedTowers.height / 4, 
+        (imgAnimatedTowers.width + imgAnimatedTowers.height) / 10)
+        
+    //object
+    let tourelle = new My_Object(X, Y, imgAnimatedTowers, hitBoxTower, "enemy", 0, 0);
     tourelles.push(tourelle);
 }
 
@@ -677,13 +624,13 @@ function projectile(laucherX, launcherX){
     //img animated
     let sprite_ball_src = assetsDir + "ball_" + "green" + pngExt
     //img animated death
-    let sprites_ball_death_src = [];
-    let numbers = [1, 1, 1, 2, 2]
-    for (let i = 0; i < 5; i++) {
-        sprites_ball_death_src.push(assetsDir + "ball_death_" + numbers[i] + pngExt);
+    let sprites_explosion_src = [];
+    // let numbers = [1, 1, 1, 2, 2]
+    for (let i = 0; i < 12; i++) {
+        sprites_explosion_src.push(assetsDir + "explosion_" + (i+1) + pngExt);
     }
 
-    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 40, 40, sprites_ball_death_src)
+    let imgBall = new My_Img_Animated([sprite_ball_src], x, y, 40, 40, sprites_explosion_src)
     let hitBoxBall = new HitBox_Circle(x + 20, y + 20, 15);
     new My_Object(hitBoxBall.x, hitBoxBall.y, imgBall, hitBoxBall, "projectile", velX, velY); 
 
