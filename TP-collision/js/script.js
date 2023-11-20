@@ -316,7 +316,6 @@ function updates() {
 function draw() {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     imgBackground.draw(ctx);
-    imgAnimatedPerso.draw(ctx);
 
     for (const obj of My_Object.instances) {
         obj.draw(ctx);
