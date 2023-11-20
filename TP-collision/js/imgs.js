@@ -45,7 +45,7 @@ class My_Img_Animated extends My_Img {
 
     // return 0 if there is no sprite left
     next_frame(loop = true) {
-        if (this.sprites.lenght == 0) {
+        if (this.sprites.length == 0) {
             this.dead = true;
             return 0;
         }
