@@ -1,6 +1,6 @@
 
 
-class My_Img {
+export class My_Img {
     constructor(imgSrc, x, y, width = 25, height = 25) {
         this.imgSrc = imgSrc;
 
@@ -31,7 +31,7 @@ class My_Img {
 
 
 //animated sprite with a SINGLE animation
-class My_Img_Animated extends My_Img {
+export class My_Img_Animated extends My_Img {
     constructor(sprites, x = 0, y = 0, width = 25, height = 25, sprites_death = []) {
         super(sprites[0], x, y, width, height);
         this.sprites = sprites;
@@ -64,13 +64,7 @@ class My_Img_Animated extends My_Img {
 
     die() {
         this.sprites = this.sprites_death;
-        // this.dead = true;
     }
 
 }
 
-
-
-
-
-export {My_Img, My_Img_Animated}

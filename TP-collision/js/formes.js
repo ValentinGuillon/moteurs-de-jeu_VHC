@@ -1,7 +1,7 @@
 
 
 
-class My_Circle {
+export class My_Circle {
     constructor(x, y, rad, color) {
         this.x = x;
         this.y = y;
@@ -22,5 +22,3 @@ class My_Circle {
         ctx.closePath();
     }
 }
-
-export default My_Circle

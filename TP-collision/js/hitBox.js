@@ -1,6 +1,6 @@
 
 
-class HitBox_Circle {
+export class HitBox_Circle {
     constructor(x, y, radius) {
         this.x = x;
         this.y = y;
@@ -42,4 +42,3 @@ class HitBox_Circle {
     }
 }
 
-export default HitBox_Circle

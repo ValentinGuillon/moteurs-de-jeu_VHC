@@ -1,19 +1,13 @@
 
 
-import {My_Img, My_Img_Animated} from "./imgs.js"
-import HitBox_Circle from "./hitBox.js";
+import { My_Img, My_Img_Animated } from "./imgs.js"
+import { HitBox_Circle } from "./hitBox.js";
+import { getRandom } from "./tools.js";
 
 
 let assetsDir = "assets/"
 let pngExt = ".png";
 
-
-// export let shoot = true;
-
-
-function getRandom(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
-}
 
 
 
@@ -213,7 +207,7 @@ export class My_Object {
         this.auto_actions(cnv);
     }
 
-    //la suite de this.action. Uniquement pour les sous-classes.
+    //la suite de this.action. Pour les sous-classes.
     auto_actions(cnv) {
         return;
     }
@@ -376,11 +370,10 @@ export class Enemy_Turret_Object extends My_Object {
     tirer(){
         if (!this.shoot) { return; }
         if (!My_Object.moving) { return; }
-        if (this.intervale == this.rate_of_fire){
 
+        if (this.intervale == this.rate_of_fire){
             this.projectile(this.x, this.y - 20);
             this.intervale = 0;
-
         }
         this.intervale++;
     }
@@ -429,9 +422,7 @@ export class Projectile_Object extends My_Object {
             this.die()
             return;
         }
-
     }
-
 }
 
 
@@ -441,5 +432,3 @@ export class Bonus_Object extends My_Object {
     }
 }
 
-
-// export {shoot, My_Object}

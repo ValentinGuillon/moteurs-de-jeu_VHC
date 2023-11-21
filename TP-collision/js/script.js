@@ -1,6 +1,19 @@
 /* Moteurs de jeu - L3B*/
-/* TP02 */
-/* Valentin GUILLON & Cheïmâa FAKIH */
+/* PROJECT:
+ * Vampire Survivor like, 2D
+ * */
+/* CONTRIBUTORS:
+ * Valentin GUILLON
+ * Halima KSAL
+ * Cheïmâa FAKIH
+ * */
+
+
+import { getRandom } from "./tools.js";
+import { My_Img, My_Img_Animated } from "./imgs.js";
+import { HitBox_Circle } from "./hitBox.js";
+import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object }
+    from "./objects.js";
 
 
 let cnv = document.getElementById("myCanvas");
@@ -15,22 +28,9 @@ let pngExt = ".png";
 
 
 
-function getRandom(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
-}
 
 
-
-
-// import My_Circle from "./formes.js";
-import {My_Img, My_Img_Animated} from "./imgs.js";
-import HitBox_Circle from "./hitBox.js";
-import {My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object}
-    from "./objects.js";
-
-
-
-//BACKGROUND (IMAGE FIXE)
+//BACKGROUND
 // image
 let imgBackgroundName = "arena";
 let spriteBackground = assetsDir + imgBackgroundName + pngExt;
@@ -38,31 +38,30 @@ let imgBackground = new My_Img(spriteBackground, 0, 0, cnv.width, cnv.height);
 
 
 
-//ANIMATED CHARACTER
+//PLAYER
 // sprites
-let imgPersoName = "RedDeathFrame_";
-let spritesPerso = [];
+let imgPlayerName = "RedDeathFrame_";
+let spritesPlayerDefault = [];
 for (let i = 0; i < 5; i++) {
-    spritesPerso.push(assetsDir + imgPersoName + (i+1) + pngExt);
+    spritesPlayerDefault.push(assetsDir + imgPlayerName + (i+1) + pngExt);
 }
-let sprites_death_src = [];
+let spritesPlayerDead = [];
 for (let i = 0; i < 5; i++) {
-    sprites_death_src.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
+    spritesPlayerDead.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
 }
 
-//img animated character + death
-let imgAnimatedPerso = new My_Img_Animated(spritesPerso, 10, 10, 30, 50, sprites_death_src)
-
+// animated img
+let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, 10, 10, 30, 50, spritesPlayerDead)
 // hitbox
 let hitBoxPerso = new HitBox_Circle(
-    imgAnimatedPerso.x + (imgAnimatedPerso.width / 2),
-    imgAnimatedPerso.y + (imgAnimatedPerso.height / 2), 
-    (imgAnimatedPerso.width + imgAnimatedPerso.height) / 5)
-
+    imgAnimatedPlayer.x + (imgAnimatedPlayer.width / 2),
+    imgAnimatedPlayer.y + (imgAnimatedPlayer.height / 2), 
+    (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
 //object
-let objectPerso = new Player_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, 0, 0);
+let objectPlayer = new Player_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPlayer, hitBoxPerso, 0, 0);
 
-// OBSTACLES
+
+//OBSTACLES
 // sprites 
 let imgObstaclesName = "vassels_";
 let spritesObstacles = [];
@@ -72,26 +71,29 @@ for (let i = 0; i < 6; i++) {
 
 // génération d'obstacles
 for (let i = 0; i < 15; i++) {
-    let randX = getRandom(0, cnv.width);
-    let randY = getRandom(0, cnv.height);
+    let X = getRandom(0, cnv.width);
+    let Y = getRandom(0, cnv.height);
     
     let distance = 0;
     while(distance < 120 || distance > 170) {
-        randX = getRandom(0, cnv.width);
-        randY = getRandom(0, cnv.height);
+        X = getRandom(0, cnv.width);
+        Y = getRandom(0, cnv.height);
         
-        let distanceX = cnv.width/2 - randX;
-        let distanceY = cnv.height/2 - randY;
+        let distanceX = cnv.width/2 - X;
+        let distanceY = cnv.height/2 - Y;
         distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
     }
     
-    let imgAnimatedObstacle = new My_Img_Animated(spritesObstacles, randX - 15, randY - 15, 30, 30);
-    let hitBoxObstacle = new HitBox_Circle(randX, randY, (imgAnimatedObstacle.width + imgAnimatedObstacle.height) / 4);
-    new Static_Object(randX, randY, imgAnimatedObstacle, hitBoxObstacle, 0, 0);
+    // animated img
+    let imgAnimatedObstacle = new My_Img_Animated(spritesObstacles, X - 15, Y - 15, 30, 30);
+    // hitbox
+    let hitBoxObstacle = new HitBox_Circle(X, Y, (imgAnimatedObstacle.width + imgAnimatedObstacle.height) / 4);
+    // object
+    new Static_Object(X, Y, imgAnimatedObstacle, hitBoxObstacle, 0, 0);
 }
 
 
-// ANIMATED TOWERS
+//TOWERS
 // sprites
 let imgTowersName = "towers_";
 let spritesTowers = [];
@@ -100,28 +102,21 @@ for (let i = 0; i < 8; i++) {
     spritesTowers.push(assetsDir + imgTowersName + numbers[i] + pngExt);
 }
 
-// animation tower
-
-
-// towers
-
-let towers = []
 for (let i = 0; i < 1; i++) {
-    
     let X = cnv.width/2;
     let Y = cnv.height/2;
     
-    //img
+    // animated img
     let imgAnimatedTowers = new My_Img_Animated(spritesTowers, X - 60/2, Y - 60/2, 60, 60)
-    //hitBox
+    // hitBox
     let hitBoxTower = new HitBox_Circle(X, Y - 20, 
         (imgAnimatedTowers.width + imgAnimatedTowers.height) / 10)
-    //object
+    // object
     let tower = new Enemy_Turret_Object(X, Y, imgAnimatedTowers, hitBoxTower, 0, 0);
 }
 
-// BONUS
-
+//BONUS
+// sprites
 let imgBonus = "stars_";
 let spritesBonus = [];
 let numbers_ = [1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 3, 3, 3, 2, 2, 2];
@@ -136,61 +131,57 @@ let bonus_pos = [
 ]
 for (let i = 0; i < 6; i+=2)
 {
-    let X = bonus_pos[i];
-    let Y = bonus_pos[i+1];
+    let X = bonus_pos[i]
+    let Y = bonus_pos[i+1]
 
-    let imgBonus = new My_Img_Animated(spritesBonus, X - 20, Y - 20, 40, 40);
-    let hitBoxBonus = new HitBox_Circle(X, Y, 20);
+    let imgBonus = new My_Img_Animated(spritesBonus, X - 20, Y - 20, 40, 40)
+    let hitBoxBonus = new HitBox_Circle(X, Y, 20)
         
     //object
-    new Bonus_Object(X, Y, imgBonus, hitBoxBonus, 0, 0);
+    new Bonus_Object(X, Y, imgBonus, hitBoxBonus, 0, 0)
 }
 
 
 
 
 // dat.GUI Folder
-let backgroundFolder = gui.addFolder("Background");
+let backgroundFolder = gui.addFolder("Background")
 backgroundFolder.add(imgBackground, "visible")
 
 // dat.GUI folder
-let persoFolder = gui.addFolder("Perso");
-persoFolder.add(imgAnimatedPerso, "x", 0, cnv.width - imgAnimatedPerso.width, 1);
-persoFolder.add(imgAnimatedPerso, "y", 0, cnv.height - imgAnimatedPerso.height, 1);
-persoFolder.add(imgAnimatedPerso, "width", 10, cnv.width, 1);
-persoFolder.add(imgAnimatedPerso, "height", 10, cnv.height, 1);
-persoFolder.add(imgAnimatedPerso, "animated");
-persoFolder.add(imgAnimatedPerso, "visible");
-persoFolder.add(objectPerso.hitBox, "collision")
-persoFolder.add(objectPerso.hitBox, "contours")
-// objectPerso
-// this.collision = true;
-// this.contours = true;
+let persoFolder = gui.addFolder("Perso")
+persoFolder.add(imgAnimatedPlayer, "x", 0, cnv.width - imgAnimatedPlayer.width, 1)
+persoFolder.add(imgAnimatedPlayer, "y", 0, cnv.height - imgAnimatedPlayer.height, 1)
+persoFolder.add(imgAnimatedPlayer, "width", 10, cnv.width, 1)
+persoFolder.add(imgAnimatedPlayer, "height", 10, cnv.height, 1)
+persoFolder.add(imgAnimatedPlayer, "animated")
+persoFolder.add(imgAnimatedPlayer, "visible")
+persoFolder.add(objectPlayer.hitBox, "collision")
+persoFolder.add(objectPlayer.hitBox, "contours")
 
+
+function update_bools_all_objects() {
+    for (const obj of My_Object.instances) {
+        obj.update_bool();
+    }
+}
 
 // dat.GUI folder
 let objectsFolder = gui.addFolder("Objects")
 // objectsFolder.open();
-objectsFolder.add(My_Object, "imgVisible").onChange(val => {
-    for (const obj of My_Object.instances) {
-        obj.update_bool();
-    }
-});
-objectsFolder.add(My_Object, "collision").onChange(val => {
-    for (const obj of My_Object.instances) {
-        obj.update_bool();
-    }
-});
-objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => {
-    for (const obj of My_Object.instances) {
-        obj.update_bool();
-    }
-});
-objectsFolder.add(My_Object, "moving").onChange(val => {
-    for (const obj of My_Object.instances) {
-        obj.update_bool();
-    }
-});
+objectsFolder.add(My_Object, "imgVisible").onChange(val => { update_bools_all_objects() } )
+objectsFolder.add(My_Object, "collision").onChange(val => { update_bools_all_objects() } )
+objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => { update_bools_all_objects() } )
+objectsFolder.add(My_Object, "moving").onChange(val =>{ update_bools_all_objects() } )
+
+
+
+
+function updateGui() {
+    backgroundFolder.updateDisplay();
+    persoFolder.updateDisplay();
+}
+
 
 
 
@@ -210,16 +201,16 @@ function execute_inputs() {
         //touche pressée
         switch (key) {
             case "z":
-                objectPerso.move(cnv, "up")
+                objectPlayer.move(cnv, "up")
                 break;
             case "q":
-                objectPerso.move(cnv, "left")
+                objectPlayer.move(cnv, "left")
                 break;
             case "s":
-                objectPerso.move(cnv, "down")
+                objectPlayer.move(cnv, "down")
                 break;
             case "d":
-                objectPerso.move(cnv, "right")
+                objectPlayer.move(cnv, "right")
                 break;
         }
     }
@@ -227,29 +218,6 @@ function execute_inputs() {
 
 
 
-
-
-function updateGui() {
-    backgroundFolder.updateDisplay();
-    persoFolder.updateDisplay();
-}
-
-let itemp = 0;
-function animations() {
-    if (itemp == 4) {
-        imgAnimatedPerso.next_frame();
-        itemp = 0;
-    }
-    itemp++;
-
-    for (const obj of My_Object.instances) {
-        if (obj.object_image instanceof My_Img_Animated) {
-            let loop = true;
-            if (obj.dying) { loop = false; }
-            obj.object_image.next_frame(loop);
-        }
-    }
-}
 
 
 function clear_dead_objects() {
@@ -265,14 +233,22 @@ function clear_dead_objects() {
 }
 
 
-function draw() {
-    ctx.clearRect(0, 0, cnv.width, cnv.height);
-    imgBackground.draw(ctx);
+
+let tempo = 0;
+function animations() {
+    if (tempo == 4) {
+        imgAnimatedPlayer.next_frame();
+        tempo = 0;
+    }
+    tempo++;
 
     for (const obj of My_Object.instances) {
-        obj.draw(ctx);
+        if (obj.object_image instanceof My_Img_Animated) {
+            let loop = true;
+            if (obj.dying) { loop = false; }
+            obj.object_image.next_frame(loop);
+        }
     }
-
 }
 
 function actions() {
@@ -281,7 +257,14 @@ function actions() {
     }
 }
 
+function draw() {
+    ctx.clearRect(0, 0, cnv.width, cnv.height);
+    imgBackground.draw(ctx);
 
+    for (const obj of My_Object.instances) {
+        obj.draw(ctx);
+    }
+}
 
 function update() {
     animations();
