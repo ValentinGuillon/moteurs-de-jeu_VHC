@@ -20,42 +20,31 @@ function check_collisions(obj, other_objects) {
         if (!(other.hitBox.is_colliding(obj.hitBox))) { continue; }
 
         switch (obj.group) {
-            case "ally":
+            case "player":
                 switch(other.group) {
-                    case "bonus":
-                        obj.invincible = true;
-                        return 1;
-                    case "ally":
-                        return 1;
+                    case "projectile":
+                        obj.die();
+                        other.die();
+                        return 0;
                     case "enemy_turret":
                         obj.die();
                         return 0;
-                    case "projectile":
-                        obj.die();
-                        return 0;
+                    case "bonus":
+                        obj.invincible = true;
+                        return 1;
                     case "static":
                         obj.recul(other);
                         return 1;
                     default:
-                        obj.rebond();
                         return 1;
                 }
             case "enemy_turret":
                 switch(other.group) {
-                    case "enemy_turret":
-                        return 1;
-                    case "ally":
+                    case "player":
                         obj.shoot = false;
                         obj.die();
                         return 0;
-                    case "projectile":
-                        return 1;
-                    case "static":
-                        console.log("n'est pas sensé pouvoir avancé");
-                        obj.rebond()
-                        return 1;
                     default:
-                        obj.rebond();
                         return 1;
                 }
             case "projectile":
@@ -63,20 +52,15 @@ function check_collisions(obj, other_objects) {
                     case "static":
                         obj.die();
                         return 0;
-                    case "ally":
+                    case "player":
                         obj.die();
                         return 0;
-                    case "projectile":
-                        return 1;
-                    case "enemy_turret":
-                        return 1;
                     default:
-                        obj.rebond();
                         return 1;
                 }
             case "bonus":
                 switch (other.group) {
-                    case "ally":
+                    case "player":
                         obj.die()
                         return 0;
                     default:
@@ -97,6 +81,8 @@ export class My_Object {
     constructor(x, y, object_image, hitBox, group = "", velocityX = 1.0, velocityY = 0.0) {
         this.x = x;
         this.y = y;
+        this.previousX = x;
+        this.previousY = y;
         this.object_image = object_image;
         this.hitBox = hitBox;
 
@@ -104,7 +90,7 @@ export class My_Object {
         this.velocityX = velocityX; //between -1 and 1
         this.velocityY = velocityY; //between -1 and 1
 
-        this.group = group; //"ally", "enemy", "static"
+        this.group = group; //"player", "enemy", "static"
         this.invincible = false;
         this.duration = 30;
         this.timer = 0;
@@ -154,6 +140,16 @@ export class My_Object {
         }
     }
 
+    update_position(add_X, add_Y) {
+        this.x += add_X;
+        this.y += add_Y;
+        this.object_image.x += add_X;
+        this.object_image.y += add_Y;
+        this.hitBox.x += add_X;
+        this.hitBox.y += add_Y;
+    }
+
+
     update_bool() {
         this.object_image.visible = My_Object.imgVisible;
         this.stop = !My_Object.moving;
@@ -186,7 +182,7 @@ export class My_Object {
 
     draw_invincible(ctx) {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.hitBox.radius, 0, 2*Math.PI);
+        ctx.arc(this.x, this.y, this.hitBox.radius + 2, 0, 2*Math.PI);
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#9e9e97";
         ctx.stroke();
@@ -212,6 +208,7 @@ export class My_Object {
         return;
     }
 
+
     recul(obj) {
         let reculX = this.speed;
         let reculY = this.speed;
@@ -223,18 +220,15 @@ export class My_Object {
             reculY *= -1;
         }
 
-        this.x += reculX;
-        this.y += reculY;
-        this.object_image.x += reculX;
-        this.object_image.y += reculY;
-        this.hitBox.x += reculX;
-        this.hitBox.y += reculY;
+        this.update_position(reculX, reculY)
     }
 
+    
     rebond() {
         this.velocityX *= -1;
         this.velocityY *= -1;
     }
+
 
     die() {
         if (this.invincible) { return; }
@@ -245,8 +239,6 @@ export class My_Object {
             this.object_image.die();
         }
     }
-
-
 }
 
 
@@ -262,7 +254,7 @@ export class Static_Object extends My_Object {
 
 export class Player_Object extends My_Object {
     constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
-        super(x, y, object_image, hitBox, "ally", velocityX, velocityY);
+        super(x, y, object_image, hitBox, "player", velocityX, velocityY);
     }
 
 
@@ -276,24 +268,16 @@ export class Player_Object extends My_Object {
         //update position
         switch (direction) {
             case "down":
-                this.y += this.speed;
-                this.object_image.y += this.speed;
-                this.hitBox.y += this.speed;
+                this.update_position(0, this.speed)
                 break;
             case "up":
-                this.y -= this.speed;
-                this.object_image.y -= this.speed;
-                this.hitBox.y -= this.speed;
+                this.update_position(0, -this.speed)
                 break
             case "right":
-                this.x += this.speed;
-                this.object_image.x += this.speed;
-                this.hitBox.x += this.speed;
+                this.update_position(this.speed, 0)
                 break
             case "left":
-                this.x -= this.speed;
-                this.object_image.x -= this.speed;
-                this.hitBox.x -= this.speed;
+                this.update_position(-this.speed, 0)
                 break
             default:
                 console.log("error: player must have an allowed direction.")
@@ -302,26 +286,16 @@ export class Player_Object extends My_Object {
 
         //out of screen
         if (this.x > limit_right) {
-            this.x -= limit_right;
-            this.object_image.x -= limit_right;
-            this.hitBox.x -= limit_right;
+            this.update_position(-limit_right, 0)
         }
         else if (this.x < 0) {
-            this.x = limit_right + this.x;
-            this.object_image.x = limit_right + this.object_image.x;
-            this.hitBox.x = limit_right + this.hitBox.x;
-
+            this.update_position(limit_right, 0)
         }
         if (this.y > limit_down) {
-            this.y -= limit_down;
-            this.object_image.y -= limit_down;
-            this.hitBox.y -= limit_down;
-
+            this.update_position(0, -limit_down)
         }
         else if (this.y < 0) {
-            this.y = limit_down + this.y;
-            this.object_image.y = limit_down + this.object_image.y;
-            this.hitBox.y = limit_down + this.hitBox.y;
+            this.update_position(0, limit_down)
         }
 
     }
@@ -397,30 +371,16 @@ export class Projectile_Object extends My_Object {
         let limit_down = cnv.height;
 
         //update position
-        this.x += this.speed * this.velocityX;
-        this.y += this.speed * this.velocityY;
-        this.object_image.x += this.speed * this.velocityX;
-        this.object_image.y += this.speed * this.velocityY;
-        this.hitBox.x += this.speed * this.velocityX;
-        this.hitBox.y += this.speed * this.velocityY;
+        this.update_position(this.speed * this.velocityX, this.speed * this.velocityY);
 
 
         //out of screen
-        if (this.x > limit_right) {
+        let out_right = this.x > limit_right;
+        let out_left = this.x < 0;
+        let out_down = this.y > limit_down;
+        let out_up = this.y < 0;
+        if (out_right || out_left || out_down || out_up) {
             this.die()
-            return;
-        }
-        else if (this.x < 0) {
-            this.die()
-            return;
-        }
-        if (this.y > limit_down) {
-            this.die()
-            return;
-        }
-        else if (this.y < 0) {
-            this.die()
-            return;
         }
     }
 }

@@ -194,6 +194,7 @@ onkeydown = onkeyup = function(e){
 
 
 function execute_inputs() {
+    // objectPlayer.save_position()
     for (const key in key_map) {
         //touche non pressée
         if (!key_map[key]) { continue; }
@@ -236,14 +237,19 @@ function clear_dead_objects() {
 
 let tempo = 0;
 function animations() {
-    if (tempo == 4) {
-        imgAnimatedPlayer.next_frame();
-        tempo = 0;
+    //animation for Player (when alive)
+    if (tempo == 2) {
+        if (!objectPlayer.dying) {
+            imgAnimatedPlayer.next_frame();
+            tempo = 0;
+        }
     }
     tempo++;
 
     for (const obj of My_Object.instances) {
         if (obj.object_image instanceof My_Img_Animated) {
+            //let player animate when dying
+            if (obj.group == "player") { if (!obj.dying) { continue; } }
             let loop = true;
             if (obj.dying) { loop = false; }
             obj.object_image.next_frame(loop);
