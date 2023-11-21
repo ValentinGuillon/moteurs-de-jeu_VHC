@@ -25,7 +25,8 @@ function getRandom(min, max) {
 // import My_Circle from "./formes.js";
 import {My_Img, My_Img_Animated} from "./imgs.js";
 import HitBox_Circle from "./hitBox.js";
-import {shoot, My_Object} from "./objects.js";
+import {My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object}
+    from "./objects.js";
 
 
 
@@ -59,7 +60,7 @@ let hitBoxPerso = new HitBox_Circle(
     (imgAnimatedPerso.width + imgAnimatedPerso.height) / 5)
 
 //object
-let objectPerso = new My_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, "ally", 0, 0);
+let objectPerso = new Player_Object(hitBoxPerso.x, hitBoxPerso.y, imgAnimatedPerso, hitBoxPerso, 0, 0);
 
 // OBSTACLES
 // sprites 
@@ -86,7 +87,7 @@ for (let i = 0; i < 15; i++) {
     
     let imgAnimatedObstacle = new My_Img_Animated(spritesObstacles, randX - 15, randY - 15, 30, 30);
     let hitBoxObstacle = new HitBox_Circle(randX, randY, (imgAnimatedObstacle.width + imgAnimatedObstacle.height) / 4);
-    new My_Object(randX, randY, imgAnimatedObstacle, hitBoxObstacle, "static", 0, 0);
+    new Static_Object(randX, randY, imgAnimatedObstacle, hitBoxObstacle, 0, 0);
 }
 
 
@@ -101,7 +102,6 @@ for (let i = 0; i < 8; i++) {
 
 // animation tower
 
-let imgAnimatedTowers = new My_Img_Animated(spritesTowers, cnv.width/2 - 60/2, cnv.height/2 - 60/2, 60, 60)
 
 // towers
 
@@ -110,15 +110,14 @@ for (let i = 0; i < 1; i++) {
     
     let X = cnv.width/2;
     let Y = cnv.height/2;
-
-    let hitBoxTower = new HitBox_Circle(
-        imgAnimatedTowers.x + (imgAnimatedTowers.width / 2),
-        imgAnimatedTowers.y + imgAnimatedTowers.height / 4, 
+    
+    //img
+    let imgAnimatedTowers = new My_Img_Animated(spritesTowers, X - 60/2, Y - 60/2, 60, 60)
+    //hitBox
+    let hitBoxTower = new HitBox_Circle(X, Y - 20, 
         (imgAnimatedTowers.width + imgAnimatedTowers.height) / 10)
-        
     //object
-    let tower = new My_Object(X, Y, imgAnimatedTowers, hitBoxTower, "enemy", 0, 0);
-    towers.push(tower);
+    let tower = new Enemy_Turret_Object(X, Y, imgAnimatedTowers, hitBoxTower, 0, 0);
 }
 
 // BONUS
@@ -144,7 +143,7 @@ for (let i = 0; i < 6; i+=2)
     let hitBoxBonus = new HitBox_Circle(X, Y, 20);
         
     //object
-    new My_Object(X, Y, imgBonus, hitBoxBonus, "bonus", 0, 0);
+    new Bonus_Object(X, Y, imgBonus, hitBoxBonus, 0, 0);
 }
 
 
@@ -211,16 +210,16 @@ function execute_inputs() {
         //touche pressée
         switch (key) {
             case "z":
-                objectPerso.move(cnv, My_Object.instances, "up")
+                objectPerso.move(cnv, "up")
                 break;
             case "q":
-                objectPerso.move(cnv, My_Object.instances, "left")
+                objectPerso.move(cnv, "left")
                 break;
             case "s":
-                objectPerso.move(cnv, My_Object.instances, "down")
+                objectPerso.move(cnv, "down")
                 break;
             case "d":
-                objectPerso.move(cnv, My_Object.instances, "right")
+                objectPerso.move(cnv, "right")
                 break;
         }
     }
@@ -228,45 +227,6 @@ function execute_inputs() {
 
 
 
-
-function projectile(laucherX, launcherX){
-    let x = laucherX;
-    let y = launcherX;
-    let velX = Math.random();
-    let velY = Math.random();
-    if (getRandom(0, 1)) {
-        velX *= -1;
-    }
-    if (getRandom(0, 1)) {
-        velY *= -1;
-    }
-    let sprite_ball_src = [];
-    for (let i = 0; i < 4; i++) {
-        sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
-    }
-
-    let sprites_explosion_src = [];
-    for (let i = 0; i < 8; i++) {
-        sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
-    }
-
-    let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, sprites_explosion_src)
-    let hitBoxBall = new HitBox_Circle(x + 10, y + 7.5, (imgBall.height + imgBall.width) / 4);
-    new My_Object(hitBoxBall.x, hitBoxBall.y, imgBall, hitBoxBall, "projectile", velX, velY); 
-
-}
-
-let intervale = 0;
-function tirer(x, y){
-    if (!shoot) { return; };
-    if (intervale == 2){
-
-        projectile(x, y);
-        intervale = 0;
-
-    }
-    intervale++;
-}
 
 
 function updateGui() {
@@ -304,14 +264,6 @@ function clear_dead_objects() {
     My_Object.instances_dead = [];
 }
 
-function updates() {
-    execute_inputs()
-
-    for (const obj of My_Object.instances) {
-        obj.update();
-    }
-    clear_dead_objects();
-}
 
 function draw() {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
@@ -323,21 +275,21 @@ function draw() {
 
 }
 
-function move() {
+function actions() {
     for (const obj of My_Object.instances) {
-        obj.move(cnv, My_Object.instances);
+        obj.action(cnv);
     }
 }
 
 
 
 function update() {
-    tirer(towers[0].x, towers[0].y);
     animations();
-    move();
+    actions();
     draw();
 
-    updates();
+    execute_inputs()
+    clear_dead_objects();
     
     updateGui();
 }
