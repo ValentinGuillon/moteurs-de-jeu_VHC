@@ -33,7 +33,8 @@ function check_collisions(obj, other_objects) {
                         obj.invincible = true;
                         return 1;
                     case "static":
-                        obj.recul(other);
+                        obj.recul(other)
+                        // obj.roll_back(other);
                         return 1;
                     default:
                         return 1;
@@ -149,6 +150,10 @@ export class My_Object {
         this.hitBox.y += add_Y;
     }
 
+    save_position() {
+        this.previousX = this.x;
+        this.previousY = this.y;
+    }
 
     update_bool() {
         this.object_image.visible = My_Object.imgVisible;
@@ -200,6 +205,8 @@ export class My_Object {
         let continu = check_collisions(this, My_Object.instances);
         if (!continu) { return; }
 
+        this.save_position()
+
         this.auto_actions(cnv);
     }
 
@@ -224,6 +231,27 @@ export class My_Object {
     }
 
     
+    //WIP, to replace recul()
+    //a diagonal must must allow one movement
+    //ex: if the wall is on right, a right-up step must allow an up step.
+    //DONE
+    //ça fait chier si la nouvelle position est dans une autre collision
+    roll_back(other) {
+        let x_diff = this.previousX - this.x;
+        let y_diff = this.previousY - this.y;
+
+        let allowed = false;
+        //test roll back x
+        this.update_position(x_diff, 0);
+        if (!(other.hitBox.is_colliding(this.hitBox))) { allowed = true; }
+        //test roll back y
+        if (!allowed) {
+            this.update_position(-x_diff, y_diff);
+        }
+        if (other.hitBox.is_colliding(this.hitBox)) { console.log("bro ?")}
+    }
+
+
     rebond() {
         this.velocityX *= -1;
         this.velocityY *= -1;
