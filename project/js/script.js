@@ -156,14 +156,15 @@ let backgroundFolder = gui.addFolder("Background")
 backgroundFolder.add(imgBackground, "visible")
 
 // OBJECTS
+let objectsFolder = gui.addFolder("Objects")
+objectsFolder.open();
+
 function update_bools_all_objects() {
     for (const obj of My_Object.instances) {
         obj.update_bool();
     }
 }
 
-let objectsFolder = gui.addFolder("Objects")
-objectsFolder.open();
 objectsFolder.add(My_Object, "imgVisible").onChange(val => { update_bools_all_objects() } )
 objectsFolder.add(My_Object, "collision").onChange(val => { update_bools_all_objects() } )
 objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => { update_bools_all_objects() } )
@@ -177,6 +178,9 @@ playerFolder.add(objectPlayer.hitBox, "collision")
 playerFolder.add(objectPlayer.hitBox, "contours")
 
 // TOWERS
+let towersFolder = gui.addFolder("Towers")
+towersFolder.open()
+
 function update_towers_shoot() {
     for (const obj of My_Object.instances) {
         if (!(obj instanceof Enemy_Turret_Object)) { continue; }
@@ -186,7 +190,6 @@ function update_towers_shoot() {
 }
 
 let towersFolderBool = { towersCanShoot: true }
-let towersFolder = gui.addFolder("Towers")
 towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_towers_shoot() } )
 
 
