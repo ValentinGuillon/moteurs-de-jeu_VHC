@@ -1,12 +1,6 @@
 /* Moteurs de jeu - L3B*/
-/* PROJECT:
- * Vampire Survivor like, 2D
- * */
-/* CONTRIBUTORS:
- * Valentin GUILLON
- * Halima KSAL
- * Cheïmâa FAKIH
- * */
+/* TP-collision */
+/* Valentin GUILLON & Cheïmâa FAKIH */
 
 
 import { getRandom } from "./tools.js";
