@@ -107,7 +107,6 @@ export class My_Object {
     }
 
     static instances = [];
-    static instances_dead = [];
     static id = 0;
     static imgVisible = true;
     static collision = true;
@@ -134,10 +133,6 @@ export class My_Object {
         }
         else {
             this.dead = true;
-        }
-
-        if (this.dead) {
-            My_Object.instances_dead.push(this);
         }
     }
 

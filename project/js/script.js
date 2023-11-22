@@ -246,15 +246,10 @@ function execute_inputs() {
 
 
 function clear_dead_objects() {
-    for (const dead_obj of My_Object.instances_dead) {
-        let valeurASupprimer = dead_obj;
-
-        let nouvelleListe = My_Object.instances.filter(function(element) {
-            return element !== valeurASupprimer;
-        });
-        My_Object.instances = nouvelleListe;
-    }
-    My_Object.instances_dead = [];
+    let nouvelleListe = My_Object.instances.filter(function(element) {
+        return !element.dead;
+    });
+    My_Object.instances = nouvelleListe;
 }
 
 
