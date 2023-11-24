@@ -12,8 +12,9 @@
 import { getRandom } from "./tools.js";
 import { My_Img, My_Img_Animated } from "./imgs.js";
 import { HitBox_Circle } from "./hitBox.js";
-import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object }
+import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object, Projectile_Object }
     from "./objects.js";
+import { Camera } from "./camera.js";
 
 
 let cnv = document.getElementById("myCanvas");
@@ -214,6 +215,7 @@ towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_to
 
 
 
+let camera = new Camera(objectPlayer.x, objectPlayer.y, imgBackground);
 
 
 // keys detection
@@ -306,6 +308,8 @@ function update() {
     animations();
     actions();
     draw();
+
+    camera.update(cnv, objectPlayer);
 
     execute_inputs()
     clear_dead_objects();
