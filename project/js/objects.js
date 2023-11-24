@@ -31,14 +31,15 @@ function check_collisions(obj, other_objects) {
                         return 0;
                     case "bonus":
                         obj.invincible = true;
-                        return 1;
+                        break;
                     case "static":
                         obj.recul(other)
                         // obj.roll_back(other);
-                        return 1;
+                        break;
                     default:
-                        return 1;
+                        break;
                 }
+                break;
             case "enemy_turret":
                 switch(other.group) {
                     case "player":
@@ -46,8 +47,9 @@ function check_collisions(obj, other_objects) {
                         obj.die();
                         return 0;
                     default:
-                        return 1;
+                        break;
                 }
+                break;
             case "projectile":
                 switch (other.group) {
                     case "static":
@@ -57,16 +59,18 @@ function check_collisions(obj, other_objects) {
                         obj.die();
                         return 0;
                     default:
-                        return 1;
+                       break;
                 }
+                break;
             case "bonus":
                 switch (other.group) {
                     case "player":
                         obj.die()
                         return 0;
                     default:
-                        return 1;
+                        break;
                 }
+                break;
             default:
                 return 1;
         
