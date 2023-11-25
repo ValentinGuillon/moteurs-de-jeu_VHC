@@ -225,7 +225,21 @@ export class My_Object {
         if (this.dead) { return; }
         if (this.dying) { return; }
 
+        this.normalize_velocity();
         this.update_position(this.speed * this.velocityX, this.speed * this.velocityY);
+    }
+
+    
+    normalize_velocity() {
+        if (this.velocityX == 0 || this.velocityY == 0) { return; }
+
+        let X = this.velocityX;
+        let Y = this.velocityY;
+
+        let hypothenuse = Math.sqrt((X*X) + (Y*Y));
+
+        this.velocityX /= hypothenuse;
+        this.velocityY /= hypothenuse;
     }
 
 
