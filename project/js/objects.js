@@ -33,6 +33,7 @@ function check_collisions(obj, other_objects) {
                         return 0;
                     case "bonus":
                         obj.invincible = true;
+                        obj.invicibility_timer = 0;
                         break;
                     case "static":
                         obj.recul(other)
@@ -71,6 +72,7 @@ function check_collisions(obj, other_objects) {
                     case "player":
                         obj.die()
                         other.invincible = true;
+                        other.invicibility_timer = 0;
                         return 0;
                     default:
                         break;
@@ -101,9 +103,6 @@ export class My_Object {
         this.velocityY = velocityY; //between -1 and 1
 
         this.group = group; //"player", "enemy", "static"
-        this.invincible = false;
-        this.duration = 30;
-        this.timer = 0;
 
         this.id = -1;
 
@@ -124,13 +123,7 @@ export class My_Object {
 
 
     update() {
-        if (this.invincible) {
-            this.timer++;
-            if (this.timer == this.duration) {
-                this.timer = 0;
-                this.invincible = false;
-            }
-        }
+        this.additionnal_update();
 
         if (this.dead) { return; }
         if (!this.dying) { return; }
@@ -143,6 +136,11 @@ export class My_Object {
         else {
             this.dead = true;
         }
+    }
+
+    //Pour les sous-classes.
+    additionnal_update() {
+        return; 
     }
 
     update_position(add_X, add_Y) {
@@ -286,7 +284,6 @@ export class My_Object {
 
 
     die() {
-        if (this.invincible) { return; }
         this.collision = false;
         this.hitBox.collision = false;
         this.dying = true;
@@ -310,8 +307,31 @@ export class Static_Object extends My_Object {
 export class Player_Object extends My_Object {
     constructor(x, y, object_image, hitBox) {
         super(x, y, object_image, hitBox, "player");
+        this.invincible = false;
+        this.invicibility_duration = 30;
+        this.invicibility_timer = 0;
     }
 
+
+    die() {
+        if (this.invincible) { return; }
+        this.collision = false;
+        this.hitBox.collision = false;
+        this.dying = true;
+        if (this.object_image instanceof My_Img_Animated) {
+            this.object_image.die();
+        }
+    }
+
+    additionnal_update() {
+        if (this.invincible) {
+            this.invicibility_timer++;
+            if (this.invicibility_timer == this.invicibility_duration) {
+                this.invicibility_timer = 0;
+                this.invincible = false;
+            }
+        }
+    }
 
     auto_actions(cnv) {
         //out of screen
