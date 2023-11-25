@@ -64,7 +64,7 @@ let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer-15, yP
 let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
 //object
-let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso, 0, 0);
+let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
 
 
 

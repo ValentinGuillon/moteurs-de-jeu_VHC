@@ -273,15 +273,15 @@ export class My_Object {
 
 
 export class Static_Object extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
-        super(x, y, object_image, hitBox, "static", velocityX, velocityY);
+    constructor(x, y, object_image, hitBox) {
+        super(x, y, object_image, hitBox, "static");
     }
 }
 
 
 export class Player_Object extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
-        super(x, y, object_image, hitBox, "player", velocityX, velocityY);
+    constructor(x, y, object_image, hitBox) {
+        super(x, y, object_image, hitBox, "player");
     }
 
 
@@ -331,8 +331,8 @@ export class Player_Object extends My_Object {
 
 
 export class Enemy_Turret_Object extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
-        super(x, y, object_image, hitBox, "enemy_turret", velocityX, velocityY);
+    constructor(x, y, object_image, hitBox) {
+        super(x, y, object_image, hitBox, "enemy_turret");
         this.shoot = true;
         this.rate_of_fire = 5;
         this.intervale = 0;
@@ -382,7 +382,7 @@ export class Enemy_Turret_Object extends My_Object {
 
 
 export class Projectile_Object extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
+    constructor(x, y, object_image, hitBox, velocityX, velocityY) {
         super(x, y, object_image, hitBox, "projectile", velocityX, velocityY);
     }
 
@@ -414,8 +414,8 @@ export class Projectile_Object extends My_Object {
 
 
 export class Bonus_Object extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 1.0, velocityY = 0.0) {
-        super(x, y, object_image, hitBox, "bonus", velocityX, velocityY);
+    constructor(x, y, object_image, hitBox) {
+        super(x, y, object_image, hitBox, "bonus");
     }
 }
 
