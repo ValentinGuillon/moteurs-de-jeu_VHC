@@ -299,33 +299,11 @@ export class Player_Object extends My_Object {
     }
 
 
-    hard_move(cnv, direction = "") {
-        if (this.dead) { return; }
-        if (this.dying) { return; }
-
+    auto_actions(cnv) {
+        //out of screen
         let limit_right = cnv.width;
         let limit_down = cnv.height;
 
-        //update position
-        switch (direction) {
-            case "down":
-                this.update_position(0, this.speed)
-                break;
-            case "up":
-                this.update_position(0, -this.speed)
-                break
-            case "right":
-                this.update_position(this.speed, 0)
-                break
-            case "left":
-                this.update_position(-this.speed, 0)
-                break
-            default:
-                console.log("error: player must have an allowed direction.")
-        }
-
-
-        //out of screen
         if (this.x > limit_right) {
             this.update_position(-limit_right, 0)
         }
@@ -339,8 +317,42 @@ export class Player_Object extends My_Object {
             this.update_position(0, limit_down)
         }
 
+        this.update_velocity(0, 0);
     }
 
+
+    update_velocity(x = undefined, y = undefined) {
+        if (x != undefined) {
+            this.velocityX = x;
+        }
+        if (y != undefined) {
+            this.velocityY = y;
+        }
+    }
+
+
+    give_direction(direction = "") {
+        if (this.dead) { return; }
+        if (this.dying) { return; }
+
+        //update position
+        switch (direction) {
+            case "down":
+                this.update_velocity(undefined, 1)
+                break;
+            case "up":
+                this.update_velocity(undefined, -1)
+                break
+            case "right":
+                this.update_velocity(1, undefined)
+                break
+            case "left":
+                this.update_velocity(-1, undefined)
+                break
+            default:
+                console.log("error: player must have an allowed direction.")
+        }
+    }
 }
 
 

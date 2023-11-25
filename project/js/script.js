@@ -227,6 +227,11 @@ onkeydown = onkeyup = function(e){
 
 function execute_inputs() {
     // objectPlayer.save_position()
+    let rightPressed = false;
+    let leftPressed = false;
+    let downPressed = false;
+    let upPressed = false;
+
     for (const key in key_map) {
         //touche non pressée
         if (!key_map[key]) { continue; }
@@ -234,18 +239,33 @@ function execute_inputs() {
         //touche pressée
         switch (key) {
             case "z":
-                objectPlayer.hard_move(cnv, "up")
+                upPressed = true;
                 break;
             case "q":
-                objectPlayer.hard_move(cnv, "left")
+                leftPressed = true;
                 break;
             case "s":
-                objectPlayer.hard_move(cnv, "down")
+                downPressed = true;
                 break;
             case "d":
-                objectPlayer.hard_move(cnv, "right")
+                rightPressed = true;
                 break;
         }
+    }
+
+    //horizontal
+    if (rightPressed && !leftPressed) {
+        objectPlayer.give_direction("right")
+    }
+    else if (!rightPressed && leftPressed) {
+        objectPlayer.give_direction("left")
+    }
+    //vertical
+    if (downPressed && !upPressed) {
+        objectPlayer.give_direction("down")
+    }
+    else if (!downPressed && upPressed) {
+        objectPlayer.give_direction("up")
     }
 }
 
