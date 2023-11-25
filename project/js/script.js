@@ -306,12 +306,12 @@ function updateGui() {
 
 function update() {
     animations();
+    execute_inputs();
     actions();
     draw();
 
     camera.update(cnv, objectPlayer);
 
-    execute_inputs()
     clear_dead_objects();
     
     updateGui();

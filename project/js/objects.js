@@ -201,12 +201,12 @@ export class My_Object {
         if (this.dying) { return; }
         if (this.stop) { return; }
         
+        this.save_position();
+        this.move();
+
         let continu = check_collisions(this, My_Object.instances);
         if (!continu) { return; }
 
-        this.save_position()
-
-        this.move();
         this.auto_actions(cnv);
     }
 
