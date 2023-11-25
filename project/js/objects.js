@@ -28,6 +28,8 @@ function check_collisions(obj, other_objects) {
                         return 0;
                     case "enemy_turret":
                         obj.die();
+                        obj.shoot = false;
+                        other.die();
                         return 0;
                     case "bonus":
                         obj.invincible = true;
@@ -45,6 +47,7 @@ function check_collisions(obj, other_objects) {
                     case "player":
                         obj.shoot = false;
                         obj.die();
+                        other.die();
                         return 0;
                     default:
                         break;
@@ -57,6 +60,7 @@ function check_collisions(obj, other_objects) {
                         return 0;
                     case "player":
                         obj.die();
+                        other.die();
                         return 0;
                     default:
                        break;
@@ -66,6 +70,7 @@ function check_collisions(obj, other_objects) {
                 switch (other.group) {
                     case "player":
                         obj.die()
+                        other.invincible = true;
                         return 0;
                     default:
                         break;
