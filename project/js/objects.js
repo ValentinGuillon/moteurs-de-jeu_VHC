@@ -206,12 +206,21 @@ export class My_Object {
 
         this.save_position()
 
+        this.move();
         this.auto_actions(cnv);
     }
 
     //la suite de this.action. Pour les sous-classes.
     auto_actions(cnv) {
         return;
+    }
+
+
+    move() {
+        if (this.dead) { return; }
+        if (this.dying) { return; }
+
+        this.update_position(this.speed * this.velocityX, this.speed * this.velocityY);
     }
 
 
@@ -285,7 +294,7 @@ export class Player_Object extends My_Object {
     }
 
 
-    move(cnv, direction = "") {
+    hard_move(cnv, direction = "") {
         if (this.dead) { return; }
         if (this.dying) { return; }
 
@@ -387,21 +396,10 @@ export class Projectile_Object extends My_Object {
     }
 
     auto_actions(cnv) {
-        this.move(cnv);
-    }
-
-    move(cnv) {
-        if (this.dead) { return; }
-        if (this.dying) { return; }
-
+        //out of screen
         let limit_right = cnv.width;
         let limit_down = cnv.height;
 
-        //update position
-        this.update_position(this.speed * this.velocityX, this.speed * this.velocityY);
-
-
-        //out of screen
         let out_right = this.x > limit_right;
         let out_left = this.x < 0;
         let out_down = this.y > limit_down;

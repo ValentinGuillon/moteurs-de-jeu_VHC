@@ -234,16 +234,16 @@ function execute_inputs() {
         //touche pressée
         switch (key) {
             case "z":
-                objectPlayer.move(cnv, "up")
+                objectPlayer.hard_move(cnv, "up")
                 break;
             case "q":
-                objectPlayer.move(cnv, "left")
+                objectPlayer.hard_move(cnv, "left")
                 break;
             case "s":
-                objectPlayer.move(cnv, "down")
+                objectPlayer.hard_move(cnv, "down")
                 break;
             case "d":
-                objectPlayer.move(cnv, "right")
+                objectPlayer.hard_move(cnv, "right")
                 break;
         }
     }
