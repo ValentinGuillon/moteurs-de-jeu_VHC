@@ -478,7 +478,21 @@ export class Enemy_Chasing_Object extends My_Object {
         this.chasePlayer();
     }
 
+    chasePlayer() {
+        //Calcule la direction vers le joueur
+        let dx = this.player.x - this.x;
+        let dy = this.player.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+
+        //Normalise la direction et applique la vitesse
+        if (distance > 1) {
+            dx = (dx / distance) * this.chaseSpeed;
+            dy = (dy / distance) * this.chaseSpeed;
+            this.update_position(dx, dy);
+        }
+    }
 }
+
 
 export class Bonus_Object extends My_Object {
     constructor(x, y, object_image, hitBox) {
