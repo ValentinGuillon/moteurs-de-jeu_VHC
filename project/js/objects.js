@@ -467,6 +467,18 @@ export class Projectile_Object extends My_Object {
     }
 }
 
+export class Enemy_Chasing_Object extends My_Object {
+    constructor(x, y, object_image, hitBox, player) {
+        super(x, y, object_image, hitBox, "enemy_chasing");
+        this.player = player; // Référence à l'objet joueur
+        this.chaseSpeed = 2; // Vitesse de poursuite de l'ennemi
+    }
+
+    auto_actions(cnv) {
+        this.chasePlayer();
+    }
+
+}
 
 export class Bonus_Object extends My_Object {
     constructor(x, y, object_image, hitBox) {
