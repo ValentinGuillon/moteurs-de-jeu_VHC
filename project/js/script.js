@@ -301,6 +301,22 @@ function clear_dead_objects() {
 }
 
 
+//sort My_Objects.instances bases on element.y
+function sort_objects() {
+    let length = My_Object.instances.length
+    for (let i = 0; i < length-1; i++) {
+        for (let j = i; j < length-1; j++) {
+            let switch_obj = false;
+            if (My_Object.instances[j].y > My_Object.instances[j+1].y) { switch_obj = true; }
+            if (!switch_obj) { continue; }
+            let temp = My_Object.instances[j];
+            My_Object.instances[j] = My_Object.instances[j+1];
+            My_Object.instances[j+1] = temp;
+        }
+    }
+}
+
+
 let tempo = 0;
 function animations() {
     //animation for Player (when alive)
@@ -349,6 +365,7 @@ function updateGui() {
 
 function update() {
     // ctx.clearRect(0, 0, cnv.width, cnv.height);
+    sort_objects();
     animations();
     execute_inputs();
     actions();
