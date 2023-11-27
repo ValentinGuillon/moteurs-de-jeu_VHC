@@ -1,8 +1,8 @@
 
 
 import { My_Img, My_Img_Animated } from "./imgs.js"
-import { HitBox_Circle } from "./hitBox.js";
-import { getRandom } from "./tools.js";
+import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
+import { getRandom, draw_rect } from "./tools.js";
 
 
 let assetsDir = "assets/"
@@ -16,8 +16,10 @@ function check_collisions(obj, other_objects) {
     for (const other of other_objects) {
         if (other == obj) { continue; }
         if (other.dead) { continue; }
+        if (other.dying) { continue; }
+        if (other.stop) { continue; }
 
-        if (!(other.hitBox.is_colliding(obj.hitBox))) { continue; }
+        if (!(obj.hitBox.is_colliding(other.hitBox))) { continue; }
 
         switch (obj.group) {
             case "player":
@@ -188,8 +190,9 @@ export class My_Object {
     }
 
     draw_invincible(ctx) {
+        let radius = (this.hitBox.width+this.hitBox.height) / 4
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.hitBox.radius + 2, 0, 2*Math.PI);
+        ctx.arc(this.x, this.y, radius, 0, 2*Math.PI);
         ctx.lineWidth = 2;
         ctx.strokeStyle = "#9e9e97";
         ctx.stroke();
@@ -197,7 +200,7 @@ export class My_Object {
     }
 
 
-    action(cnv) {
+    action(cnv, ctx) {
         this.update();
         
         if (this.dead) { return; }
@@ -207,6 +210,7 @@ export class My_Object {
         this.save_position();
         this.move();
 
+        // draw_rect(ctx, this.x-5, this.y-5, 10, 10, "#000000")
         let continu = check_collisions(this, My_Object.instances);
         if (!continu) { return; }
 
@@ -391,11 +395,12 @@ export class Player_Object extends My_Object {
 
 
 export class Enemy_Turret_Object extends My_Object {
-    constructor(x, y, object_image, hitBox) {
+    constructor(x, y, object_image, hitBox, ctx) {
         super(x, y, object_image, hitBox, "enemy_turret");
         this.shoot = true;
         this.rate_of_fire = 5;
         this.intervale = 0;
+        this.ctx = ctx
     }
 
     auto_actions(cnv) {
@@ -423,7 +428,8 @@ export class Enemy_Turret_Object extends My_Object {
         }
 
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
-        let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
+        // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
+        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, assetsDir + "fireballs_mid_mask" + pngExt, 20, 15, this.ctx)
         new Projectile_Object(x, y, imgBall, hitBoxBall, velX, velY);
 
     }

@@ -11,7 +11,7 @@
 
 import { getRandom } from "./tools.js";
 import { My_Img, My_Img_Animated } from "./imgs.js";
-import { HitBox_Circle } from "./hitBox.js";
+import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object, Projectile_Object }
     from "./objects.js";
 import { Camera } from "./camera.js";
@@ -61,8 +61,10 @@ let xPlayer = cnv.width/2; let yPlayer = cnv.height/2;
 // animated img
 let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer-15, yPlayer-25, 30, 50, spritesPlayerDead)
 // hitbox
-let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
-    (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
+// let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
+//     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
+let hitBoxPerso = new HitBox_Mask(xPlayer-15, yPlayer-25, assetsDir+imgPlayerName+"mask"+pngExt, 30, 50, ctx)
+
 //object
 let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
 
@@ -74,7 +76,21 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
     let y_mid = cnv.height / 2
     let x_objs = [x_mid+60, x_mid+60, x_mid-60, x_mid-60]
     let y_objs = [y_mid+60, y_mid-60, y_mid+60, y_mid-60]
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 2; i++) {
+        let imgName = "vassels_";
+        let spritesDefault = [];
+        for (let i = 0; i < 6; i++) {
+            spritesDefault.push(assetsDir + imgName + (i+1) + pngExt);
+        }
+
+        let X = x_objs[i]
+        let Y = y_objs[i]
+        let imgObj = new My_Img_Animated(spritesDefault, X-30, Y-30, 60, 60);
+        // let hitBoxObj = new HitBox_Circle(X, Y, 30)
+        let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask"+pngExt, 60, 60, ctx)
+        new Static_Object(X, Y, imgObj, hitBoxObj)
+    }
+    for (let i = 2; i < 4; i++) {
         let imgName = "vassels_";
         let spritesDefault = [];
         for (let i = 0; i < 6; i++) {
@@ -85,6 +101,7 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-30, Y-30, 60, 60);
         let hitBoxObj = new HitBox_Circle(X, Y, 30)
+        // let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask"+pngExt, 60, 60, ctx)
         new Static_Object(X, Y, imgObj, hitBoxObj)
     }
 }
@@ -102,12 +119,17 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         for (let i = 0; i < nb.length; i++) {
             spritesDefault.push(assetsDir + imgName + nb[i] + pngExt);
         }
+        let sprites_explosion_src = [];
+        for (let i = 0; i < 8; i++) {
+            sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
+        }
 
         let X = x_objs[i]
         let Y = y_objs[i]
-        let imgObj = new My_Img_Animated(spritesDefault, X-20, Y-20, 40, 40);
-        let hitBoxObj = new HitBox_Circle(X, Y, 15)
-        new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj)
+        let imgObj = new My_Img_Animated(spritesDefault, X-20, Y-20, 40, 40, sprites_explosion_src);
+        // let hitBoxObj = new HitBox_Circle(X, Y, 15)
+        let hitBoxObj = new HitBox_Mask(X-20, Y-20, assetsDir+imgName+"mask"+pngExt, 40, 40, ctx)
+        new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj, ctx)
     }
 }
 
@@ -130,7 +152,8 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let X = x_objs[i]
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-25, Y-25, 50, 50);
-        let hitBoxObj = new HitBox_Circle(X, Y, 20)
+        // let hitBoxObj = new HitBox_Circle(X, Y, 20)
+        let hitBoxObj = new HitBox_Mask(X-25, Y-25, assetsDir+imgName+"mask"+pngExt, 50, 50, ctx)
         new Bonus_Object(X, Y, imgObj, hitBoxObj)
     }
 }
@@ -303,7 +326,7 @@ function animations() {
 
 function actions() {
     for (const obj of My_Object.instances) {
-        obj.action(cnv);
+        obj.action(cnv, ctx);
     }
 }
 
@@ -325,12 +348,12 @@ function updateGui() {
 
 
 function update() {
+    // ctx.clearRect(0, 0, cnv.width, cnv.height);
     animations();
     execute_inputs();
     actions();
-    draw();
-
     camera.update(cnv, objectPlayer);
+    draw();
 
     clear_dead_objects();
     
