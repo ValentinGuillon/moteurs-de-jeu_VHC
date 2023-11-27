@@ -12,7 +12,7 @@
 import { getRandom } from "./tools.js";
 import { My_Img, My_Img_Animated } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Bonus_Object, Projectile_Object }
+import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Chasing_Object, Bonus_Object, Projectile_Object }
     from "./objects.js";
 import { Camera } from "./camera.js";
 
@@ -134,6 +134,8 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
 }
 
 
+
+
 // bonus
 {
     let x_mid = cnv.width / 2
@@ -155,6 +157,36 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         // let hitBoxObj = new HitBox_Circle(X, Y, 20)
         let hitBoxObj = new HitBox_Mask(X-25, Y-25, assetsDir+imgName+"mask_v2"+pngExt, 50, 50, ctx)
         new Bonus_Object(X, Y, imgObj, hitBoxObj)
+    }
+}
+
+
+// instances des mobs
+{
+    //Ennemis qui poursuivent le joueur
+    let nombreEnnemis = 10;
+    for (let i = 0; i < nombreEnnemis; i++) {
+        let enemyX = getRandom(0, cnv.width); // Position X aléatoire
+        let enemyY = getRandom(0, cnv.height); // Position Y aléatoire
+
+        // Création du cercle rouge pour faire l'ennemi
+        let enemyImage = {
+            draw: function(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI); // Rayon de 15
+                ctx.fillStyle = 'red';
+                ctx.fill();
+                ctx.closePath();
+            },
+            x: enemyX,
+            y: enemyY
+        };
+
+        //Hitbox sous forme de cercle
+        let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
+
+        let chasingEnemy = new Enemy_Chasing_Object(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
+        My_Object.instances.push(chasingEnemy);
     }
 }
 
