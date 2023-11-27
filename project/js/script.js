@@ -63,7 +63,7 @@ let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer-15, yP
 // hitbox
 // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
 //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
-let hitBoxPerso = new HitBox_Mask(xPlayer-15, yPlayer-25, assetsDir+imgPlayerName+"mask"+pngExt, 30, 50, ctx)
+let hitBoxPerso = new HitBox_Mask(xPlayer-15, yPlayer-25, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
 
 //object
 let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
@@ -87,7 +87,7 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-30, Y-30, 60, 60);
         // let hitBoxObj = new HitBox_Circle(X, Y, 30)
-        let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask"+pngExt, 60, 60, ctx)
+        let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask_v2"+pngExt, 60, 60, ctx)
         new Static_Object(X, Y, imgObj, hitBoxObj)
     }
     for (let i = 2; i < 4; i++) {
@@ -101,7 +101,7 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-30, Y-30, 60, 60);
         let hitBoxObj = new HitBox_Circle(X, Y, 30)
-        // let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask"+pngExt, 60, 60, ctx)
+        // let hitBoxObj = new HitBox_Mask(X-30, Y-30, assetsDir+imgName+"mask_v2"+pngExt, 60, 60, ctx)
         new Static_Object(X, Y, imgObj, hitBoxObj)
     }
 }
@@ -128,7 +128,7 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-20, Y-20, 40, 40, sprites_explosion_src);
         // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-        let hitBoxObj = new HitBox_Mask(X-20, Y-20, assetsDir+imgName+"mask"+pngExt, 40, 40, ctx)
+        let hitBoxObj = new HitBox_Mask(X-20, Y-20, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
         new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj, ctx)
     }
 }
@@ -153,7 +153,7 @@ let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBox
         let Y = y_objs[i]
         let imgObj = new My_Img_Animated(spritesDefault, X-25, Y-25, 50, 50);
         // let hitBoxObj = new HitBox_Circle(X, Y, 20)
-        let hitBoxObj = new HitBox_Mask(X-25, Y-25, assetsDir+imgName+"mask"+pngExt, 50, 50, ctx)
+        let hitBoxObj = new HitBox_Mask(X-25, Y-25, assetsDir+imgName+"mask_v2"+pngExt, 50, 50, ctx)
         new Bonus_Object(X, Y, imgObj, hitBoxObj)
     }
 }
