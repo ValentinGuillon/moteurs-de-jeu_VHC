@@ -25,10 +25,6 @@ export class Camera {
 
         for (const obj of My_Object.instances) {
             // if (obj.id == central_obj.id && obj instanceof Player_Object) { continue; }
-            if (obj.group == "enemy_chasing") {
-                obj.update_position(addX/2, addY/2);
-                continue;
-            }
             obj.update_position(addX, addY);
         }
     }
