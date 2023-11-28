@@ -154,6 +154,17 @@ export class My_Object {
         this.hitBox.y += add_Y;
     }
 
+
+    update_velocity(x = undefined, y = undefined) {
+        if (x != undefined) {
+            this.velocityX = x;
+        }
+        if (y != undefined) {
+            this.velocityY = y;
+        }
+    }
+
+
     save_position() {
         this.previousX = this.x;
         this.previousY = this.y;
@@ -356,16 +367,6 @@ export class Player_Object extends My_Object {
         }
 
         this.update_velocity(0, 0);
-    }
-
-
-    update_velocity(x = undefined, y = undefined) {
-        if (x != undefined) {
-            this.velocityX = x;
-        }
-        if (y != undefined) {
-            this.velocityY = y;
-        }
     }
 
 
