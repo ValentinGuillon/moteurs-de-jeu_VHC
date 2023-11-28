@@ -6,6 +6,7 @@ import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Chasing_Object, Bonus_Object, Projectile_Object }
     from "./objects.js";
 import { Camera } from "./camera.js";
+import { My_Circle } from "./formes.js"
 
 
 
@@ -243,27 +244,28 @@ function create_game_test(ctx, cnv) {
         //Ennemis qui poursuivent le joueur
         let nombreEnnemis = 10;
         for (let i = 0; i < nombreEnnemis; i++) {
-            let enemyX = getRandom(0, cnv.width); // Position X aléatoire
+            let enemyX = getRandom(cnv.width/2, cnv.width); // Position X aléatoire
             let enemyY = getRandom(0, cnv.height); // Position Y aléatoire
 
-            // Création du cercle rouge pour faire l'ennemi
-            let enemyImage = {
-                draw: function(ctx) {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, 15, 0, 2 * Math.PI); // Rayon de 15
-                    ctx.fillStyle = 'red';
-                    ctx.fill();
-                    ctx.closePath();
-                },
-                x: enemyX,
-                y: enemyY
-            };
+            // // Création du cercle rouge pour faire l'ennemi
+            // let enemyImage = {
+            //     draw: function(ctx) {
+            //         ctx.beginPath();
+            //         ctx.arc(enemyX, enemyY, 15, 0, 2 * Math.PI); // Rayon de 15
+            //         ctx.fillStyle = 'green';
+            //         ctx.fill();
+            //         ctx.closePath();
+            //     },
+            //     x: enemyX,
+            //     y: enemyY
+            // };
+            let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
 
             //Hitbox sous forme de cercle
             let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
 
             let chasingEnemy = new Enemy_Chasing_Object(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
-            My_Object.instances.push(chasingEnemy);
+            // My_Object.instances.push(chasingEnemy);
         }
     }
 
