@@ -69,6 +69,22 @@ function check_collisions(obj, other_objects) {
                        break;
                 }
                 break;
+            case "enemy_chasing":
+                switch (other.group) {
+                    case "enemy_chasing":
+                        obj.recul(other)
+                        return 0;
+                    case "static":
+                        obj.recul(other)
+                        return 0;
+                    case "player":
+                        obj.die();
+                        other.die();
+                        return 0;
+                    default:
+                        break;
+                    }
+                    break;
             case "bonus":
                 switch (other.group) {
                     case "player":
@@ -472,7 +488,7 @@ export class Enemy_Chasing_Object extends My_Object {
     constructor(x, y, object_image, hitBox, player) {
         super(x, y, object_image, hitBox, "enemy_chasing");
         this.player = player; // Référence à l'objet joueur
-        this.chaseSpeed = 2; // Vitesse de poursuite de l'ennemi
+        this.chaseSpeed = 6; // Vitesse de poursuite de l'ennemi
     }
 
     auto_actions(cnv) {
