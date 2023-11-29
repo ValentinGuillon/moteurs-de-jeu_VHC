@@ -136,7 +136,7 @@ export class My_Object {
     static id = 0;
     static imgVisible = true;
     static collision = true;
-    static hitBoxVisible = false;
+    static hitBoxVisible = true;
     static moving = true;
 
 

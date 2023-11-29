@@ -7,6 +7,7 @@ import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Cha
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { My_Circle } from "./formes.js"
+import { Jukebox } from "./audio.js";
 
 
 
@@ -17,6 +18,7 @@ let pngExt = ".png";
 export let objectPlayer = undefined
 export let imgBackground = undefined
 export let camera = undefined
+export let jukebox = new Jukebox()
 
 
 export class My_Button {
@@ -41,6 +43,10 @@ export class My_Button {
 
     action () {
         switch (this.type) {
+            case "home":
+                console.log("hOme")
+                create_Main_Menu(this.ctx, this.cnv)
+                break;
             case "play_test":
                 console.log("plAy")
                 create_game_test(this.ctx, this.cnv)
@@ -88,7 +94,13 @@ function destroy_button () {
 }
 
 
+export function create_home_page(ctx, cnv) {
+    new Button_with_text(ctx, cnv, "Launch Game", "home", 200, 100, 100, 100, "#00FFFF")
+}
+
+
 export function create_Main_Menu(ctx, cnv) {
+    jukebox.play_main_menu()
     destroy_button()
     objectPlayer = undefined
     My_Object.instances = [];
@@ -109,6 +121,7 @@ function create_other_menu(ctx, cnv) {
 
 
 function create_game_test(ctx, cnv) {
+    jukebox.play_game()
     destroy_button()
     new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
 
@@ -244,7 +257,7 @@ function create_game_test(ctx, cnv) {
         //Ennemis qui poursuivent le joueur
         let nombreEnnemis = 10;
         for (let i = 0; i < nombreEnnemis; i++) {
-            let enemyX = getRandom(cnv.width/2, cnv.width); // Position X aléatoire
+            let enemyX = getRandom((cnv.width/3)*2, cnv.width); // Position X aléatoire
             let enemyY = getRandom(0, cnv.height); // Position Y aléatoire
 
             // // Création du cercle rouge pour faire l'ennemi

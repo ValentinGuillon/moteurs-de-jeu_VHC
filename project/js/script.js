@@ -15,7 +15,7 @@ import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Chasing_Object, Bonus_Object, Projectile_Object }
     from "./objects.js";
 import { Camera } from "./camera.js";
-import { My_Button, Button_with_text, create_Main_Menu, objectPlayer, imgBackground, camera } from "./interface.js";
+import { My_Button, Button_with_text, create_home_page, objectPlayer, imgBackground, camera } from "./interface.js";
 
 
 let cnv = document.getElementById("myCanvas");
@@ -415,7 +415,9 @@ function actions() {
 
 function draw() {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
-    imgBackground.draw(ctx);
+    if (imgBackground) {
+        imgBackground.draw(ctx);
+    }
 
     for (const obj of My_Object.instances) {
         obj.draw(ctx);
@@ -455,7 +457,7 @@ function update() {
     updateGui()
 }
 
-create_Main_Menu(ctx, cnv);
+create_home_page(ctx, cnv);
 // let camera = new Camera(objectPlayer.x, objectPlayer.y, imgBackground);
 // let camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
 setInterval(update, 100);
