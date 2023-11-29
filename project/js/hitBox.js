@@ -72,7 +72,7 @@ export class HitBox_Mask {
         this.height = height;
         this.ctx = ctx
         this.mask = [] //boolens correspondant aux pixels d'une image
-        this.mask_created = 20;
+        this.mask_created = false;
         
         //predefined Image class
         this.img = new Image();
@@ -83,12 +83,22 @@ export class HitBox_Mask {
         this.contours = false;
     }
 
+    is_mask_empty() {
+        for (const pixel of this.mask) {
+            if (pixel) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     is_colliding(obj) {
         //creation of the mask
-        if (this.mask_created > 0) {
+        if (!this.mask_created) {
             this.update_mask();
-            this.mask_created--;
+            if (!this.is_mask_empty()) {
+                this.mask_created = true;
+            }
         }
 
         //collision disabled
