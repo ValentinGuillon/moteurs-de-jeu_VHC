@@ -12,20 +12,6 @@ export function distance(x1, y1, x2, y2) {
 }
 
 
-export function draw_rect(ctx, x, y, width, height, color) {
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.fillStyle = color
-    ctx.fill();
-    ctx.closePath();
-}
-
-
-export function draw_point(ctx, x, y, color) {
-    draw_rect(ctx, x, y, 1, 1, color);
-}
-
-
 export function convert(A, B, C) {
     //by ChatGPT
     // Convert each integer to a hexadecimal string and pad with zeros if needed

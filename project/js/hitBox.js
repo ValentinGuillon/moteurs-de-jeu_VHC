@@ -1,5 +1,6 @@
 
-import { distance, convert, draw_rect, draw_point } from "./tools.js";
+import { distance, convert } from "./tools.js";
+import { draw_rect, draw_point } from "./imgs.js";
 
 export class HitBox_Circle {
     constructor(x, y, radius) {
