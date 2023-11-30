@@ -26,3 +26,9 @@ export function convert(A, B, C) {
 }
 
 
+export function is_in_rect(x, y, x1, y1, x2, y2) {
+    let in_x = x > x1 && x <= x2;
+    let in_y = y > y1 && y <= y2;
+    return in_x && in_y;
+}
+
