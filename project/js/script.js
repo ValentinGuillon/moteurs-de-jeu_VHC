@@ -221,11 +221,11 @@ function draw() {
     ctx.clearRect(0, 0, cnv.width, cnv.height);
     //draw background
     if (imgBackground) {
-        imgBackground.draw(ctx);
+        imgBackground.draw(ctx, cnv, true);
     }
     //draw objects
     for (const obj of My_Object.instances) {
-        obj.draw(ctx);
+        obj.draw(ctx, cnv);
     }
     //draw buttons
     for (const btn of My_Button.instances) {

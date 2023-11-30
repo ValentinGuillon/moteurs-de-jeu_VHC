@@ -32,3 +32,10 @@ export function is_in_rect(x, y, x1, y1, x2, y2) {
     return in_x && in_y;
 }
 
+
+
+export function min(a, b) {
+    if (a < b) { return a; }
+    return b;
+}
+

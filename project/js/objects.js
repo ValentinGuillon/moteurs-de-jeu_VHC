@@ -131,7 +131,7 @@ export class My_Object {
     static instances = [];
     static id = 0;
     static imgVisible = true;
-    static collision = true;
+    static collision = false;
     static hitBoxVisible = true;
     static moving = true;
     static playerSpeed = 10;
@@ -223,10 +223,10 @@ export class My_Object {
 
 
 
-    draw(ctx) {
+    draw(ctx, cnv) {
         if (this.dead) { return ; }
         if (this.object_image) { 
-            this.object_image.draw(ctx);
+            this.object_image.draw(ctx, cnv);
         }
         if (this.hitBox) {
             this.hitBox.draw_contours(ctx);
@@ -470,6 +470,7 @@ export class Bonus_Invicibility extends My_Object {
 export class Player extends My_Object {
     constructor(x, y, object_image, hitBox) {
         super(x, y, object_image, hitBox, "player");
+        this.speed = My_Object.playerSpeed;
         this.invincible = false;
         this.invicibility_duration = 30;
         this.invicibility_timer = 0;
@@ -557,10 +558,10 @@ export class Player extends My_Object {
     }
 
 
-    draw(ctx) {
+    draw(ctx, cnv) {
         if (this.dead) { return ; }
         if (this.object_image) { 
-            this.object_image.draw(ctx);
+            this.object_image.draw(ctx, cnv);
         }
         if (this.invincible) {
             this.draw_invincible(ctx);
