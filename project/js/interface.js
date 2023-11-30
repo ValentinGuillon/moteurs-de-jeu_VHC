@@ -1,5 +1,5 @@
 
-import { getRandom } from "./tools.js";
+import { getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Chasing_Object, Bonus_Object }
@@ -58,8 +58,13 @@ export class My_Button {
                 break;
 
             case "play_test":
-                console.log("plAy")
+                console.log("plAy game test")
                 create_game_test(this.ctx, this.cnv)
+                break;
+
+            case "play_game":
+                console.log("plAy game survive")
+                create_game_survive(this.ctx, this.cnv)
                 break;
 
             case "go_main-menu":
@@ -122,7 +127,8 @@ function create_main_menu(ctx, cnv) {
     jukebox.play_main_menu()
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
-    new Button_with_text(ctx, cnv, "Play", "play_test", cnv.width/2-100, 200, 100, 100, "#00FFFF")
+    new Button_with_text(ctx, cnv, "Test", "play_test", cnv.width/2-100, 200, 100, 100, "#00FFFF")
+    new Button_with_text(ctx, cnv, "Play", "play_game", cnv.width/2-100, 320, 100, 100, "#00FFFF")
     let imgBackgroundName = "arena";
     let spriteBackground = assetsDir + imgBackgroundName + pngExt;
     imgBackground.overwrite(spriteBackground, cnv.width/2, cnv.height/2, cnv.width, cnv.height);
@@ -283,5 +289,154 @@ function create_game_test(ctx, cnv) {
     camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
 }
 
+
+
+function create_game_survive(ctx, cnv) {
+    jukebox.play_game();
+    My_Button.destroy_buttons();
+    My_Object.destroy_objects();
+    new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
+
+    let cnvMidX = cnv.width/2
+    let cnvMidY = cnv.height/2
+    let mapWidth = cnv.width*4
+    let mapHeight = cnv.height*4
+
+    let limits = {
+        "x":      cnvMidX-(mapWidth/2),
+        "y":      cnvMidY-(mapHeight/2),
+        "width":  mapWidth,
+        "height": mapHeight,
+    }
+
+    let imgBackgroundName = "arena";
+    let spriteBackground = assetsDir + imgBackgroundName + pngExt;
+    imgBackground.overwrite(spriteBackground, cnvMidX, cnvMidY, limits.width, limits.height);
+
+
+    //PLAYER
+    // sprites
+    let imgPlayerName = "RedDeathFrame_";
+    let spritesPlayerDefault = [];
+    for (let i = 0; i < 5; i++) {
+        spritesPlayerDefault.push(assetsDir + imgPlayerName + (i+1) + pngExt);
+    }
+    let spritesPlayerDead = [];
+    for (let i = 0; i < 5; i++) {
+        spritesPlayerDead.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
+    }
+
+    let xPlayer = cnv.width/2; let yPlayer = cnv.height/2;
+    // animated img
+    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, spritesPlayerDead)
+    // hitbox
+    // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
+    //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
+    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
+
+    // object
+    let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
+
+
+    // OBSTACLES
+    {
+        let imgName = "vassels_";
+        let radius = 30;
+        let rows = Math.floor(limits.width / (radius*2))
+        let columns = Math.floor(limits.height / (radius*2))
+        
+
+    
+        //limits obstacles
+        for (let i = 1; i <= rows; i++) {
+            for (let j = 1; j <= columns ; j++) {
+                if (!(i == 1 || i == rows || j == 1 || j == columns)) { continue; }
+                //get here only if it's a border
+                let X = limits.x + (i*(radius*2)) - radius
+                let Y = limits.y + (j* (radius*2)) - radius
+
+                let spritesDefault = [];
+                for (let i = 0; i < 6; i++) {
+                    spritesDefault.push(assetsDir + imgName + (i+1) + pngExt);
+                }
+
+                // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
+                let imgObj = new My_Circle(X, Y, 30, "#0000FF");
+                //hitBox
+                let hitBoxObj = new HitBox_Circle(X, Y, 30)
+                new Static_Object(X, Y, imgObj, hitBoxObj)
+            }
+        }
+    }
+
+
+
+    // TOWERS
+    {
+        let offset = ((limits.width+limits.height) /2) /4;
+        // let offset = 30;
+        let coords = [
+            {"x": limits.x + offset,     "y": limits.y + offset},
+            {"x": limits.x + offset,     "y": limits.y + limits.height - offset},
+            {"x": limits.x + limits.width - offset, "y": limits.y + offset},
+            {"x": limits.x + limits.width - offset, "y": limits.y + limits.height - offset},
+        ]
+        // let coords = [
+        //     {"x": -offset,     "y": offset},
+        //     {"x": -offset,     "y": cnv.height - offset},
+        //     {"x": cnv.width - offset, "y": offset},
+        //     {"x": cnv.width - offset, "y": cnv.height - offset},
+        // ]
+        for (let i = 0; i < coords.length; i++) {
+            let imgName = "towers_";
+            let nb = [6, 6, 7, 7, 8, 8, 7, 7];
+            let spritesDefault = [];
+            for (let i = 0; i < nb.length; i++) {
+                spritesDefault.push(assetsDir + imgName + nb[i] + pngExt);
+            }
+            let sprites_explosion_src = [];
+            for (let i = 0; i < 8; i++) {
+                sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
+            }
+
+            let X = coords[i].x
+            let Y = coords[i].y
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src);
+            // let hitBoxObj = new HitBox_Circle(X, Y, 15)
+            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
+            new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj, ctx)
+        }
+    }
+
+
+    // MOBS
+    {
+        let nombreObj = 10;
+        for (let i = 0; i < nombreObj; i++) {
+            //define position
+            let X = getRandom(10, cnv.width-10);
+            let Y = getRandom(cnvMidX+20, cnv.height-10);
+            let restart = false;
+            if (!is_in_rect(X, Y, 10, 10, cnv.width-10, cnv.height-10)) {
+                restart = true;
+            }
+            if (is_in_rect(X, Y, cnvMidX-50, cnvMidY-50, cnvMidX+50, cnvMidY+50)) {
+                restart = true;
+            }
+            if (restart) {
+                i--;
+                continue;
+            }
+
+            //create object
+            let objImg = new My_Circle(X, Y, 15, "green")
+            let objHitBox = new HitBox_Circle(X, Y, 15);
+            new Enemy_Chasing_Object(X, Y, objImg, objHitBox, objectPlayer);
+        }
+    }
+
+
+    camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
+}
 
 
