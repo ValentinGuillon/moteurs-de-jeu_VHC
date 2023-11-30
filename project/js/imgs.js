@@ -24,8 +24,8 @@ export class My_Img {
         this.height = height;
 
         //position
-        this.x = x;
-        this.y = y;
+        this.x = x - (width/2);
+        this.y = y - (height/2);
 
         //predefined Image class
         this.img = new Image();
@@ -45,8 +45,8 @@ export class My_Img {
         this.height = height;
 
         //position
-        this.x = x;
-        this.y = y;
+        this.x = x - (width/2);
+        this.y = y - (height/2);
 
         //predefined Image class
         this.img = new Image();

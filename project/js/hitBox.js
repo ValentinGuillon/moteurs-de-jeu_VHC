@@ -67,8 +67,8 @@ export class HitBox_Circle {
  */
 export class HitBox_Mask {
     constructor(x, y, img, width, height, ctx) {
-        this.x = x;
-        this.y = y;
+        this.x = x - (width/2);
+        this.y = y - (height/2);
         this.width = width;
         this.height = height;
         this.ctx = ctx
