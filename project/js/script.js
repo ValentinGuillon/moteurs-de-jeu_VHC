@@ -38,6 +38,25 @@ let pngExt = ".png";
 let backgroundFolder = gui.addFolder("Background")
 backgroundFolder.add(imgBackground, "visible")
 
+//PLAYER
+let playerFolder = gui.addFolder("Player")
+playerFolder.open()
+
+function update_player_speed(new_val) {
+    let player = undefined;
+    for (const obj of My_Object.instances) {
+        if (obj.group != "player") { continue; }
+        player = obj;
+        break;
+    }
+    if (!player) { return; }
+    My_Object.playerSpeed = new_val;
+    player.speed = new_val;
+}
+
+playerFolder.add(My_Object, "playerSpeed", 0, 100).onChange(val => { update_player_speed(val) })
+
+
 // OBJECTS
 let objectsFolder = gui.addFolder("Objects")
 objectsFolder.open();
@@ -217,6 +236,7 @@ function draw() {
 
 function updateGui() {
     backgroundFolder.updateDisplay();
+    playerFolder.updateDisplay();
 }
 
 

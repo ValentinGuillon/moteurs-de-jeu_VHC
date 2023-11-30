@@ -134,6 +134,7 @@ export class My_Object {
     static collision = true;
     static hitBoxVisible = true;
     static moving = true;
+    static playerSpeed = 10;
 
 
     static destroy_objects () {
