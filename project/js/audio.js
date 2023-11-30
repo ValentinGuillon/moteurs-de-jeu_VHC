@@ -20,7 +20,7 @@ export class Jukebox {
 
     play_main_menu() {
         this.stop_music();
-        this.music = new Audio(assetsDir + "main-menu_v1.mp3");
+        this.music = new Audio(assetsDir + "in-game_lugubre_v0.1.mp3");
         this.music.volume = 0.5
         this.music.loop = true;
         this.play_music();
@@ -28,7 +28,7 @@ export class Jukebox {
 
     play_game() {
         this.stop_music();
-        this.music = new Audio(assetsDir + "in-game_lugubre_v0.1.mp3");
+        this.music = new Audio(assetsDir + "main-menu_v1.mp3");
         this.music.volume = 0.5
         this.music.loop = true;
         this.play_music();
