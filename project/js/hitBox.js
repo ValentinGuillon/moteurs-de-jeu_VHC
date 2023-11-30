@@ -218,11 +218,11 @@ export class HitBox_Mask {
 
     get_pixels() {
         //draw the img
-        draw_rect(this.ctx, this.x, this.y, this.width, this.height, "#00FF00")
-        this.ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        draw_rect(this.ctx, 0, 0, this.width, this.height, "#00FF00")
+        this.ctx.drawImage(this.img, 0, 0, this.width, this.height);
 
         //get pixels data where the img was drawn
-        let imgData = this.ctx.getImageData(this.x, this.y, this.width, this.height)
+        let imgData = this.ctx.getImageData(0, 0, this.width, this.height)
         return imgData.data;
     }
 
