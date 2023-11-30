@@ -43,6 +43,15 @@ export class My_Button {
         My_Button.instances = [];
     }
 
+    static get_mute_button() {
+        for (const btn of My_Button.instances) {
+            if (btn.type == "mute_music") {
+                return btn;
+            }
+        }
+        return undefined;
+    }
+
 
     //for subclasses
     draw() {
@@ -70,6 +79,19 @@ export class My_Button {
             case "go_main-menu":
                 console.log("back menu")
                 create_main_menu(this.ctx, this.cnv)
+                break;
+
+            case "mute_music":
+                jukebox.mute_music();
+                let btn = My_Button.get_mute_button();
+                if (!btn) { break; }
+                if (jukebox.muted) {
+                    btn.update_text("Unmute")
+                }
+                else {
+                    btn.update_text("Mute")
+                }
+
                 break;
 
             default:
@@ -104,7 +126,13 @@ export class Button_with_text extends My_Button {
         this.ctx.fillStyle = this.font_color;
         this.ctx.fillText(this.text, this.x, this.y);
     }
+
+    update_text(new_text) {
+        this.text = new_text;
+    }
 }
+
+
 
 
 
@@ -119,6 +147,7 @@ export class Button_with_text extends My_Button {
 
 export function create_home_page(ctx, cnv) {
     new Button_with_text(ctx, cnv, "Launch Game", "home", 200, 100, 100, 100, "#00FFFF")
+    new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
 }
 
 
@@ -129,6 +158,12 @@ function create_main_menu(ctx, cnv) {
     My_Object.destroy_objects();
     new Button_with_text(ctx, cnv, "Test", "play_test", cnv.width/2-100, 200, 100, 100, "#00FFFF")
     new Button_with_text(ctx, cnv, "Play", "play_game", cnv.width/2-100, 320, 100, 100, "#00FFFF")
+    if (jukebox.muted) {
+        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
+    else {
+        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
     let imgBackgroundName = "arena";
     let spriteBackground = assetsDir + imgBackgroundName + pngExt;
     imgBackground.overwrite(spriteBackground, cnv.width/2, cnv.height/2, cnv.width, cnv.height);
@@ -142,6 +177,12 @@ function create_game_test(ctx, cnv) {
     jukebox.play_game()
     My_Button.destroy_buttons()
     new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
+    if (jukebox.muted) {
+        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
+    else {
+        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
 
 
     //BACKGROUND
@@ -296,6 +337,12 @@ function create_game_survive(ctx, cnv) {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
+    if (jukebox.muted) {
+        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
+    else {
+        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    }
 
     let cnvMidX = cnv.width/2
     let cnvMidY = cnv.height/2
