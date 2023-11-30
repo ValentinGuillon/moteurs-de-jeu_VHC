@@ -25,7 +25,7 @@ export class Camera {
         this.imgBackground.y += addY;
 
         for (const obj of objects) {
-            // if (obj.id == central_obj.id && obj instanceof Player_Object) { continue; }
+            // if (obj.id == central_obj.id && obj instanceof Player) { continue; }
             obj.update_position(addX, addY);
         }
     }

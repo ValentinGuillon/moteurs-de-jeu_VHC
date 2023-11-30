@@ -2,7 +2,7 @@
 import { getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Player_Object, Enemy_Turret_Object, Static_Object, Enemy_Chasing_Object, Bonus_Object }
+import { My_Object, Player, Enemy_Turret, Obstacle, Enemy_Chasing, Bonus_Invicibility }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -172,7 +172,7 @@ function create_game_test(ctx, cnv) {
     let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
 
     // object
-    let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
+    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
 
 
 
@@ -197,7 +197,7 @@ function create_game_test(ctx, cnv) {
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
             //hitBox
             let hitBoxObj = new HitBox_Circle(X, Y, 30)
-            new Static_Object(X, Y, imgObj, hitBoxObj)
+            new Obstacle(X, Y, imgObj, hitBoxObj)
         }
         //with mask hitBox
         for (let i = 2; i < 4; i++) {
@@ -212,7 +212,7 @@ function create_game_test(ctx, cnv) {
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
             //hitBox
             let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 60, 60, ctx)
-            new Static_Object(X, Y, imgObj, hitBoxObj)
+            new Obstacle(X, Y, imgObj, hitBoxObj)
         }
     }
 
@@ -239,7 +239,7 @@ function create_game_test(ctx, cnv) {
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
             let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
-            new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj, ctx)
+            new Enemy_Turret(X, Y, imgObj, hitBoxObj, ctx)
         }
     }
 
@@ -264,7 +264,7 @@ function create_game_test(ctx, cnv) {
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 50, 50);
             // let hitBoxObj = new HitBox_Circle(X, Y, 20)
             let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 50, 50, ctx)
-            new Bonus_Object(X, Y, imgObj, hitBoxObj)
+            new Bonus_Invicibility(X, Y, imgObj, hitBoxObj)
         }
     }
 
@@ -280,7 +280,7 @@ function create_game_test(ctx, cnv) {
             let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
             //Hitbox sous forme de cercle
             let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
-            new Enemy_Chasing_Object(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
+            new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
         }
     }
 
@@ -335,7 +335,7 @@ function create_game_survive(ctx, cnv) {
     let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
 
     // object
-    let objectPlayer = new Player_Object(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
+    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
 
 
     // OBSTACLES
@@ -364,7 +364,7 @@ function create_game_survive(ctx, cnv) {
                 let imgObj = new My_Circle(X, Y, 30, "#0000FF");
                 //hitBox
                 let hitBoxObj = new HitBox_Circle(X, Y, 30)
-                new Static_Object(X, Y, imgObj, hitBoxObj)
+                new Obstacle(X, Y, imgObj, hitBoxObj)
             }
         }
     }
@@ -404,7 +404,7 @@ function create_game_survive(ctx, cnv) {
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
             let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
-            new Enemy_Turret_Object(X, Y, imgObj, hitBoxObj, ctx)
+            new Enemy_Turret(X, Y, imgObj, hitBoxObj, ctx)
         }
     }
 
@@ -431,7 +431,7 @@ function create_game_survive(ctx, cnv) {
             //create object
             let objImg = new My_Circle(X, Y, 15, "green")
             let objHitBox = new HitBox_Circle(X, Y, 15);
-            new Enemy_Chasing_Object(X, Y, objImg, objHitBox, objectPlayer);
+            new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
         }
     }
 

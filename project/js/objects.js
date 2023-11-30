@@ -26,7 +26,7 @@ function check_collisions(obj, other_objects) {
         switch (obj.group) {
             case "player":
                 switch(other.group) {
-                    case "projectile":
+                    case "enemy_projectile":
                         obj.recul(other);
                         obj.die();
                         other.die();
@@ -36,10 +36,10 @@ function check_collisions(obj, other_objects) {
                         obj.die();
                         other.die();
                         return 0;
-                    case "bonus":
+                    case "bonus_invicibility":
                         obj.give_invicibility();
                         break;
-                    case "static":
+                    case "obstacle":
                         obj.recul(other)
                         // obj.roll_back(other);
                         break;
@@ -56,9 +56,9 @@ function check_collisions(obj, other_objects) {
                 }
                 break;
 
-            case "projectile":
+            case "enemy_projectile":
                 switch (other.group) {
-                    case "static":
+                    case "obstacle":
                         obj.die();
                         return 0;
                     case "player":
@@ -74,7 +74,7 @@ function check_collisions(obj, other_objects) {
                     case "enemy_chasing":
                         obj.recul(other)
                         return 0;
-                    case "static":
+                    case "obstacle":
                         obj.recul(other)
                         return 0;
                     case "player":
@@ -85,7 +85,7 @@ function check_collisions(obj, other_objects) {
                 }
                 break;
 
-            case "bonus":
+            case "bonus_invicibility":
                 switch (other.group) {
                     case "player":
                         obj.die()
@@ -114,7 +114,7 @@ export class My_Object {
         this.velocityX = velocityX; //between -1 and 1
         this.velocityY = velocityY; //between -1 and 1
 
-        this.group = group; //"player", "enemy", "static"
+        this.group = group; //"player", "enemy", "obstacle"
 
         this.id = -1;
 
@@ -449,25 +449,25 @@ export class My_Object {
 
 
 
-export class Static_Object extends My_Object {
+export class Obstacle extends My_Object {
     constructor(x, y, object_image, hitBox) {
-        super(x, y, object_image, hitBox, "static");
+        super(x, y, object_image, hitBox, "obstacle");
     }
 }
 
 
 
 
-export class Bonus_Object extends My_Object {
+export class Bonus_Invicibility extends My_Object {
     constructor(x, y, object_image, hitBox) {
-        super(x, y, object_image, hitBox, "bonus");
+        super(x, y, object_image, hitBox, "bonus_invicibility");
     }
 }
 
 
 
 
-export class Player_Object extends My_Object {
+export class Player extends My_Object {
     constructor(x, y, object_image, hitBox) {
         super(x, y, object_image, hitBox, "player");
         this.invincible = false;
@@ -574,7 +574,7 @@ export class Player_Object extends My_Object {
 
 
 
-export class Enemy_Turret_Object extends My_Object {
+export class Enemy_Turret extends My_Object {
     constructor(x, y, object_image, hitBox, ctx) {
         super(x, y, object_image, hitBox, "enemy_turret");
         this.shoot = true;
@@ -622,7 +622,7 @@ export class Enemy_Turret_Object extends My_Object {
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
         // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
         let hitBoxBall = new HitBox_Mask(x-10, y-7.5, assetsDir + "fireballs_mid_mask" + pngExt, 20, 15, this.ctx)
-        new Projectile_Object(x, y, imgBall, hitBoxBall, velX, velY);
+        new Enemy_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
     }
 
 
@@ -641,9 +641,9 @@ export class Enemy_Turret_Object extends My_Object {
 
 
 
-export class Projectile_Object extends My_Object {
+export class Enemy_Projectile extends My_Object {
     constructor(x, y, object_image, hitBox, velocityX, velocityY) {
-        super(x, y, object_image, hitBox, "projectile", velocityX, velocityY);
+        super(x, y, object_image, hitBox, "enemy_projectile", velocityX, velocityY);
     }
 
     auto_actions(cnv) {
@@ -664,7 +664,7 @@ export class Projectile_Object extends My_Object {
 
 
 
-export class Enemy_Chasing_Object extends My_Object {
+export class Enemy_Chasing extends My_Object {
     constructor(x, y, object_image, hitBox, player) {
         super(x, y, object_image, hitBox, "enemy_chasing");
         this.player = player; // Référence à l'objet joueur
