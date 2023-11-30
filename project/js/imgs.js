@@ -17,27 +17,14 @@ export function draw_point(ctx, x, y, color) {
 
 export class My_Img {
     constructor(imgSrc, x, y, width = 25, height = 25) {
-        this.imgSrc = imgSrc;
-
-        //size
-        this.width = width;
-        this.height = height;
-
-        //position
-        this.x = x - (width/2);
-        this.y = y - (height/2);
-
-        //predefined Image class
-        this.img = new Image();
-        if(imgSrc) {
-            this.img.src = this.imgSrc;
-        }
+        this.real_constructor(imgSrc, x, y, width, height)
 
         //dat.GUI
         this.visible = true;
     }
 
-    overwrite(imgSrc, x, y, width = 25, height = 25) {
+
+    real_constructor(imgSrc, x, y, width, height) {
         this.imgSrc = imgSrc;
 
         //size
@@ -53,6 +40,11 @@ export class My_Img {
         if(imgSrc) {
             this.img.src = this.imgSrc;
         }
+    }
+
+
+    overwrite(imgSrc, x, y, width = 25, height = 25) {
+        this.real_constructor(imgSrc, x, y, width, height);
     }
 
 
