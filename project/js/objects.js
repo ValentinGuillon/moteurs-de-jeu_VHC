@@ -46,11 +46,35 @@ function check_collisions(obj, other_objects) {
                 }
                 break;
 
+            case "ally_projectile":
+                switch(other.group) {
+                    case "enemy_turret":
+                        obj.die();
+                        other.die();
+                        return 0;
+                    case "enemy_projectile":
+                        obj.die();
+                        other.die();
+                        return 0;
+                    case "enemy_chasing":
+                        obj.die();
+                        other.die();
+                        return 0;
+                    case "obstacle":
+                        obj.die();
+                        return 0;
+                }
+                break;
+
             case "enemy_turret":
                 switch(other.group) {
                     case "player":
                         obj.die();
                         other.recul(obj)
+                        other.die();
+                        return 0;
+                    case "ally_projectile":
+                        obj.die();
                         other.die();
                         return 0;
                 }
@@ -66,6 +90,11 @@ function check_collisions(obj, other_objects) {
                         other.recul(obj);
                         other.die();
                         return 0;
+                    case "ally_projectile":
+                        obj.die();
+                        other.die();
+                        return 0;
+
                 }
                 break;
 
@@ -80,6 +109,10 @@ function check_collisions(obj, other_objects) {
                     case "player":
                         obj.die();
                         other.recul(obj)
+                        other.die();
+                        return 0;
+                    case "ally_projectile":
+                        obj.die();
                         other.die();
                         return 0;
                 }
@@ -474,6 +507,10 @@ export class Player extends My_Object {
         this.invincible = false;
         this.invicibility_duration = 30;
         this.invicibility_timer = 0;
+    
+        this.shoot = true;
+        this.delay = 5;
+        this.intervale = 0;
     }
 
 
@@ -509,6 +546,45 @@ export class Player extends My_Object {
 
     auto_actions(cnv) {
         this.check_out_of_screen(cnv);
+        this.tirer();
+    }
+
+    generate_projectile(x, y){
+        // faire en sorte que les projectiles aient une vélocité influencé par l'ennemi le plus proche (histoire de cosinus blabla...)
+        // OU faire en sorte de tirer régulièrement en cercle (maths aussi)
+        let velX = Math.random();
+        let velY = Math.random();
+        if (getRandom(0, 1)) {
+            velX *= -1;
+        }
+        if (getRandom(0, 1)) {
+            velY *= -1;
+        }
+        let sprite_ball_src = [];
+        for (let i = 0; i < 4; i++) {
+            sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
+        }
+
+        let sprites_explosion_src = [];
+        for (let i = 0; i < 8; i++) {
+            sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
+        }
+
+        let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
+        let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
+
+    }
+
+    tirer(){
+        if (!this.shoot) { return; }
+        if (!My_Object.moving) { return; }
+
+        if (this.intervale == this.delay){
+            this.generate_projectile(this.x, this.y - 20);
+            this.intervale = 0;
+        }
+        this.intervale++;
     }
 
 
@@ -579,7 +655,7 @@ export class Enemy_Turret extends My_Object {
     constructor(x, y, object_image, hitBox, ctx) {
         super(x, y, object_image, hitBox, "enemy_turret");
         this.shoot = true;
-        this.delai = 5;
+        this.delay = 5;
         this.timer = 0;
         this.ctx = ctx
     }
@@ -631,7 +707,7 @@ export class Enemy_Turret extends My_Object {
         if (!this.shoot) { return; }
         if (!My_Object.moving) { return; }
 
-        if (this.timer == this.delai){
+        if (this.timer == this.delay){
             this.generate_projectile(this.x, this.y - 20);
             this.timer = 0;
         }
@@ -645,6 +721,30 @@ export class Enemy_Turret extends My_Object {
 export class Enemy_Projectile extends My_Object {
     constructor(x, y, object_image, hitBox, velocityX, velocityY) {
         super(x, y, object_image, hitBox, "enemy_projectile", velocityX, velocityY);
+    }
+
+    auto_actions(cnv) {
+        if (this.is_out_of_screen(cnv)) {
+            this.die();
+        }
+    }
+
+    is_out_of_screen(cnv) {
+        let out_right = this.x > cnv.width;
+        let out_left = this.x < 0;
+        let out_down = this.y > cnv.height;
+        let out_up = this.y < 0;
+        return out_right || out_left || out_down || out_up;
+    }
+}
+
+
+
+
+export class Ally_Projectile extends My_Object {
+    constructor(x, y, object_image, hitBox, velocityX = 0.0, velocityY = 0.0) 
+    {
+        super(x, y, object_image, hitBox, "ally_projectile", velocityX, velocityY);
     }
 
     auto_actions(cnv) {
