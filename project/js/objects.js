@@ -16,6 +16,7 @@ function check_collisions(obj, other_objects) {
     if (!obj.hitBox) { return 1; }
     for (const other of other_objects) {
         if (other == obj) { continue; }
+        if (!other.hitBox) { continue; }
         if (other.dead) { continue; }
         if (other.dying) { continue; }
         if (other.stop) { continue; }
@@ -199,14 +200,17 @@ export class My_Object {
         this.move();
 
         // draw_rect(ctx, this.x-5, this.y-5, 10, 10, "#000000")
-        let continu = check_collisions(this, My_Object.instances);
-        if (!continu) { return; }
+        if (this.hitBox) {
+            let continu = check_collisions(this, My_Object.instances);
+            if (!continu) { return; }
+        }
 
         this.auto_actions(cnv);
     }
 
 
     animate() {
+        if (!this.object_image) { return; }
         if (this.stop) { return; }
         if (this.dead) { return; }
         if (!(this.object_image instanceof My_Img_Animated)) { return; }
@@ -220,11 +224,12 @@ export class My_Object {
 
     draw(ctx) {
         if (this.dead) { return ; }
-        this.object_image.draw(ctx);
-        if (this.invincible) {
-            this.draw_invincible(ctx);
+        if (this.object_image) { 
+            this.object_image.draw(ctx);
         }
-        this.hitBox.draw_contours(ctx);
+        if (this.hitBox) {
+            this.hitBox.draw_contours(ctx);
+        }
     }
 
 
@@ -235,7 +240,9 @@ export class My_Object {
 
     die() {
         this.collision = false;
-        this.hitBox.collision = false;
+        if (this.hitBox) {
+            this.hitBox.collision = false;
+        }
         this.dying = true;
         if (this.object_image instanceof My_Img_Animated) {
             this.object_image.die();
@@ -301,10 +308,14 @@ export class My_Object {
     update_position(add_X, add_Y) {
         this.x += add_X;
         this.y += add_Y;
-        this.object_image.x += add_X;
-        this.object_image.y += add_Y;
-        this.hitBox.x += add_X;
-        this.hitBox.y += add_Y;
+        if (this.object_image) {
+            this.object_image.x += add_X;
+            this.object_image.y += add_Y;
+        }
+        if (this.hitBox) {
+            this.hitBox.x += add_X;
+            this.hitBox.y += add_Y;
+        }
     }
 
 
@@ -377,11 +388,17 @@ export class My_Object {
      */
 
     update_bools() {
-        this.object_image.visible = My_Object.imgVisible;
+        if (this.object_image) {
+            this.object_image.visible = My_Object.imgVisible;
+        }
         this.stop = !My_Object.moving;
-        this.hitBox.contours = My_Object.hitBoxVisible;
+        if (this.hitBox) {
+            this.hitBox.contours = My_Object.hitBoxVisible;
+        }
         if (this.dead || this.dying) { return; }
-        this.hitBox.collision = My_Object.collision;
+        if (this.hitBox) {
+            this.hitBox.collision = My_Object.collision;
+        }
     }
 }
 
@@ -467,7 +484,9 @@ export class Player_Object extends My_Object {
     die() {
         if (this.invincible) { return; }
         this.collision = false;
-        this.hitBox.collision = false;
+        if (this.hitBox) {
+            this.hitBox.collision = false;
+        }
         this.dying = true;
         if (this.object_image instanceof My_Img_Animated) {
             this.object_image.die();
@@ -535,6 +554,20 @@ export class Player_Object extends My_Object {
                 console.log("error: player must have an allowed direction.")
         }
     }
+
+
+    draw(ctx) {
+        if (this.dead) { return ; }
+        if (this.object_image) { 
+            this.object_image.draw(ctx);
+        }
+        if (this.invincible) {
+            this.draw_invincible(ctx);
+        }
+        if (this.hitBox) {
+            this.hitBox.draw_contours(ctx);
+        }
+    }
 }
 
 
@@ -552,7 +585,9 @@ export class Enemy_Turret_Object extends My_Object {
     die() {
         this.shoot = false
         this.collision = false;
-        this.hitBox.collision = false;
+        if (this.hitBox) {
+            this.hitBox.collision = false;
+        }
         this.dying = true;
         if (this.object_image instanceof My_Img_Animated) {
             this.object_image.die();
