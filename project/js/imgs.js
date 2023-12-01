@@ -142,19 +142,32 @@ export class My_Img {
 
 //animated sprite with a SINGLE animation
 export class My_Img_Animated extends My_Img {
-    constructor(sprites, x, y, width, height, sprites_death = [], iconeSrc = undefined) {
+    constructor(sprites, x, y, width, height, fps, sprites_death = [], iconeSrc = undefined) {
         super(sprites[0], x, y, width, height, iconeSrc);
         this.sprites = sprites;
         this.sprites_death = sprites_death;
 
         this.dead = false;
 
+        this.fps = fps;
+        this.previousTimestamp = undefined;
+
         //dat.GUI
         this.animated = true;
     }
 
     // return 0 if there is no sprite left
-    next_frame(loop = true) {
+    next_frame(timestamp, loop = true) {
+        if (this.previousTimestamp == undefined) {
+            this.previousTimestamp = timestamp;
+        }
+
+        let elapsed = timestamp - this.previousTimestamp;
+        let delay = 1000 / this.fps
+        if (elapsed < delay) { return 1; }
+
+        this.previousTimestamp = timestamp;
+
         if (this.sprites.length == 0) {
             this.dead = true;
             return 0;

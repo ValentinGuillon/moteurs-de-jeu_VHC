@@ -203,7 +203,7 @@ function create_game_test() {
 
     let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
     // animated img
-    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, spritesPlayerDead)
+    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, 6, spritesPlayerDead)
     // hitbox
     // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
     //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
@@ -232,7 +232,7 @@ function create_game_test() {
 
             let X = x_objs[i]
             let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
             //hitBox
             let hitBoxObj = new HitBox_Circle(X, Y, 30)
             new Obstacle(X, Y, imgObj, hitBoxObj)
@@ -247,7 +247,7 @@ function create_game_test() {
 
             let X = x_objs[i]
             let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
             //hitBox
             let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 60, 60)
             new Obstacle(X, Y, imgObj, hitBoxObj)
@@ -274,7 +274,7 @@ function create_game_test() {
 
             let X = x_objs[i]
             let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 5, sprites_explosion_src);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
             let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
             new Enemy_Turret(X, Y, imgObj, hitBoxObj)
@@ -299,7 +299,7 @@ function create_game_test() {
 
             let X = x_objs[i]
             let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 50, 50);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 50, 50, 3);
             // let hitBoxObj = new HitBox_Circle(X, Y, 20)
             let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 50, 50)
             new Bonus_Invicibility(X, Y, imgObj, hitBoxObj)
@@ -372,14 +372,14 @@ function create_game_survive() {
 
     let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
     // animated img
-    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, spritesPlayerDead)
+    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, 6, spritesPlayerDead)
     // hitbox
     // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
     //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
     let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, 30, 50)
 
     // object
-    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
+    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso, 10);
 
 
     // OBSTACLES
@@ -404,7 +404,7 @@ function create_game_survive() {
                     spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
                 }
 
-                // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
+                // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
                 let imgObj = new My_Circle(X, Y, 30, "#0000FF");
                 //hitBox
                 let hitBoxObj = new HitBox_Circle(X, Y, 30)
@@ -445,7 +445,7 @@ function create_game_survive() {
 
             let X = coords[i].x
             let Y = coords[i].y
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src, ASSETS_DIR+"test_icone"+PNG_EXT);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"test_icone"+PNG_EXT);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
             let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
             new Enemy_Turret(X, Y, imgObj, hitBoxObj)

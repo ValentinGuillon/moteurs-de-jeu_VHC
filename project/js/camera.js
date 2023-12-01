@@ -7,7 +7,7 @@ export class Camera {
         this.x = x;
         this.y = y;
         this.imgBackground = imgBackground;
-        this.smoothness = 2; //a small value made a harder camera
+        this.smoothness = 10; //a small value made a harder camera
     }
 
 

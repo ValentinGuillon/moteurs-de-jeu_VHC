@@ -203,16 +203,16 @@ function execute_inputs() {
 }
 
 
-function animations() {
+function animations(timestamp) {
     for (const obj of My_Object.instances) {
-        obj.animate();
+        obj.animate(timestamp);
     }
 }
 
 
-function actions() {
+function actions(timestamp) {
     for (const obj of My_Object.instances) {
-        obj.action();
+        obj.action(timestamp);
     }
 }
 
@@ -241,16 +241,18 @@ function updateGui() {
 
 
 function refresh(timestamp) {
-    My_Object.sort_objects();
-    animations();
+    animations(timestamp);
     execute_inputs();
-    actions();
-
+    actions(timestamp);
+    My_Object.clear_dead_objects();
+    My_Object.sort_objects();
+    
     //the camera follows either the player or the canvas's center
     if (camera) {
         let objPlayer = get_player_object()
         if (objPlayer) {
             camera.update(My_Object.instances, objPlayer);
+            console.log(objPlayer.speed)
         }
         else {
             camera.update(My_Object.instances, undefined, CNV.width/2, CNV.height/2);
@@ -259,10 +261,9 @@ function refresh(timestamp) {
 
     draw();
 
-    My_Object.clear_dead_objects();
-    
     updateGui()
+    requestAnimationFrame(refresh);
 }
 
 create_home_page();
-setInterval(refresh, 100);
+requestAnimationFrame(refresh);
