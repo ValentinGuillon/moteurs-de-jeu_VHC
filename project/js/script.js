@@ -20,8 +20,8 @@ CTX.imageSmoothingEnabled = false;
 
 let gui = new dat.gui.GUI();
 
-export const assetsDir = "assets/"
-export const pngExt = ".png";
+export const ASSETS_DIR = "./assets/"
+export const PNG_EXT = ".png";
 
 
 
@@ -240,7 +240,7 @@ function updateGui() {
 }
 
 
-function refresh() {
+function refresh(timestamp) {
     My_Object.sort_objects();
     animations();
     execute_inputs();

@@ -1,12 +1,10 @@
 
-import { CNV, CTX } from "./script.js";
+import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { My_Img, My_Img_Animated } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { getRandom } from "./tools.js";
 
 
-let assetsDir = "assets/"
-let pngExt = ".png";
 
 
 
@@ -562,12 +560,12 @@ export class Player extends My_Object {
         }
         let sprite_ball_src = [];
         for (let i = 0; i < 4; i++) {
-            sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
+            sprite_ball_src.push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
         }
 
         let sprites_explosion_src = [];
         for (let i = 0; i < 8; i++) {
-            sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
+            sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
@@ -687,17 +685,17 @@ export class Enemy_Turret extends My_Object {
         }
         let sprite_ball_src = [];
         for (let i = 0; i < 4; i++) {
-            sprite_ball_src.push(assetsDir + "fireballs_mid_" + (i+1) + pngExt);
+            sprite_ball_src.push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
         }
 
         let sprites_explosion_src = [];
         for (let i = 0; i < 8; i++) {
-            sprites_explosion_src.push(assetsDir + "explosion_balle_" + (i+1) + pngExt);
+            sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
         // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, assetsDir + "fireballs_mid_mask" + pngExt, 20, 15)
+        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, 20, 15)
         new Enemy_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
     }
 

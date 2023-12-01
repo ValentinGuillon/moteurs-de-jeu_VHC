@@ -1,5 +1,5 @@
 
-let assetsDir = "assets/"
+import { ASSETS_DIR } from "./script.js";
 
 export class Jukebox {
     constructor() {
@@ -32,7 +32,7 @@ export class Jukebox {
 
     play_main_menu() {
         this.stop_music();
-        this.music = new Audio(assetsDir + "in-game_lugubre_v0.1.mp3");
+        this.music = new Audio(ASSETS_DIR + "in-game_lugubre_v0.1.mp3");
         if (this.muted) {
             this.music.volume = 0.0;
         }
@@ -45,7 +45,7 @@ export class Jukebox {
 
     play_game() {
         this.stop_music();
-        this.music = new Audio(assetsDir + "main-menu_v1.mp3");
+        this.music = new Audio(ASSETS_DIR + "main-menu_v1.mp3");
         if (this.muted) {
             this.music.volume = 0.0;
         }
