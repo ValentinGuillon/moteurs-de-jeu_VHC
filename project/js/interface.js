@@ -1,4 +1,5 @@
 
+import { CNV, CTX } from "./script.js";
 import { getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
@@ -22,9 +23,7 @@ export let jukebox = new Jukebox()
 
 
 export class My_Button {
-    constructor(ctx, cnv, type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
-        this.ctx = ctx;
-        this.cnv = cnv;
+    constructor(type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
         this.type = type
         this.x = x;
         this.y = y;
@@ -63,22 +62,22 @@ export class My_Button {
         switch (this.type) {
             case "home":
                 console.log("hOme")
-                create_main_menu(this.ctx, this.cnv)
+                create_main_menu()
                 break;
 
             case "play_test":
                 console.log("plAy game test")
-                create_game_test(this.ctx, this.cnv)
+                create_game_test()
                 break;
 
             case "play_game":
                 console.log("plAy game survive")
-                create_game_survive(this.ctx, this.cnv)
+                create_game_survive()
                 break;
 
             case "go_main-menu":
                 console.log("back menu")
-                create_main_menu(this.ctx, this.cnv)
+                create_main_menu()
                 break;
 
             case "mute_music":
@@ -101,7 +100,7 @@ export class My_Button {
 
 
     draw_zone() {
-        draw_rect(this.ctx, this.x, this.y-this.height, this.width, this.height, this.back_color);
+        draw_rect(this.x, this.y-this.height, this.width, this.height, this.back_color);
     }
 
 
@@ -115,16 +114,16 @@ export class My_Button {
 
 
 export class Button_with_text extends My_Button {
-    constructor(ctx, cnv, text, type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
-        super(ctx, cnv, type, x, y, width, height, font_color, back_color)
+    constructor(text, type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
+        super(type, x, y, width, height, font_color, back_color)
         this.text = text;
     }
 
     draw() {
         this.draw_zone();
-        this.ctx.font = "48px serif";
-        this.ctx.fillStyle = this.font_color;
-        this.ctx.fillText(this.text, this.x, this.y);
+        CTX.font = "48px serif";
+        CTX.fillStyle = this.font_color;
+        CTX.fillText(this.text, this.x, this.y);
     }
 
     update_text(new_text) {
@@ -145,43 +144,43 @@ export class Button_with_text extends My_Button {
 
 
 
-export function create_home_page(ctx, cnv) {
-    new Button_with_text(ctx, cnv, "Launch Game", "home", 200, 100, 100, 100, "#00FFFF")
-    new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+export function create_home_page() {
+    new Button_with_text("Launch Game", "home", 200, 100, 100, 100, "#00FFFF")
+    new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
 }
 
 
 
-function create_main_menu(ctx, cnv) {
+function create_main_menu() {
     jukebox.play_main_menu()
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
-    new Button_with_text(ctx, cnv, "Test", "play_test", cnv.width/2-100, 200, 100, 100, "#00FFFF")
-    new Button_with_text(ctx, cnv, "Play", "play_game", cnv.width/2-100, 320, 100, 100, "#00FFFF")
+    new Button_with_text("Test", "play_test", CNV.width/2-100, 200, 100, 100, "#00FFFF")
+    new Button_with_text("Play", "play_game", CNV.width/2-100, 320, 100, 100, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
     else {
-        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
     let imgBackgroundName = "arena";
     let spriteBackground = assetsDir + imgBackgroundName + pngExt;
-    imgBackground.overwrite(spriteBackground, cnv.width/2, cnv.height/2, cnv.width, cnv.height);
+    imgBackground.overwrite(spriteBackground, CNV.width/2, CNV.height/2, CNV.width, CNV.height);
 
-    camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
+    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
 }
 
 
 
-function create_game_test(ctx, cnv) {
+function create_game_test() {
     jukebox.play_game()
     My_Button.destroy_buttons()
-    new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
+    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
     else {
-        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
 
 
@@ -189,7 +188,7 @@ function create_game_test(ctx, cnv) {
     // image
     let imgBackgroundName = "arena";
     let spriteBackground = assetsDir + imgBackgroundName + pngExt;
-    imgBackground.overwrite(spriteBackground, cnv.width/2, cnv.height/2, cnv.width*2, cnv.height*2);
+    imgBackground.overwrite(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*2, CNV.height*2);
 
 
     //PLAYER
@@ -204,13 +203,13 @@ function create_game_test(ctx, cnv) {
         spritesPlayerDead.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
     }
 
-    let xPlayer = cnv.width/2; let yPlayer = cnv.height/2;
+    let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
     // animated img
     let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, spritesPlayerDead)
     // hitbox
     // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
     //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
-    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
+    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50)
 
     // object
     let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
@@ -221,8 +220,8 @@ function create_game_test(ctx, cnv) {
 
     // OBSTACLES
     {
-        let x_mid = cnv.width / 2
-        let y_mid = cnv.height / 2
+        let x_mid = CNV.width / 2
+        let y_mid = CNV.height / 2
         let x_objs = [x_mid+60, x_mid-60, x_mid+60, x_mid-60]
         let y_objs = [y_mid-60, y_mid+60, y_mid+60, y_mid-60]
         //with circle hitBox
@@ -252,7 +251,7 @@ function create_game_test(ctx, cnv) {
             let Y = y_objs[i]
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60);
             //hitBox
-            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 60, 60, ctx)
+            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 60, 60)
             new Obstacle(X, Y, imgObj, hitBoxObj)
         }
     }
@@ -261,8 +260,8 @@ function create_game_test(ctx, cnv) {
     // TOWERS
     {
         let diff = 30;
-        let x_objs = [diff, diff, cnv.width-diff, cnv.width-diff]
-        let y_objs = [diff, cnv.height-diff, diff, cnv.height-diff]
+        let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
+        let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
         for (let i = 0; i < 4; i++) {
             let imgName = "towers_";
             let nb = [6, 6, 7, 7, 8, 8, 7, 7];
@@ -279,19 +278,19 @@ function create_game_test(ctx, cnv) {
             let Y = y_objs[i]
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
-            new Enemy_Turret(X, Y, imgObj, hitBoxObj, ctx)
+            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40)
+            new Enemy_Turret(X, Y, imgObj, hitBoxObj)
         }
     }
 
 
     // BONUS
     {
-        let x_mid = cnv.width / 2
-        let y_mid = cnv.height / 2
+        let x_mid = CNV.width / 2
+        let y_mid = CNV.height / 2
         let diff = 40;
-        let x_objs = [diff, x_mid, x_mid, cnv.width-diff]
-        let y_objs = [y_mid, diff, cnv.height-diff, y_mid]
+        let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
+        let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
         for (let i = 0; i < 4; i++) {
             let imgName = "stars_";
             let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
@@ -304,7 +303,7 @@ function create_game_test(ctx, cnv) {
             let Y = y_objs[i]
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 50, 50);
             // let hitBoxObj = new HitBox_Circle(X, Y, 20)
-            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 50, 50, ctx)
+            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 50, 50)
             new Bonus_Invicibility(X, Y, imgObj, hitBoxObj)
         }
     }
@@ -315,8 +314,8 @@ function create_game_test(ctx, cnv) {
         //Ennemis qui poursuivent le joueur
         let nombreEnnemis = 10;
         for (let i = 0; i < nombreEnnemis; i++) {
-            let enemyX = getRandom((cnv.width/3)*2, cnv.width); // Position X aléatoire
-            let enemyY = getRandom(0, cnv.height); // Position Y aléatoire
+            let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
+            let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
 
             let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
             //Hitbox sous forme de cercle
@@ -327,27 +326,27 @@ function create_game_test(ctx, cnv) {
 
 
 
-    camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
+    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
 }
 
 
 
-function create_game_survive(ctx, cnv) {
+function create_game_survive() {
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
-    new Button_with_text(ctx, cnv, "X", "go_main-menu", cnv.width-40, 40, 30, 30, "#00FFFF")
+    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text(ctx, cnv, "Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
     else {
-        new Button_with_text(ctx, cnv, "Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
 
-    let cnvMidX = cnv.width/2
-    let cnvMidY = cnv.height/2
-    let mapWidth = cnv.width*4
-    let mapHeight = cnv.height*4
+    let cnvMidX = CNV.width/2
+    let cnvMidY = CNV.height/2
+    let mapWidth = CNV.width*4
+    let mapHeight = CNV.height*4
 
     let limits = {
         "x":      cnvMidX-(mapWidth/2),
@@ -373,13 +372,13 @@ function create_game_survive(ctx, cnv) {
         spritesPlayerDead.push(assetsDir + "explosion_perso_" + (i+1) + pngExt);
     }
 
-    let xPlayer = cnv.width/2; let yPlayer = cnv.height/2;
+    let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
     // animated img
     let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, spritesPlayerDead)
     // hitbox
     // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
     //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
-    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50, ctx)
+    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, assetsDir+imgPlayerName+"mask_v2"+pngExt, 30, 50)
 
     // object
     let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
@@ -430,9 +429,9 @@ function create_game_survive(ctx, cnv) {
         ]
         // let coords = [
         //     {"x": -offset,     "y": offset},
-        //     {"x": -offset,     "y": cnv.height - offset},
-        //     {"x": cnv.width - offset, "y": offset},
-        //     {"x": cnv.width - offset, "y": cnv.height - offset},
+        //     {"x": -offset,     "y": CNV.height - offset},
+        //     {"x": CNV.width - offset, "y": offset},
+        //     {"x": CNV.width - offset, "y": CNV.height - offset},
         // ]
         for (let i = 0; i < coords.length; i++) {
             let imgName = "towers_";
@@ -450,8 +449,8 @@ function create_game_survive(ctx, cnv) {
             let Y = coords[i].y
             let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, sprites_explosion_src, assetsDir+"test_icone"+pngExt);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40, ctx)
-            new Enemy_Turret(X, Y, imgObj, hitBoxObj, ctx)
+            let hitBoxObj = new HitBox_Mask(X, Y, assetsDir+imgName+"mask_v2"+pngExt, 40, 40)
+            new Enemy_Turret(X, Y, imgObj, hitBoxObj)
         }
     }
 
@@ -461,10 +460,10 @@ function create_game_survive(ctx, cnv) {
         let nombreObj = 10;
         for (let i = 0; i < nombreObj; i++) {
             //define position
-            let X = getRandom(10, cnv.width-10);
-            let Y = getRandom(cnvMidX+20, cnv.height-10);
+            let X = getRandom(10, CNV.width-10);
+            let Y = getRandom(cnvMidX+20, CNV.height-10);
             let restart = false;
-            if (!is_in_rect(X, Y, 10, 10, cnv.width-10, cnv.height-10)) {
+            if (!is_in_rect(X, Y, 10, 10, CNV.width-10, CNV.height-10)) {
                 restart = true;
             }
             if (is_in_rect(X, Y, cnvMidX-50, cnvMidY-50, cnvMidX+50, cnvMidY+50)) {
@@ -484,7 +483,7 @@ function create_game_survive(ctx, cnv) {
     }
 
 
-    camera = new Camera(cnv.width/2, cnv.height/2, imgBackground);
+    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
 }
 
 

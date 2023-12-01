@@ -1,4 +1,5 @@
 
+import { CTX } from "./script.js";
 import { distance, convert } from "./tools.js";
 import { draw_rect, draw_point } from "./imgs.js";
 
@@ -39,7 +40,7 @@ export class HitBox_Circle {
     }
 
 
-    draw_contours(ctx) {
+    draw_contours() {
         if (!this.contours) { return; }
 
         let thickness = 2;
@@ -49,12 +50,12 @@ export class HitBox_Circle {
             color = "#FF0000AA";
         }
 
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-        ctx.lineWidth = thickness;
-        ctx.strokeStyle = color;
-        ctx.stroke();
-        ctx.closePath();
+        CTX.beginPath();
+        CTX.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
+        CTX.lineWidth = thickness;
+        CTX.strokeStyle = color;
+        CTX.stroke();
+        CTX.closePath();
     }
 }
 
@@ -66,12 +67,11 @@ export class HitBox_Circle {
  * Le fond doit être transparent
  */
 export class HitBox_Mask {
-    constructor(x, y, img, width, height, ctx) {
+    constructor(x, y, img, width, height) {
         this.x = x - (width/2);
         this.y = y - (height/2);
         this.width = width;
         this.height = height;
-        this.ctx = ctx
         this.mask = [] //boolens correspondant aux pixels d'une image
         this.mask_created = false;
         
@@ -107,7 +107,7 @@ export class HitBox_Mask {
 
         //collide with other mask
         if (obj instanceof HitBox_Mask) {
-            // draw_rect(this.ctx, this.x, this.y, this.width, this.height, "#55555511")
+            // draw_rect(this.x, this.y, this.width, this.height, "#55555511")
             return this.collide_with_mask(obj);
         }
         //collide with Circle
@@ -156,11 +156,11 @@ export class HitBox_Mask {
                 let iOther = xOther + (yOther * obj.width);
 
                 // if (this.mask[iThis]) {
-                //     draw_point(this.ctx, X, Y, "#00FF0055")
+                //     draw_point(X, Y, "#00FF0055")
                 // }
 
                 if (this.mask[iThis] && obj.mask[iOther]) {
-                    // draw_rect(this.ctx, X-1, Y-1, 3, 3, "#FF0000")
+                    // draw_rect(X-1, Y-1, 3, 3, "#FF0000")
                     // console.log("collision")
                     return true; // Collision detected
                 }
@@ -176,14 +176,14 @@ export class HitBox_Mask {
         //ex: si l'obj est en haut à gauche, il faut vérifier ignorer les pixels dans la partie bas-droite de this.mask (donc x > width/2 && y > height/2)
         //ex: --   obj ----   bas, il faut ignore les pixels d'en haut (donc y < this.height/2)
 
-        // draw_rect(this.ctx, obj.x-10, obj.y-10, 20, 20, "#FF000055")
+        // draw_rect(obj.x-10, obj.y-10, 20, 20, "#FF000055")
         
-        // this.ctx.beginPath();
-        // this.ctx.arc(obj.x, obj.y, obj.radius, 0, 2*Math.PI);
-        // this.ctx.lineWidth = 2;
-        // this.ctx.fillStyle = "#0000FF55";
-        // this.ctx.fill();
-        // this.ctx.closePath();
+        // CTX.beginPath();
+        // CTX.arc(obj.x, obj.y, obj.radius, 0, 2*Math.PI);
+        // CTX.lineWidth = 2;
+        // CTX.fillStyle = "#0000FF55";
+        // CTX.fill();
+        // CTX.closePath();
 
         //pre check
         //check if objects overlaps
@@ -199,10 +199,10 @@ export class HitBox_Mask {
         for (let j = 0; j < this.height; j++) {
             for (let i = 0; i < this.width; i++) {
                 if (!this.mask[i + j*this.width]) { continue; }
-                // draw_point(this.ctx, this.x+i, this.y+j, "#00FF00")
+                // draw_point(this.x+i, this.y+j, "#00FF00")
                 let dist = distance(obj.x, obj.y, this.x+i, this.y+j)
                 if (dist < obj.radius) { 
-                    // draw_rect(this.ctx, this.x+i-1, this.y+j-1, 3, 3, "#FF0000")
+                    // draw_rect(this.x+i-1, this.y+j-1, 3, 3, "#FF0000")
                     // console.log("collision")
                     return true; }
             }
@@ -218,11 +218,11 @@ export class HitBox_Mask {
 
     get_pixels() {
         //draw the img
-        draw_rect(this.ctx, 0, 0, this.width, this.height, "#00FF00")
-        this.ctx.drawImage(this.img, 0, 0, this.width, this.height);
+        draw_rect(0, 0, this.width, this.height, "#00FF00")
+        CTX.drawImage(this.img, 0, 0, this.width, this.height);
 
         //get pixels data where the img was drawn
-        let imgData = this.ctx.getImageData(0, 0, this.width, this.height)
+        let imgData = CTX.getImageData(0, 0, this.width, this.height)
         return imgData.data;
     }
 
@@ -262,14 +262,16 @@ export class HitBox_Mask {
         for (let j = 0; j < this.height; j++) {
             for (let k = 0; k < this.width; k++, i++) {
                 if (!this.mask[i]) { continue; }
-                draw_point(this.ctx, this.x+k, this.y+j, color)
+                draw_point(this.x+k, this.y+j, color)
             }
         }
     }
 
 
-    draw_contours(ctx) {
+    draw_contours() {
         if (!this.contours) { return; }
+        if (this instanceof HitBox_Mask) {
+        }
         this.draw_mask()
     }
 }

@@ -1,18 +1,18 @@
 
-
+import { CNV, CTX } from "./script.js";
 import { is_in_rect, distance, min } from "./tools.js";
 
-export function draw_rect(ctx, x, y, width, height, color) {
-    ctx.beginPath();
-    ctx.rect(x, y, width, height);
-    ctx.fillStyle = color
-    ctx.fill();
-    ctx.closePath();
+export function draw_rect(x, y, width, height, color) {
+    CTX.beginPath();
+    CTX.rect(x, y, width, height);
+    CTX.fillStyle = color
+    CTX.fill();
+    CTX.closePath();
 }
 
 
-export function draw_point(ctx, x, y, color) {
-    draw_rect(ctx, x, y, 1, 1, color);
+export function draw_point(x, y, color) {
+    draw_rect(x, y, 1, 1, color);
 }
 
 
@@ -57,27 +57,27 @@ export class My_Img {
     }
 
 
-    draw(ctx, cnv, drawBackground = false) {
+    draw(drawBackground = false) {
         if (!this.imgSrc) { return; }
         if (!this.visible) { return; }
-        if (this.iconeSrc && this.is_out_of_canvas(cnv) && !drawBackground) {
-            this.draw_icone(ctx, cnv);
+        if (this.iconeSrc && this.is_out_of_canvas() && !drawBackground) {
+            this.draw_icone();
         }
-        if (drawBackground || !this.is_entirely_out_of_canvas(cnv)) {
-            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+        if (drawBackground || !this.is_entirely_out_of_canvas()) {
+            CTX.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
 
-    draw_icone(ctx, cnv) {
+    draw_icone() {
         let target = {"x": this.x+this.width/2, "y": this.y+this.height/2}
-        let origin = {"x": cnv.width/2, "y": cnv.height/2}
+        let origin = {"x": CNV.width/2, "y": CNV.height/2}
         let dist = distance(target.x, target.y, origin.x, origin.y)
         let vector = {"x": (target.x - origin.x)/dist , "y": (target.y - origin.y) /dist}
 
         let border = {"x": 0, "y": 0};
-        if (vector.x > 0) { border.x = cnv.width; }
-        if (vector.y > 0) { border.y = cnv.height; }
-        let distFromBorder = cnv.width + cnv.height;
+        if (vector.x > 0) { border.x = CNV.width; }
+        if (vector.y > 0) { border.y = CNV.height; }
+        let distFromBorder = CNV.width + CNV.height;
 
         //move the origin to the target until he's near the border
         while (distFromBorder > 30) {
@@ -106,17 +106,17 @@ export class My_Img {
         else if (dist > 100) {
             size = Math.abs(size*0.8);
         }
-        ctx.drawImage(this.icone, X-size/2, Y-size/2, size, size);
+        CTX.drawImage(this.icone, X-size/2, Y-size/2, size, size);
     }
 
-    is_out_of_canvas(cnv) {
-        if (!is_in_rect(this.x+this.width/2, this.y+this.height/2, 0, 0, cnv.width, cnv.height)) {
+    is_out_of_canvas() {
+        if (!is_in_rect(this.x+this.width/2, this.y+this.height/2, 0, 0, CNV.width, CNV.height)) {
             return true;
         }
         return false;
     }
 
-    is_entirely_out_of_canvas(cnv) {
+    is_entirely_out_of_canvas() {
         let left = this.x - this.width/2;
         let right = this.x + this.width/2;
         let up = this.y - this.height/2;
@@ -129,7 +129,7 @@ export class My_Img {
         ]
 
         for (let i = 0; i < 4; i++) {
-            if (is_in_rect(coords[i].x, coords[i].y, 0, 0, cnv.width, cnv.height)) {
+            if (is_in_rect(coords[i].x, coords[i].y, 0, 0, CNV.width, CNV.height)) {
                 return false;
             }
         }
@@ -193,13 +193,13 @@ export class My_Circle {
     }
 
 
-    draw(ctx, cnv) {
+    draw() {
         if (!this.visible) { return; }
 
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.rad, 0, 2*Math.PI);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.closePath();
+        CTX.beginPath();
+        CTX.arc(this.x, this.y, this.rad, 0, 2*Math.PI);
+        CTX.fillStyle = this.color;
+        CTX.fill();
+        CTX.closePath();
     }
 }

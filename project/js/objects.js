@@ -1,5 +1,5 @@
 
-
+import { CNV, CTX } from "./script.js";
 import { My_Img, My_Img_Animated } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { getRandom } from "./tools.js";
@@ -214,7 +214,7 @@ export class My_Object {
 
     //follows this.action()
     //called after collisions has been checked
-    auto_actions(cnv) {
+    auto_actions() {
         return;
     }
 
@@ -224,7 +224,7 @@ export class My_Object {
      * MAIN METHODS (called outside)
      */
 
-    action(cnv, ctx) {
+    action() {
         this.status_update();
         
         if (this.dead) { return; }
@@ -233,13 +233,13 @@ export class My_Object {
 
         this.move();
 
-        // draw_rect(ctx, this.x-5, this.y-5, 10, 10, "#000000")
+        // draw_rect(this.x-5, this.y-5, 10, 10, "#000000")
         if (this.hitBox) {
             let continu = check_collisions(this, My_Object.instances);
             if (!continu) { return; }
         }
 
-        this.auto_actions(cnv);
+        this.auto_actions();
     }
 
 
@@ -256,13 +256,13 @@ export class My_Object {
 
 
 
-    draw(ctx, cnv) {
+    draw() {
         if (this.dead) { return ; }
         if (this.object_image) { 
-            this.object_image.draw(ctx, cnv);
+            this.object_image.draw();
         }
         if (this.hitBox) {
-            this.hitBox.draw_contours(ctx);
+            this.hitBox.draw_contours();
         }
     }
 
@@ -379,14 +379,14 @@ export class My_Object {
     }
 
 
-    draw_invincible(ctx) {
+    draw_invincible() {
         let radius = (this.hitBox.width+this.hitBox.height) / 4
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, radius, 0, 2*Math.PI);
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#9e9e97";
-        ctx.stroke();
-        ctx.closePath();
+        CTX.beginPath();
+        CTX.arc(this.x, this.y, radius, 0, 2*Math.PI);
+        CTX.lineWidth = 2;
+        CTX.strokeStyle = "#9e9e97";
+        CTX.stroke();
+        CTX.closePath();
     }
 
 
@@ -474,7 +474,7 @@ export class My_Object {
 
 //     //follows this.action()
 //     //called after collisions has been checked
-//     auto_actions(cnv) {
+//     auto_actions() {
 //         return;
 //     }
 // }
@@ -544,8 +544,8 @@ export class Player extends My_Object {
     }
 
 
-    auto_actions(cnv) {
-        this.check_out_of_screen(cnv);
+    auto_actions() {
+        this.check_out_of_screen();
         this.tirer();
     }
 
@@ -588,10 +588,10 @@ export class Player extends My_Object {
     }
 
 
-    check_out_of_screen(cnv) {
+    check_out_of_screen() {
         //out of screen
-        let limit_right = cnv.width;
-        let limit_down = cnv.height;
+        let limit_right = CNV.width;
+        let limit_down = CNV.height;
 
         if (this.x > limit_right) {
             this.update_position(-limit_right, 0)
@@ -634,16 +634,16 @@ export class Player extends My_Object {
     }
 
 
-    draw(ctx, cnv) {
+    draw() {
         if (this.dead) { return ; }
         if (this.object_image) { 
-            this.object_image.draw(ctx, cnv);
+            this.object_image.draw();
         }
         if (this.invincible) {
-            this.draw_invincible(ctx);
+            this.draw_invincible();
         }
         if (this.hitBox) {
-            this.hitBox.draw_contours(ctx);
+            this.hitBox.draw_contours();
         }
     }
 }
@@ -652,12 +652,11 @@ export class Player extends My_Object {
 
 
 export class Enemy_Turret extends My_Object {
-    constructor(x, y, object_image, hitBox, ctx) {
+    constructor(x, y, object_image, hitBox) {
         super(x, y, object_image, hitBox, "enemy_turret");
         this.shoot = true;
         this.delay = 5;
         this.timer = 0;
-        this.ctx = ctx
     }
 
     die() {
@@ -672,7 +671,7 @@ export class Enemy_Turret extends My_Object {
         }
     }
 
-    auto_actions(cnv) {
+    auto_actions() {
         this.tirer();
     }
 
@@ -698,7 +697,7 @@ export class Enemy_Turret extends My_Object {
 
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, sprites_explosion_src)
         // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, assetsDir + "fireballs_mid_mask" + pngExt, 20, 15, this.ctx)
+        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, assetsDir + "fireballs_mid_mask" + pngExt, 20, 15)
         new Enemy_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
     }
 
@@ -723,16 +722,16 @@ export class Enemy_Projectile extends My_Object {
         super(x, y, object_image, hitBox, "enemy_projectile", velocityX, velocityY);
     }
 
-    auto_actions(cnv) {
-        if (this.is_out_of_screen(cnv)) {
+    auto_actions() {
+        if (this.is_out_of_screen()) {
             this.die();
         }
     }
 
-    is_out_of_screen(cnv) {
-        let out_right = this.x > cnv.width;
+    is_out_of_screen() {
+        let out_right = this.x > CNV.width;
         let out_left = this.x < 0;
-        let out_down = this.y > cnv.height;
+        let out_down = this.y > CNV.height;
         let out_up = this.y < 0;
         return out_right || out_left || out_down || out_up;
     }
@@ -747,16 +746,16 @@ export class Ally_Projectile extends My_Object {
         super(x, y, object_image, hitBox, "ally_projectile", velocityX, velocityY);
     }
 
-    auto_actions(cnv) {
-        if (this.is_out_of_screen(cnv)) {
+    auto_actions() {
+        if (this.is_out_of_screen()) {
             this.die();
         }
     }
 
-    is_out_of_screen(cnv) {
-        let out_right = this.x > cnv.width;
+    is_out_of_screen() {
+        let out_right = this.x > CNV.width;
         let out_left = this.x < 0;
-        let out_down = this.y > cnv.height;
+        let out_down = this.y > CNV.height;
         let out_up = this.y < 0;
         return out_right || out_left || out_down || out_up;
     }
@@ -772,7 +771,7 @@ export class Enemy_Chasing extends My_Object {
         this.chaseSpeed = 6; // Vitesse de poursuite de l'ennemi
     }
 
-    auto_actions(cnv) {
+    auto_actions() {
         this.chasePlayer();
     }
 

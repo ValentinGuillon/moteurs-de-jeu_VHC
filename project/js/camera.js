@@ -1,4 +1,5 @@
 
+import { CNV, CTX } from "./script.js";
 
 
 export class Camera {
@@ -32,14 +33,14 @@ export class Camera {
 
 
     //déplace la "caméra" pour placer X et Y au centre de l'écran
-    update(cnv, objects, obj_focus = undefined, X = 0, Y = 0) {
+    update(objects, obj_focus = undefined, X = 0, Y = 0) {
         if (obj_focus) {
             if (obj_focus.dead || obj_focus.dying) { return; }
             X = obj_focus.x; Y = obj_focus.y;
         }
 
-        let x_mid = cnv.width / 2
-        let y_mid = cnv.height / 2
+        let x_mid = CNV.width / 2
+        let y_mid = CNV.height / 2
         
         let diff_x = x_mid - X
         let diff_y = y_mid - Y

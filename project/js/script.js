@@ -13,15 +13,15 @@ import { My_Object } from "./objects.js";
 import { My_Button, create_home_page, imgBackground, camera } from "./interface.js";
 
 
-let cnv = document.getElementById("myCanvas");
-let ctx = cnv.getContext("2d");
+export const CNV = document.getElementById("myCanvas");
+export const CTX = CNV.getContext("2d");
 
-ctx.imageSmoothingEnabled = false;
+CTX.imageSmoothingEnabled = false;
 
 let gui = new dat.gui.GUI();
 
-let assetsDir = "assets/"
-let pngExt = ".png";
+export const assetsDir = "assets/"
+export const pngExt = ".png";
 
 
 
@@ -103,8 +103,8 @@ towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_to
 
 
 // click detection
-cnv.addEventListener('click', function(evt) {
-    var mousePos = getMousePos(cnv, evt);
+CNV.addEventListener('click', function(evt) {
+    var mousePos = getMousePos(evt);
     execute_click(mousePos, My_Button.instances)
 }, false);
 
@@ -119,9 +119,9 @@ onkeydown = onkeyup = function(e){
 
 
 // Function to get the mouse position
-function getMousePos(cnv, event) {
+function getMousePos(event) {
     if (!event) { return; }
-    var rect = cnv.getBoundingClientRect();
+    var rect = CNV.getBoundingClientRect();
     return {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top,
@@ -212,20 +212,20 @@ function animations() {
 
 function actions() {
     for (const obj of My_Object.instances) {
-        obj.action(cnv, ctx);
+        obj.action();
     }
 }
 
 
 function draw() {
-    ctx.clearRect(0, 0, cnv.width, cnv.height);
+    CTX.clearRect(0, 0, CNV.width, CNV.height);
     //draw background
     if (imgBackground) {
-        imgBackground.draw(ctx, cnv, true);
+        imgBackground.draw(true);
     }
     //draw objects
     for (const obj of My_Object.instances) {
-        obj.draw(ctx, cnv);
+        obj.draw();
     }
     //draw buttons
     for (const btn of My_Button.instances) {
@@ -250,10 +250,10 @@ function refresh() {
     if (camera) {
         let objPlayer = get_player_object()
         if (objPlayer) {
-            camera.update(cnv, My_Object.instances, objPlayer);
+            camera.update(My_Object.instances, objPlayer);
         }
         else {
-            camera.update(cnv, My_Object.instances, undefined, cnv.width/2, cnv.height/2);
+            camera.update(My_Object.instances, undefined, CNV.width/2, CNV.height/2);
         }
     }
 
@@ -264,5 +264,5 @@ function refresh() {
     updateGui()
 }
 
-create_home_page(ctx, cnv);
+create_home_page();
 setInterval(refresh, 100);
