@@ -343,8 +343,8 @@ function create_game_survive() {
 
     let cnvMidX = CNV.width/2
     let cnvMidY = CNV.height/2
-    let mapWidth = CNV.width*4
-    let mapHeight = CNV.height*4
+    let mapWidth = CNV.width*8
+    let mapHeight = CNV.height*8
 
     let limits = {
         "x":      cnvMidX-(mapWidth/2),
@@ -353,7 +353,7 @@ function create_game_survive() {
         "height": mapHeight,
     }
 
-    let imgBackgroundName = "arena";
+    let imgBackgroundName = "forest_map";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
     imgBackground.overwrite(spriteBackground, cnvMidX, cnvMidY, limits.width, limits.height);
 
