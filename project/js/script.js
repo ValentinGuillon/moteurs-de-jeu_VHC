@@ -252,7 +252,6 @@ function refresh(timestamp) {
         let objPlayer = get_player_object()
         if (objPlayer) {
             camera.update(My_Object.instances, objPlayer);
-            console.log(objPlayer.speed)
         }
         else {
             camera.update(My_Object.instances, undefined, CNV.width/2, CNV.height/2);

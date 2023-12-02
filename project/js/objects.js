@@ -294,26 +294,6 @@ export class My_Object {
         }
     }
 
-    
-    //WIP, to replace recul()
-    //a diagonal must must allow one movement
-    //ex: if the wall is on right, a right-up step must allow an up step.
-    //DONE
-    //ça fait chier si la nouvelle position est dans une autre collision
-    roll_back(other) {
-        let x_diff = this.previousX - this.x;
-        let y_diff = this.previousY - this.y;
-
-        let allowed = false;
-        //test roll back x
-        this.update_position(x_diff, 0);
-        if (!(other.hitBox.is_colliding(this.hitBox))) { allowed = true; }
-        //test roll back y
-        if (!allowed) {
-            this.update_position(-x_diff, y_diff);
-        }
-        if (other.hitBox.is_colliding(this.hitBox)) { console.log("bro ?")}
-    }
 
 
     rebond() {
