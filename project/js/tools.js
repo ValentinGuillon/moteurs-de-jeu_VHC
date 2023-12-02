@@ -12,6 +12,26 @@ export function distance(x1, y1, x2, y2) {
 }
 
 
+export function direction(fromX, fromY, toX, toY) {
+    const dist = distance(fromX, fromY, toX, toY);
+    const dirX = (toX - fromX) / dist
+    const dirY = (toY - fromY) / dist
+    return {"x": dirX, "y": dirY};
+}
+
+
+export function normalize(x, y) {
+    if (x == 0 || y == 0) { return {"x": x, "y": y}; }
+
+    const hypothenuse = Math.sqrt((x*x) + (y*y));
+
+    x /= hypothenuse;
+    y /= hypothenuse;
+
+    return {"x": x, "y": y};
+}
+
+
 export function convert(A, B, C) {
     //by ChatGPT
     // Convert each integer to a hexadecimal string and pad with zeros if needed

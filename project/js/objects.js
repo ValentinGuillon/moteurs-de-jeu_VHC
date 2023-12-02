@@ -2,7 +2,7 @@
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { getRandom } from "./tools.js";
+import { direction, getRandom, normalize } from "./tools.js";
 
 
 
@@ -285,17 +285,12 @@ export class My_Object {
 
 
     recul(obj) {
-        let reculX = this.speed;
-        let reculY = this.speed;
-
-        if (this.x < obj.x) {
-            reculX *= -1;
+        let vel = direction(obj.x, obj.y, this.x, this.y);
+        vel = normalize(vel.x, vel.y);
+        this.update_position(vel.x, vel.y);
+        if (this.hitBox.is_colliding(obj.hitBox)) {
+            this.recul(obj);
         }
-        if (this.y < obj.y) {
-            reculY *= -1;
-        }
-
-        this.update_position(reculX, reculY)
     }
 
     
@@ -510,7 +505,7 @@ export class Player extends My_Object {
         this.invicibility_duration = 5; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
     
-        this.shoot = true;
+        this.shoot = false;
         this.shot_by_seconds = 1; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
     }
@@ -665,7 +660,7 @@ export class Enemy_Turret extends My_Object {
     constructor(x, y, object_image, hitBox) {
         super(x, y, object_image, hitBox, "enemy_turret");
 
-        this.shoot = true;
+        this.shoot = false;
         this.shot_by_seconds = 3; // 1/X, to shot every X seconds
         this.timestampWhenLastShot = undefined;
     }
