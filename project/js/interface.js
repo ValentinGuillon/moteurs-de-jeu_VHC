@@ -445,7 +445,7 @@ function create_game_survive() {
 
             let X = coords[i].x
             let Y = coords[i].y
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"test_icone"+PNG_EXT);
+            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"towers_9"+PNG_EXT);
             // let hitBoxObj = new HitBox_Circle(X, Y, 15)
             let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
             new Enemy_Turret(X, Y, imgObj, hitBoxObj)
@@ -474,7 +474,7 @@ function create_game_survive() {
 
             //create object
             // let objImg = new My_Circle(X, Y, 20, "green")
-            let objImg = new My_Img(ASSETS_DIR+"test_mob"+PNG_EXT, X, Y, 40, 40, ASSETS_DIR+"test_icone_2"+PNG_EXT)
+            let objImg = new My_Img(ASSETS_DIR+"test_mob"+PNG_EXT, X, Y, 40, 40, ASSETS_DIR+"test_mob"+PNG_EXT)
             let objHitBox = new HitBox_Circle(X, Y, 20);
             new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
         }

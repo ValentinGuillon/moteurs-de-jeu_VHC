@@ -66,7 +66,7 @@ export class My_Img {
         this.icone = new Image();
         if(iconeSrc) {
             this.icone.src = this.iconeSrc;
-            this.iconeSize = 50;
+            this.iconeSize = 40;
         }
     }
 
@@ -113,19 +113,28 @@ export class My_Img {
         let Y = origin.y;
         dist = distance(target.x, target.y, X, Y);
         let size = this.iconeSize;
+        let thickness = 2;
         if (dist > 800) {
             size = Math.abs(size*0.2);
+            thickness *= 0.2;
         }
         else if (dist > 500) {
             size = Math.abs(size*0.4);
+            thickness *= 0.4;
         }
         else if (dist > 200) {
             size = Math.abs(size*0.6);
+            thickness *= 0.6;
         }
         else if (dist > 100) {
             size = Math.abs(size*0.8);
+            thickness *= 0.8;
         }
-        CTX.drawImage(this.icone, X-size/2, Y-size/2, size, size);
+
+        let subSize = size * 0.8;
+        draw_circle_fill(X, Y, size/2, "#000000");
+        draw_circle_stroke(X, Y, size/2, "#FFFFFF", thickness);
+        CTX.drawImage(this.icone, X-subSize/2, Y-subSize/2, subSize, subSize);
     }
 
     is_out_of_canvas() {
