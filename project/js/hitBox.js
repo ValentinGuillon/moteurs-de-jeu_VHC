@@ -1,7 +1,7 @@
 
 import { CTX } from "./script.js";
 import { distance, convert } from "./tools.js";
-import { draw_rect, draw_point } from "./imgs.js";
+import { draw_rect, draw_point, draw_circle_stroke, draw_circle_fill } from "./imgs.js";
 
 export class HitBox_Circle {
     constructor(x, y, radius) {
@@ -50,12 +50,7 @@ export class HitBox_Circle {
             color = "#FF0000AA";
         }
 
-        CTX.beginPath();
-        CTX.arc(this.x, this.y, this.radius, 0, 2*Math.PI);
-        CTX.lineWidth = thickness;
-        CTX.strokeStyle = color;
-        CTX.stroke();
-        CTX.closePath();
+        draw_circle_stroke(this.x, this.y, this.radius, color, thickness)
     }
 }
 
@@ -178,12 +173,7 @@ export class HitBox_Mask {
 
         // draw_rect(obj.x-10, obj.y-10, 20, 20, "#FF000055")
         
-        // CTX.beginPath();
-        // CTX.arc(obj.x, obj.y, obj.radius, 0, 2*Math.PI);
-        // CTX.lineWidth = 2;
-        // CTX.fillStyle = "#0000FF55";
-        // CTX.fill();
-        // CTX.closePath();
+        // draw_circle_fill(obj.x, obj.y, obj.radius, "#0000FF55")
 
         //pre check
         //check if objects overlaps

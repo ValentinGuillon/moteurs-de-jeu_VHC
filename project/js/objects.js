@@ -1,6 +1,6 @@
 
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
-import { My_Img, My_Img_Animated } from "./imgs.js"
+import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { getRandom } from "./tools.js";
 
@@ -389,12 +389,7 @@ export class My_Object {
 
     draw_invincible() {
         let radius = (this.hitBox.width+this.hitBox.height) / 4
-        CTX.beginPath();
-        CTX.arc(this.x, this.y, radius, 0, 2*Math.PI);
-        CTX.lineWidth = 2;
-        CTX.strokeStyle = "#9e9e97";
-        CTX.stroke();
-        CTX.closePath();
+        draw_circle_stroke(this.x, this.y, radius, "#9e9e97", 2)
     }
 
 

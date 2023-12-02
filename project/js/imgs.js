@@ -16,6 +16,25 @@ export function draw_point(x, y, color) {
 }
 
 
+export function draw_circle_stroke(x, y, radius, color, thickness = 1) {
+    CTX.beginPath();
+    CTX.arc(x, y, radius, 0, 2*Math.PI);
+    CTX.lineWidth = thickness;
+    CTX.strokeStyle = color;
+    CTX.stroke();
+    CTX.closePath();
+}
+
+
+export function draw_circle_fill(x, y, radius, color) {
+    CTX.beginPath();
+    CTX.arc(x, y, radius, 0, 2*Math.PI);
+    CTX.fillStyle = color;
+    CTX.fill();
+    CTX.closePath();
+}
+
+
 
 export class My_Img {
     constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc) {
@@ -209,10 +228,6 @@ export class My_Circle {
     draw() {
         if (!this.visible) { return; }
 
-        CTX.beginPath();
-        CTX.arc(this.x, this.y, this.rad, 0, 2*Math.PI);
-        CTX.fillStyle = this.color;
-        CTX.fill();
-        CTX.closePath();
+        draw_circle_fill(this.x, this.y, this.rad, this.color);
     }
 }
