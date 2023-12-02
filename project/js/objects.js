@@ -2,7 +2,8 @@
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { direction, getRandom, normalize } from "./tools.js";
+import { direction, distance, getRandom, normalize } from "./tools.js";
+import { My_Button } from "./interface.js";
 
 
 
@@ -505,7 +506,7 @@ export class Player extends My_Object {
         this.invicibility_duration = 5; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
     
-        this.shoot = false;
+        this.shoot = true;
         this.shot_by_seconds = 1; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
     }
@@ -550,17 +551,49 @@ export class Player extends My_Object {
         this.tirer(timestamp);
     }
 
+
     generate_projectile(x, y){
-        // faire en sorte que les projectiles aient une vélocité influencé par l'ennemi le plus proche (histoire de cosinus blabla...)
-        // OU faire en sorte de tirer régulièrement en cercle (maths aussi)
-        let velX = Math.random();
-        let velY = Math.random();
-        if (getRandom(0, 1)) {
-            velX *= -1;
+        //found the nearest ennemy
+        let nearest_obj = undefined;
+        let smallest_dist = undefined;
+        const targets = ["enemy_chasing", "enemy_turret"];
+        for (const obj of My_Object.instances) {
+            if (obj.dead || obj.dying) { continue; }
+            //check if obj is a possible target
+            let is_a_target = false;
+            for (const target of targets) {
+                if (obj.group != target) { continue; }
+                is_a_target = true;
+            }
+            if (!is_a_target) { continue; }
+
+            //obj is a target
+            let dist = distance(this.x, this.y, obj.x, obj.y);
+            //update nearest_obj based on distance
+            if ((smallest_dist == undefined) || (dist < smallest_dist)) {
+                nearest_obj = obj;
+                smallest_dist = dist;
+            }
         }
-        if (getRandom(0, 1)) {
-            velY *= -1;
+
+        let vel = {"x": 0, "y": 0};
+        //random direction
+        if (nearest_obj == undefined) {
+            vel.x = Math.random();
+            vel.y = Math.random();
+            if (getRandom(0, 1)) {
+                vel.x *= -1;
+            }
+            if (getRandom(0, 1)) {
+                vel.y *= -1;
+            }
         }
+        //direction toward nearest_obj
+        else {
+            vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
+        }
+    
+        //create projectile
         let sprite_ball_src = [];
         for (let i = 0; i < 4; i++) {
             sprite_ball_src.push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
@@ -571,11 +604,12 @@ export class Player extends My_Object {
             sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, 4, sprites_explosion_src)
+        let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, 4, sprites_explosion_src)
         let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, vel.x, vel.y);
 
     }
+
 
     tirer(timestamp){
         if (!this.shoot) { return; }
@@ -587,7 +621,7 @@ export class Player extends My_Object {
         let elapsed = timestamp - this.timestampWhenLastShot;
         let delay = 1000 / this.shot_by_seconds
         if (elapsed >= delay){
-            this.generate_projectile(this.x, this.y - 20);
+            this.generate_projectile(this.x, this.y);
             this.timestampWhenLastShot = timestamp;
         }
     }
