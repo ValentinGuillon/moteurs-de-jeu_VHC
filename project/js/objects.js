@@ -370,15 +370,9 @@ export class My_Object {
 
 
     normalize_velocity() {
-        if (this.velocityX == 0 || this.velocityY == 0) { return; }
-
-        let X = this.velocityX;
-        let Y = this.velocityY;
-
-        let hypothenuse = Math.sqrt((X*X) + (Y*Y));
-
-        this.velocityX /= hypothenuse;
-        this.velocityY /= hypothenuse;
+        const vel = normalize(this.velocityX, this.velocityY)
+        this.velocityX = vel.x;
+        this.velocityY = vel.y
     }
 
 

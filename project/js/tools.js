@@ -21,7 +21,7 @@ export function direction(fromX, fromY, toX, toY) {
 
 
 export function normalize(x, y) {
-    if (x == 0 || y == 0) { return {"x": x, "y": y}; }
+    if (x == 0 && y == 0) { return {"x": 0, "y": 0}; }
 
     const hypothenuse = Math.sqrt((x*x) + (y*y));
 
