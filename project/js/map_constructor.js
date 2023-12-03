@@ -110,21 +110,26 @@ export function construct_map() {
             img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
             My_Img.add_instance(img);
 
-            if (tile == -1) { continue; }
-            //empty space
-            if (!tile) {
-                if (getRandom(0, 4)) { continue; }
-                create_tree(x, y, tileSize.width, tileSize.height);
+            //ground
+            if (tile == -1 || tile == 0) {
+                img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
+                My_Img.add_instance(img);
                 continue;
             }
 
             //road
-            if (tile == 1 || tile == 2) {
-                name = ASSETS_DIR + "forest_" + roadTileName(j, i) + PNG_EXT
+            else if (tile == 1 || tile == 2) {
+                name = ASSETS_DIR + "forest_" + roadTileName(j, i) + PNG_EXT;
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
             }
 
+            //tree
+            if (tile == 0) {
+                if (getRandom(0, 4)) { continue; }
+                create_tree(x, y, tileSize.width, tileSize.height);
+                continue;
+            }
             //bonus
             if (tile == 2) {
                 create_bonus(x, y);
