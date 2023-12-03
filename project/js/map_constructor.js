@@ -106,9 +106,6 @@ export function construct_map() {
             let name = ASSETS_DIR + "forest_ground" + PNG_EXT
 
             let img = undefined;
-            //create ground
-            img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
-            My_Img.add_instance(img);
 
             //ground
             if (tile == -1 || tile == 0) {
