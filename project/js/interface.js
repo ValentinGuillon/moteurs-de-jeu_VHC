@@ -7,6 +7,7 @@ import { My_Object, Player, Enemy_Turret, Obstacle, Enemy_Chasing, Bonus_Invicib
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
+import { construct_map } from "./map_constructor.js";
 
 
 
@@ -338,6 +339,8 @@ function create_game_survive() {
         new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
 
+    construct_map();
+
     let cnvMidX = CNV.width/2
     let cnvMidY = CNV.height/2
     let mapWidth = CNV.width*8
@@ -350,10 +353,6 @@ function create_game_survive() {
         "height": mapHeight,
     }
 
-    let imgBackgroundName = "forest_map";
-    let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    let imgBackground = new My_Img(spriteBackground, cnvMidX, cnvMidY, limits.width, limits.height, undefined, true);
-    My_Img.add_instance(imgBackground)
 
 
     //PLAYER
@@ -380,103 +379,103 @@ function create_game_survive() {
     let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso, 10);
 
 
-    // OBSTACLES
-    {
-        let imgName = "vassels_";
-        let radius = 30;
-        let rows = Math.floor(limits.width / (radius*2))
-        let columns = Math.floor(limits.height / (radius*2))
+    // // OBSTACLES
+    // {
+    //     let imgName = "vassels_";
+    //     let radius = 30;
+    //     let rows = Math.floor(limits.width / (radius*2))
+    //     let columns = Math.floor(limits.height / (radius*2))
         
 
     
-        //limits obstacles
-        for (let i = 1; i <= rows; i++) {
-            for (let j = 1; j <= columns ; j++) {
-                if (!(i == 1 || i == rows || j == 1 || j == columns)) { continue; }
-                //get here only if it's a border
-                let X = limits.x + (i*(radius*2)) - radius
-                let Y = limits.y + (j* (radius*2)) - radius
+    //     //limits obstacles
+    //     for (let i = 1; i <= rows; i++) {
+    //         for (let j = 1; j <= columns ; j++) {
+    //             if (!(i == 1 || i == rows || j == 1 || j == columns)) { continue; }
+    //             //get here only if it's a border
+    //             let X = limits.x + (i*(radius*2)) - radius
+    //             let Y = limits.y + (j* (radius*2)) - radius
 
-                let spritesDefault = [];
-                for (let i = 0; i < 6; i++) {
-                    spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
-                }
+    //             let spritesDefault = [];
+    //             for (let i = 0; i < 6; i++) {
+    //                 spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
+    //             }
 
-                // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
-                let imgObj = new My_Circle(X, Y, 30, "#0000FF");
-                //hitBox
-                let hitBoxObj = new HitBox_Circle(X, Y, 30)
-                new Obstacle(X, Y, imgObj, hitBoxObj)
-            }
-        }
-    }
-
-
-
-    // TOWERS
-    {
-        let offset = ((limits.width+limits.height) /2) /4;
-        // let offset = 30;
-        let coords = [
-            {"x": limits.x + offset,     "y": limits.y + offset},
-            {"x": limits.x + offset,     "y": limits.y + limits.height - offset},
-            {"x": limits.x + limits.width - offset, "y": limits.y + offset},
-            {"x": limits.x + limits.width - offset, "y": limits.y + limits.height - offset},
-        ]
-        // let coords = [
-        //     {"x": -offset,     "y": offset},
-        //     {"x": -offset,     "y": CNV.height - offset},
-        //     {"x": CNV.width - offset, "y": offset},
-        //     {"x": CNV.width - offset, "y": CNV.height - offset},
-        // ]
-        for (let i = 0; i < coords.length; i++) {
-            let imgName = "towers_";
-            let nb = [6, 6, 7, 7, 8, 8, 7, 7];
-            let spritesDefault = [];
-            for (let i = 0; i < nb.length; i++) {
-                spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
-            }
-            let sprites_explosion_src = [];
-            for (let i = 0; i < 8; i++) {
-                sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-            }
-
-            let X = coords[i].x
-            let Y = coords[i].y
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"towers_9"+PNG_EXT);
-            // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-            let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
-            new Enemy_Turret(X, Y, imgObj, hitBoxObj)
-        }
-    }
+    //             // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
+    //             let imgObj = new My_Circle(X, Y, 30, "#0000FF");
+    //             //hitBox
+    //             let hitBoxObj = new HitBox_Circle(X, Y, 30)
+    //             new Obstacle(X, Y, imgObj, hitBoxObj)
+    //         }
+    //     }
+    // }
 
 
-    // MOBS
-    {
-        let nombreObj = 10;
-        for (let i = 0; i < nombreObj; i++) {
-            //define position
-            let X = getRandom(10, CNV.width-10);
-            let Y = getRandom(cnvMidX+20, CNV.height-10);
-            let restart = false;
-            if (!is_in_rect(X, Y, 10, 10, CNV.width-10, CNV.height-10)) {
-                restart = true;
-            }
-            if (is_in_rect(X, Y, cnvMidX-50, cnvMidY-50, cnvMidX+50, cnvMidY+50)) {
-                restart = true;
-            }
-            if (restart) {
-                i--;
-                continue;
-            }
 
-            //create object
-            // let objImg = new My_Circle(X, Y, 20, "green")
-            let objImg = new My_Img(ASSETS_DIR+"test_mob"+PNG_EXT, X, Y, 40, 40, ASSETS_DIR+"test_mob"+PNG_EXT)
-            let objHitBox = new HitBox_Circle(X, Y, 20);
-            new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
-        }
-    }
+    // // TOWERS
+    // {
+    //     let offset = ((limits.width+limits.height) /2) /4;
+    //     // let offset = 30;
+    //     let coords = [
+    //         {"x": limits.x + offset,     "y": limits.y + offset},
+    //         {"x": limits.x + offset,     "y": limits.y + limits.height - offset},
+    //         {"x": limits.x + limits.width - offset, "y": limits.y + offset},
+    //         {"x": limits.x + limits.width - offset, "y": limits.y + limits.height - offset},
+    //     ]
+    //     // let coords = [
+    //     //     {"x": -offset,     "y": offset},
+    //     //     {"x": -offset,     "y": CNV.height - offset},
+    //     //     {"x": CNV.width - offset, "y": offset},
+    //     //     {"x": CNV.width - offset, "y": CNV.height - offset},
+    //     // ]
+    //     for (let i = 0; i < coords.length; i++) {
+    //         let imgName = "towers_";
+    //         let nb = [6, 6, 7, 7, 8, 8, 7, 7];
+    //         let spritesDefault = [];
+    //         for (let i = 0; i < nb.length; i++) {
+    //             spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
+    //         }
+    //         let sprites_explosion_src = [];
+    //         for (let i = 0; i < 8; i++) {
+    //             sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    //         }
+
+    //         let X = coords[i].x
+    //         let Y = coords[i].y
+    //         let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"towers_9"+PNG_EXT);
+    //         // let hitBoxObj = new HitBox_Circle(X, Y, 15)
+    //         let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
+    //         new Enemy_Turret(X, Y, imgObj, hitBoxObj)
+    //     }
+    // }
+
+
+    // // MOBS
+    // {
+    //     let nombreObj = 10;
+    //     for (let i = 0; i < nombreObj; i++) {
+    //         //define position
+    //         let X = getRandom(10, CNV.width-10);
+    //         let Y = getRandom(cnvMidX+20, CNV.height-10);
+    //         let restart = false;
+    //         if (!is_in_rect(X, Y, 10, 10, CNV.width-10, CNV.height-10)) {
+    //             restart = true;
+    //         }
+    //         if (is_in_rect(X, Y, cnvMidX-50, cnvMidY-50, cnvMidX+50, cnvMidY+50)) {
+    //             restart = true;
+    //         }
+    //         if (restart) {
+    //             i--;
+    //             continue;
+    //         }
+
+    //         //create object
+    //         // let objImg = new My_Circle(X, Y, 20, "green")
+    //         let objImg = new My_Img(ASSETS_DIR+"test_mob"+PNG_EXT, X, Y, 40, 40, ASSETS_DIR+"test_mob"+PNG_EXT)
+    //         let objHitBox = new HitBox_Circle(X, Y, 20);
+    //         new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
+    //     }
+    // }
 }
 
 
