@@ -1,12 +1,11 @@
 
+import { My_Img } from "./imgs.js";
+import { My_Object } from "./objects.js";
 import { CNV, CTX } from "./script.js";
 
 
 export class Camera {
-    constructor (x, y, imgBackground) {
-        this.x = x;
-        this.y = y;
-        this.imgBackground = imgBackground;
+    constructor() {
         this.smoothness = 10; //a small value made a harder camera
     }
 
@@ -18,14 +17,16 @@ export class Camera {
     }
 
 
-    move_objects(addX, addY, objects) {
+    move_objects(addX, addY) {
         if (addX < 1 && addX > -1) { addX = 0; }
         if (addY < 1 && addY > -1) { addY = 0; }
 
-        this.imgBackground.x += addX;
-        this.imgBackground.y += addY;
+        for (const img of My_Img.instances) {
+            img.x += addX;
+            img.y += addY;
+        }
 
-        for (const obj of objects) {
+        for (const obj of My_Object.instances) {
             // if (obj.id == central_obj.id && obj instanceof Player) { continue; }
             obj.update_position(addX, addY);
         }
@@ -33,7 +34,7 @@ export class Camera {
 
 
     //déplace la "caméra" pour placer X et Y au centre de l'écran
-    update(objects, obj_focus = undefined, X = 0, Y = 0) {
+    update(obj_focus = undefined, X = 0, Y = 0) {
         if (obj_focus) {
             if (obj_focus.dead || obj_focus.dying) { return; }
             X = obj_focus.x; Y = obj_focus.y;
@@ -45,7 +46,7 @@ export class Camera {
         let diff_x = x_mid - X
         let diff_y = y_mid - Y
 
-        this.move_objects(diff_x/this.smoothness, diff_y/this.smoothness, objects);
+        this.move_objects(diff_x/this.smoothness, diff_y/this.smoothness);
     }
 }
 

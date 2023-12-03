@@ -37,52 +37,56 @@ export function draw_circle_fill(x, y, radius, color) {
 
 
 export class My_Img {
-    constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc) {
-        this.real_constructor(imgSrc, x, y, width, height, iconeSrc)
+    constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc = undefined, background_component = false) {
+        this.imgSrc = imgSrc;
+        this.iconeSrc = iconeSrc
+        this.background_component = background_component;
+    
+        //size
+        this.width = width;
+        this.height = height;
+    
+        //position
+        this.x = x - (width/2);
+        this.y = y - (height/2);
+    
+        //predefined Image class
+        this.img = new Image();
+        if(imgSrc) {
+            this.img.src = this.imgSrc;
+        }
+    
+        this.icone = new Image();
+        if(iconeSrc) {
+            this.icone.src = this.iconeSrc;
+            this.iconeSize = 40;
+        }
 
         //dat.GUI
         this.visible = true;
     }
 
 
-    real_constructor(imgSrc, x, y, width, height, iconeSrc) {
-        this.imgSrc = imgSrc;
-        this.iconeSrc = iconeSrc
 
-        //size
-        this.width = width;
-        this.height = height;
+    static instances = [];
 
-        //position
-        this.x = x - (width/2);
-        this.y = y - (height/2);
+    static destroy_imgs() {
+        My_Img.instances = [];
+    }
 
-        //predefined Image class
-        this.img = new Image();
-        if(imgSrc) {
-            this.img.src = this.imgSrc;
-        }
-
-        this.icone = new Image();
-        if(iconeSrc) {
-            this.icone.src = this.iconeSrc;
-            this.iconeSize = 40;
-        }
+    static add_instance(img) {
+        My_Img.instances.push(img);
     }
 
 
-    overwrite(imgSrc, x, y, width = 25, height = 25) {
-        this.real_constructor(imgSrc, x, y, width, height);
-    }
 
-
-    draw(drawBackground = false) {
+    draw() {
         if (!this.imgSrc) { return; }
         if (!this.visible) { return; }
-        if (this.iconeSrc && this.is_out_of_canvas() && !drawBackground) {
+        if (this.iconeSrc && this.is_out_of_canvas()) {
             this.draw_icone();
         }
-        if (drawBackground || !this.is_entirely_out_of_canvas()) {
+        if (this.background_component || !this.is_entirely_out_of_canvas()) {
             CTX.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }

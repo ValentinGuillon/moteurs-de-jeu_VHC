@@ -10,7 +10,8 @@
 
 
 import { My_Object } from "./objects.js";
-import { My_Button, create_home_page, imgBackground, camera } from "./interface.js";
+import { My_Button, create_home_page, camera } from "./interface.js";
+import { My_Img } from "./imgs.js";
 
 
 export const CNV = document.getElementById("myCanvas");
@@ -35,8 +36,8 @@ export const PNG_EXT = ".png";
 
 //dat.GUI Folders
 // BACKGROUND 
-let backgroundFolder = gui.addFolder("Background")
-backgroundFolder.add(imgBackground, "visible")
+// let backgroundFolder = gui.addFolder("Background")
+// backgroundFolder.add(imgBackground, "visible")
 
 //PLAYER
 let playerFolder = gui.addFolder("Player")
@@ -219,9 +220,9 @@ function actions(timestamp) {
 
 function draw() {
     CTX.clearRect(0, 0, CNV.width, CNV.height);
-    //draw background
-    if (imgBackground) {
-        imgBackground.draw(true);
+    //draw imgs (that are not objects component)
+    for (const img of My_Img.instances) {
+        img.draw();
     }
     //draw objects
     for (const obj of My_Object.instances) {
@@ -235,7 +236,7 @@ function draw() {
 
 
 function updateGui() {
-    backgroundFolder.updateDisplay();
+    // backgroundFolder.updateDisplay();
     playerFolder.updateDisplay();
 }
 
@@ -251,10 +252,10 @@ function refresh(timestamp) {
     if (camera) {
         let objPlayer = get_player_object()
         if (objPlayer) {
-            camera.update(My_Object.instances, objPlayer);
+            camera.update(objPlayer);
         }
         else {
-            camera.update(My_Object.instances, undefined, CNV.width/2, CNV.height/2);
+            camera.update(undefined, CNV.width/2, CNV.height/2);
         }
     }
 

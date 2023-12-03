@@ -13,8 +13,7 @@ import { Jukebox } from "./audio.js";
 
 
 
-export let imgBackground = new My_Img(undefined, 0, 0, undefined, undefined);
-export let camera = undefined
+export let camera = new Camera()
 export let jukebox = new Jukebox()
 
 
@@ -137,7 +136,6 @@ export class Button_with_text extends My_Button {
 // function create_template {
 //     //buttons
 //     //objects
-//     camera = new Camera(..., ..., ...)
 // }
 
 
@@ -151,6 +149,7 @@ export function create_home_page() {
 
 function create_main_menu() {
     jukebox.play_main_menu()
+    My_Img.destroy_imgs();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     new Button_with_text("Test", "play_test", CNV.width/2-100, 200, 100, 100, "#00FFFF")
@@ -163,9 +162,8 @@ function create_main_menu() {
     }
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    imgBackground.overwrite(spriteBackground, CNV.width/2, CNV.height/2, CNV.width, CNV.height);
-
-    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
+    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, true);
+    My_Img.add_instance(imgBackground);
 }
 
 
@@ -173,6 +171,7 @@ function create_main_menu() {
 function create_game_test() {
     jukebox.play_game()
     My_Button.destroy_buttons()
+    My_Img.destroy_imgs();
     new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
     if (jukebox.muted) {
         new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
@@ -186,7 +185,8 @@ function create_game_test() {
     // image
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    imgBackground.overwrite(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*2, CNV.height*2);
+    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*2, CNV.height*2, undefined, true);
+    My_Img.add_instance(imgBackground)
 
 
     //PLAYER
@@ -321,10 +321,6 @@ function create_game_test() {
             new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
         }
     }
-
-
-
-    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
 }
 
 
@@ -333,6 +329,7 @@ function create_game_survive() {
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
+    My_Img.destroy_imgs();
     new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
     if (jukebox.muted) {
         new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
@@ -355,7 +352,8 @@ function create_game_survive() {
 
     let imgBackgroundName = "forest_map";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    imgBackground.overwrite(spriteBackground, cnvMidX, cnvMidY, limits.width, limits.height);
+    let imgBackground = new My_Img(spriteBackground, cnvMidX, cnvMidY, limits.width, limits.height, undefined, true);
+    My_Img.add_instance(imgBackground)
 
 
     //PLAYER
@@ -479,9 +477,6 @@ function create_game_survive() {
             new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
         }
     }
-
-
-    camera = new Camera(CNV.width/2, CNV.height/2, imgBackground);
 }
 
 
