@@ -137,6 +137,9 @@ export function construct_map() {
 
             //border
             if (tile == 9) {
+                name = ASSETS_DIR + "forest_ground" + PNG_EXT;
+                img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
+                My_Img.add_instance(img);
                 create_border(x, y, tileSize.width, tileSize.height)
             }
 
