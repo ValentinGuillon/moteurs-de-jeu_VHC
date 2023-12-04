@@ -310,7 +310,20 @@ export class My_Object {
 
 
     recul(obj) {
-        let vel = direction(obj.x, obj.y, this.x, this.y);
+        let thisX = this.x;
+        let thisY = this.y;
+        let objX = obj.x;
+        let objY = obj.y;
+        if (this.hitBox instanceof HitBox_Mask) {
+            thisX = this.hitBox.centerMaskX;
+            thisY = this.hitBox.centerMaskY;
+        }
+        if (obj.hitBox instanceof HitBox_Mask) {
+            objX = obj.hitBox.centerMaskX;
+            objY = obj.hitBox.centerMaskY;
+        }
+
+        let vel = direction(objX, objY, thisX, thisY);
         vel = normalize(vel.x, vel.y);
         if (obj.hitBox instanceof HitBox_Rect) {
             if (Math.abs(vel.x) > Math.abs(vel.y)) {
