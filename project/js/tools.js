@@ -53,6 +53,33 @@ export function is_in_rect(x, y, x1, y1, x2, y2) {
 }
 
 
+export function rect_is_in_rect(rect1, rect2) {
+    // check if a corner of rect1 is inside rect2
+    const positions = [
+        {"x": rect1.x1, "y": rect1.y1},
+        {"x": rect1.x1, "y": rect1.y2},
+        {"x": rect1.x2, "y": rect1.y1},
+        {"x": rect1.x2, "y": rect1.y2},
+    ]
+    for (const pos of positions) {
+        if (is_in_rect(pos.x, pos.y, rect2.x1, rect2.y1, rect2.x2, rect2.y2)) {
+            return true;
+        }
+    }
+
+    //check if rectangles overlaps
+    let overlapX = rect1.x2 >= rect2.x1 && rect1.x1 < rect2.x2
+    let overlapY = rect1.y2 >= rect2.y1 && rect1.y1 < rect2.y2
+    let englobeX = rect1.x1 < rect2.x1 && rect1.x2 > rect2.x2
+    let englobeY = rect1.y1 < rect2.y1 && rect1.y2 > rect2.y2
+    let insideX = rect1.x1 > rect2.x1 && rect1.x2 < rect2.x2
+    let insideY = rect1.y1 > rect2.y1 && rect1.y2 < rect2.y2
+    if ((overlapX && overlapY) ||
+        ((englobeX || insideX || overlapX) && (englobeY || insideY || overlapY))
+    ) { return true; }
+}
+
+
 
 export function min(a, b) {
     if (a < b) { return a; }

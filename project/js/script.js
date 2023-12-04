@@ -35,10 +35,6 @@ export const PNG_EXT = ".png";
 
 
 //dat.GUI Folders
-// BACKGROUND 
-// let backgroundFolder = gui.addFolder("Background")
-// backgroundFolder.add(imgBackground, "visible")
-
 //PLAYER
 let playerFolder = gui.addFolder("Player")
 playerFolder.open()
@@ -80,7 +76,7 @@ towersFolder.open()
 function update_towers_shoot() {
     for (const obj of My_Object.instances) {
         if (obj.group != "enemy_turret") { continue; }
-        if (obj.dead || obj.dying) { continue; }
+        if (obj.is_dead || obj.dying) { continue; }
         obj.shoot = !obj.shoot;
     }
 }

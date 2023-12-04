@@ -10,16 +10,20 @@ import { My_Button } from "./interface.js";
 
 
 
-// return 1 to allow next actions, 0 to not.
-function check_collisions(obj, other_objects, timestamp) {
+// Function that checks if the given object collides with any other objects.
+// If collide with an object, compare their group, then call corresponding effect for each objects.
+// Return 0 immediatly if the effect on the given object makes (like dying) makes him unable for next actions.
+// Else, return 1.
+function check_collisions(obj = My_Object, other_objects = Array(My_Object) , timestamp) {
+    // if object has no hitBox
     if (!obj.hitBox) { return 1; }
+
     for (const other of other_objects) {
         if (other == obj) { continue; }
         if (!other.hitBox) { continue; }
-        if (other.dead) { continue; }
+        if (other.is_dead) { continue; }
         if (other.dying) { continue; }
-        if (other.stop) { continue; }
-
+        if (!other.can_move) { continue; }
         if (!(obj.hitBox.is_colliding(other.hitBox))) { continue; }
 
         switch (obj.group) {
@@ -40,7 +44,6 @@ function check_collisions(obj, other_objects, timestamp) {
                         break;
                     case "obstacle":
                         obj.recul(other)
-                        // obj.roll_back(other);
                         break;
                 }
                 break;
@@ -76,6 +79,9 @@ function check_collisions(obj, other_objects, timestamp) {
                         obj.die();
                         other.die();
                         return 0;
+                    case "enemy_chasing":
+                        other.recul(obj)
+                        break;
                 }
                 break;
 
@@ -114,6 +120,9 @@ function check_collisions(obj, other_objects, timestamp) {
                         obj.die();
                         other.die();
                         return 0;
+                    case "enemy_turret":
+                        obj.recul(other);
+                        break;
                 }
                 break;
 
@@ -134,12 +143,11 @@ function check_collisions(obj, other_objects, timestamp) {
 
 
 export class My_Object {
-    constructor(x, y, object_image, hitBox, group = "", speed = 1, velocityX = 0.0, velocityY = 0.0) {
+    constructor(x, y, image, hitBox, group = "", speed = 1, velocityX = 0.0, velocityY = 0.0) {
         this.x = x;
         this.y = y;
-        this.previousX = x;
-        this.previousY = y;
-        this.object_image = object_image;
+
+        this.image = image;
         this.hitBox = hitBox;
 
         this.speed = speed;
@@ -152,11 +160,11 @@ export class My_Object {
 
         this.id = -1;
 
-        this.stop = false;
+        this.can_move = true;
         this.dying = false;
-        this.dead = false;
+        this.is_dead = false;
 
-        this.addInstance();
+        My_Object.addInstance(this);
         this.update_bools();
     }
 
@@ -168,7 +176,7 @@ export class My_Object {
     static collision = true;
     static hitBoxVisible = false;
     static moving = true;
-    static playerSpeed = 10;
+    static playerSpeed = 15;
 
 
     static destroy_objects () {
@@ -178,7 +186,7 @@ export class My_Object {
 
     static clear_dead_objects() {
     let newList = My_Object.instances.filter(function(element) {
-        return !element.dead;
+        return !element.is_dead;
         });
         My_Object.instances = newList;
     }
@@ -199,6 +207,19 @@ export class My_Object {
                 list[j+1] = temp;
             }
         }
+    }
+
+
+    static addInstance(obj) {
+        if (obj.id != -1) {
+            console.log("This obj already added:")
+            console.log(obj)
+            return;
+        }
+
+        obj.id = My_Object.id;
+        My_Object.id++;
+        My_Object.instances.push(obj);
     }
 
 
@@ -228,13 +249,15 @@ export class My_Object {
     action(timestamp) {
         this.status_update(timestamp);
         
-        if (this.dead) { return; }
+        if (this.is_dead) { return; }
         if (this.dying) { return; }
-        if (this.stop) { return; }
+        if (!this.can_move) { 
+            this.previousTimestampWhenMoved = timestamp;
+            return;
+        }
 
         this.move(timestamp);
 
-        // draw_rect(this.x-5, this.y-5, 10, 10, "#000000")
         if (this.hitBox) {
             let continu = check_collisions(this, My_Object.instances, timestamp);
             if (!continu) { return; }
@@ -245,22 +268,22 @@ export class My_Object {
 
 
     animate(timestamp) {
-        if (!this.object_image) { return; }
-        if (this.stop) { return; }
-        if (this.dead) { return; }
-        if (!(this.object_image instanceof My_Img_Animated)) { return; }
+        if (!this.image) { return; }
+        if (!this.can_move) { return; }
+        if (this.is_dead) { return; }
+        if (!(this.image instanceof My_Img_Animated)) { return; }
 
         let loop = true;
         if (this.dying) { loop = false; }
-        this.object_image.next_frame(timestamp, loop);
+        this.image.next_frame(timestamp, loop);
     }
 
 
 
     draw() {
-        if (this.dead) { return ; }
-        if (this.object_image) { 
-            this.object_image.draw();
+        if (this.is_dead) { return ; }
+        if (this.image) { 
+            this.image.draw();
         }
         if (this.hitBox) {
             this.hitBox.draw_contours();
@@ -279,8 +302,8 @@ export class My_Object {
             this.hitBox.collision = false;
         }
         this.dying = true;
-        if (this.object_image instanceof My_Img_Animated) {
-            this.object_image.die();
+        if (this.image instanceof My_Img_Animated) {
+            this.image.die();
         }
     }
 
@@ -288,7 +311,7 @@ export class My_Object {
     recul(obj) {
         let vel = direction(obj.x, obj.y, this.x, this.y);
         vel = normalize(vel.x, vel.y);
-        this.update_position(vel.x, vel.y);
+        this.add_to_position(vel.x, vel.y);
         if (this.hitBox.is_colliding(obj.hitBox)) {
             this.recul(obj);
         }
@@ -307,7 +330,8 @@ export class My_Object {
      */
 
     move(timestamp) {
-        if (this.dead) { return; }
+        if (!this.can_move) { return; }
+        if (this.is_dead) { return; }
         if (this.dying) { return; }
 
         if (this.previousTimestampWhenMoved == undefined) {
@@ -317,18 +341,18 @@ export class My_Object {
         let elapsed = (timestamp - this.previousTimestampWhenMoved) / 100;
 
         this.normalize_velocity();
-        this.update_position(this.speed * this.velocityX * elapsed, this.speed * this.velocityY * elapsed);
+        this.add_to_position(this.speed * this.velocityX * elapsed, this.speed * this.velocityY * elapsed);
 
         this.previousTimestampWhenMoved = timestamp;
     }
 
 
-    update_position(add_X, add_Y) {
+    add_to_position(add_X, add_Y) {
         this.x += add_X;
         this.y += add_Y;
-        if (this.object_image) {
-            this.object_image.x += add_X;
-            this.object_image.y += add_Y;
+        if (this.image) {
+            this.image.x += add_X;
+            this.image.y += add_Y;
         }
         if (this.hitBox) {
             this.hitBox.x += add_X;
@@ -349,23 +373,17 @@ export class My_Object {
     status_update(timestamp) {
         this.additionnal_update(timestamp);
 
-        if (this.dead) { return; }
+        if (this.is_dead) { return; }
         if (!this.dying) { return; }
 
-        if (this.object_image instanceof My_Img_Animated) {
-            if (this.object_image.dead) {
-                this.dead = true;
+        if (this.image instanceof My_Img_Animated) {
+            if (this.image.is_dead) {
+                this.is_dead = true;
             }
         }
         else {
-            this.dead = true;
+            this.is_dead = true;
         }
-    }
-
-
-    draw_invincible() {
-        let radius = (this.hitBox.width+this.hitBox.height) / 4
-        draw_circle_stroke(this.x, this.y, radius, "#9e9e97", 2)
     }
 
 
@@ -376,33 +394,20 @@ export class My_Object {
     }
 
 
-    addInstance() {
-        if (this.id != -1) {
-            console.log("This obj already added:")
-            console.log(this)
-            return;
-        }
-
-        this.id = My_Object.id;
-        My_Object.id++;
-        My_Object.instances.push(this);
-    }
-
-
 
     /*
      * DEBUG (dat.GUI)
      */
 
     update_bools() {
-        if (this.object_image) {
-            this.object_image.visible = My_Object.imgVisible;
+        if (this.image) {
+            this.image.is_visible = My_Object.imgVisible;
         }
-        this.stop = !My_Object.moving;
+        this.can_move = My_Object.moving;
         if (this.hitBox) {
             this.hitBox.contours = My_Object.hitBoxVisible;
         }
-        if (this.dead || this.dying) { return; }
+        if (this.is_dead || this.dying) { return; }
         if (this.hitBox) {
             this.hitBox.collision = My_Object.collision;
         }
@@ -435,8 +440,8 @@ export class My_Object {
 // // You must give "subclass_name" and a "group_name"
 
 // export class subclass_name extends My_Object {
-//     constructor(x, y, object_image, hitBox /*you can add brand new properties*/) {
-//         super(x, y, object_image, hitBox, "group_name");
+//     constructor(x, y, image, hitBox /*you can add brand new properties*/) {
+//         super(x, y, image, hitBox, "group_name");
 //         /*you can add brand new this.properties*/
 //     }
 
@@ -456,8 +461,8 @@ export class My_Object {
 
 
 export class Obstacle extends My_Object {
-    constructor(x, y, object_image, hitBox) {
-        super(x, y, object_image, hitBox, "obstacle");
+    constructor(x, y, image, hitBox) {
+        super(x, y, image, hitBox, "obstacle");
     }
 }
 
@@ -465,8 +470,8 @@ export class Obstacle extends My_Object {
 
 
 export class Bonus_Invicibility extends My_Object {
-    constructor(x, y, object_image, hitBox) {
-        super(x, y, object_image, hitBox, "bonus_invicibility");
+    constructor(x, y, image, hitBox) {
+        super(x, y, image, hitBox, "bonus_invicibility");
     }
 }
 
@@ -474,9 +479,9 @@ export class Bonus_Invicibility extends My_Object {
 
 
 export class Player extends My_Object {
-    constructor(x, y, object_image, hitBox, speed = 10) {
-        super(x, y, object_image, hitBox, "player", speed);
-        this.invincible = false;
+    constructor(x, y, image, hitBox, speed = 10) {
+        super(x, y, image, hitBox, "player", speed);
+        this.is_invincible = false;
         this.invicibility_duration = 5; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
     
@@ -487,26 +492,26 @@ export class Player extends My_Object {
 
 
     give_invicibility(timestamp) {
-        this.invincible = true;
+        this.is_invincible = true;
         this.timestampWhenInvicibililtyGiven = timestamp;
     }
 
 
     die() {
-        if (this.invincible) { return; }
+        if (this.is_invincible) { return; }
         this.collision = false;
         if (this.hitBox) {
             this.hitBox.collision = false;
         }
         this.dying = true;
-        if (this.object_image instanceof My_Img_Animated) {
-            this.object_image.die();
+        if (this.image instanceof My_Img_Animated) {
+            this.image.die();
         }
     }
 
 
     additionnal_update(timestamp) {
-        if (this.invincible) {
+        if (this.is_invincible) {
             if (this.timestampWhenInvicibililtyGiven == undefined) {
                 this.timestampWhenInvicibililtyGiven = timestamp;
                 return;
@@ -514,7 +519,7 @@ export class Player extends My_Object {
             let elapsed = timestamp - this.timestampWhenInvicibililtyGiven;
             let delay = this.invicibility_duration * 1000
             if (elapsed >= delay) {
-                this.invincible = false;
+                this.is_invincible = false;
             }
         }
     }
@@ -522,6 +527,7 @@ export class Player extends My_Object {
 
     auto_actions(timestamp) {
         this.check_out_of_screen();
+        this.update_velocity(0, 0);
         this.tirer(timestamp);
     }
 
@@ -532,7 +538,7 @@ export class Player extends My_Object {
         let smallest_dist = undefined;
         const targets = ["enemy_chasing", "enemy_turret"];
         for (const obj of My_Object.instances) {
-            if (obj.dead || obj.dying) { continue; }
+            if (obj.is_dead || obj.dying) { continue; }
             //check if obj is a possible target
             let is_a_target = false;
             for (const target of targets) {
@@ -607,24 +613,22 @@ export class Player extends My_Object {
         let limit_down = CNV.height;
 
         if (this.x > limit_right) {
-            this.update_position(-limit_right, 0)
+            this.add_to_position(-limit_right, 0)
         }
         else if (this.x < 0) {
-            this.update_position(limit_right, 0)
+            this.add_to_position(limit_right, 0)
         }
         if (this.y > limit_down) {
-            this.update_position(0, -limit_down)
+            this.add_to_position(0, -limit_down)
         }
         else if (this.y < 0) {
-            this.update_position(0, limit_down)
+            this.add_to_position(0, limit_down)
         }
-
-        this.update_velocity(0, 0);
     }
 
 
     give_direction(direction = "") {
-        if (this.dead) { return; }
+        if (this.is_dead) { return; }
         if (this.dying) { return; }
 
         //update position
@@ -647,12 +651,18 @@ export class Player extends My_Object {
     }
 
 
+    draw_invincible() {
+        let radius = (this.hitBox.width+this.hitBox.height) / 4
+        draw_circle_stroke(this.x, this.y, radius, "#AeAeA7", 3)
+    }
+
+
     draw() {
-        if (this.dead) { return ; }
-        if (this.object_image) { 
-            this.object_image.draw();
+        if (this.is_dead) { return ; }
+        if (this.image) { 
+            this.image.draw();
         }
-        if (this.invincible) {
+        if (this.is_invincible) {
             this.draw_invincible();
         }
         if (this.hitBox) {
@@ -665,8 +675,8 @@ export class Player extends My_Object {
 
 
 export class Enemy_Turret extends My_Object {
-    constructor(x, y, object_image, hitBox) {
-        super(x, y, object_image, hitBox, "enemy_turret");
+    constructor(x, y, image, hitBox) {
+        super(x, y, image, hitBox, "enemy_turret");
 
         this.shoot = false;
         this.shot_by_seconds = 3; // 1/X, to shot every X seconds
@@ -680,8 +690,8 @@ export class Enemy_Turret extends My_Object {
             this.hitBox.collision = false;
         }
         this.dying = true;
-        if (this.object_image instanceof My_Img_Animated) {
-            this.object_image.die();
+        if (this.image instanceof My_Img_Animated) {
+            this.image.die();
         }
     }
 
@@ -737,8 +747,8 @@ export class Enemy_Turret extends My_Object {
 
 
 export class Enemy_Projectile extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX, velocityY, speed = 10) {
-        super(x, y, object_image, hitBox, "enemy_projectile", speed, velocityX, velocityY);
+    constructor(x, y, image, hitBox, velocityX, velocityY, speed = 10) {
+        super(x, y, image, hitBox, "enemy_projectile", speed, velocityX, velocityY);
     }
 
     auto_actions(timestamp) {
@@ -760,8 +770,8 @@ export class Enemy_Projectile extends My_Object {
 
 
 export class Ally_Projectile extends My_Object {
-    constructor(x, y, object_image, hitBox, velocityX = 0.0, velocityY = 0.0, speed = 8)  {
-        super(x, y, object_image, hitBox, "ally_projectile", speed, velocityX, velocityY);
+    constructor(x, y, image, hitBox, velocityX = 0.0, velocityY = 0.0, speed = 8)  {
+        super(x, y, image, hitBox, "ally_projectile", speed, velocityX, velocityY);
     }
 
     auto_actions(timestamp) {
@@ -783,8 +793,8 @@ export class Ally_Projectile extends My_Object {
 
 
 export class Enemy_Chasing extends My_Object {
-    constructor(x, y, object_image, hitBox, player, speed = 6) {
-        super(x, y, object_image, hitBox, "enemy_chasing", speed);
+    constructor(x, y, image, hitBox, player, speed = 6) {
+        super(x, y, image, hitBox, "enemy_chasing", speed);
         this.player = player; // Référence à l'objet joueur
         // this.chaseSpeed = 6; // Vitesse de poursuite de l'ennemi
     }
@@ -797,16 +807,159 @@ export class Enemy_Chasing extends My_Object {
         //Calcule la direction vers le joueur
         let dx = this.player.x - this.x;
         let dy = this.player.y - this.y;
-        let distance = Math.sqrt(dx * dx + dy * dy);
+        let dist = Math.sqrt(dx * dx + dy * dy);
 
         //Normalise la direction et applique la vitesse
-        if (distance > 1) {
-            // dx = (dx / distance) * this.speed;
-            // dy = (dy / distance) * this.speed;
-            dx = (dx / distance);
-            dy = (dy / distance);
-            // this.update_position(dx, dy);
+        if (dist > 1) {
+            dx = (dx / dist);
+            dy = (dy / dist);
             this.update_velocity(dx, dy);
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+export function create_object(name, args) {
+    switch (name) {
+        case "bonus":
+            create_bonus(args.x, args.y, args.width, args.height);
+            break;
+        case "tree":
+            create_tree(args.x, args.y, args.width, args.height);
+            break;
+        case "border":
+            create_border(args.x, args.y, args.width, args.height);
+            break;
+        case "vassel circle":
+            create_vassel("circle", args.x, args.y, args.width, args.height);
+            break;
+        case "vassel mask":
+            create_vassel("mask", args.x, args.y, args.width, args.height);
+            break;
+        case "tower":
+            create_tower(args.x, args.y, args.width, args.height);
+            break;
+        case "player":
+            return create_player(args.x, args.y, args.width, args.height);
+            break;
+        default:
+            console.log("error: there is no method to create this abject (\"" + name + "\").")
+            console.log("In create_object in objects.js.")
+            break;
+    }
+}
+
+
+
+function create_bonus(x, y, width, height) {
+    // prepare sprites
+    let imgName = "stars_";
+    let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
+    let spritesDefault = [];
+    for (let i = 0; i < nb.length; i++) {
+        spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
+    }
+    // create object
+    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 10, [], spritesDefault[0]);
+    let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
+    new Bonus_Invicibility(x, y, imgObj, hitBoxObj)
+}
+
+
+
+function create_tree(x, y, width, height) {
+    // prepare sprite
+    let imgName = "forest_";
+    if (getRandom(0, 1)) {
+        imgName += "tree_large"
+    }
+    else {
+        imgName += "tree_thin"
+    }
+    // create object
+    let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
+    let hitBox = new HitBox_Circle(x, y, (width+height)/4)
+    new Obstacle(x, y, imgObj, hitBox)
+}
+
+
+
+function create_border(x, y, width, height) {
+    // prepare sprite
+    let imgName = "forest_tree_large";
+    // create object
+    let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
+    let hitBox = new HitBox_Circle(x, y, (width+height)/4)
+    new Obstacle(x, y, imgObj, hitBox)
+}
+
+
+
+function create_vassel(type, x, y, width, height) {
+    // prepare sprites
+    let imgName = "vassels_";
+    let spritesDefault = [];
+    for (let i = 0; i < 6; i++) {
+        spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
+    }
+    // create object
+    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 10);
+    let hitBoxObj = undefined;
+    if (type == "circle") {
+        hitBoxObj = new HitBox_Circle(x, y, 30)
+    }
+    else if (type == "mask") {
+        hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
+    }
+    new Obstacle(x, y, imgObj, hitBoxObj)
+
+}
+
+
+
+function create_tower(x, y, width, height) {
+    // prepare sprites
+    let imgName = "towers_";
+    let nb = [6, 6, 7, 7, 8, 8, 7, 7];
+    let spritesDefault = [];
+    for (let i = 0; i < nb.length; i++) {
+        spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
+    }
+    let sprites_explosion_src = [];
+    for (let i = 0; i < 8; i++) {
+        sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    }
+    // create object
+    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 5, sprites_explosion_src);
+    let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
+    new Enemy_Turret(x, y, imgObj, hitBoxObj)
+}
+
+
+
+function create_player(x, y, width, height) {
+    // prepare sprites
+    let imgPlayerName = "RedDeathFrame_";
+    let spritesPlayerDefault = [];
+    for (let i = 0; i < 5; i++) {
+        spritesPlayerDefault.push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
+    }
+    let spritesPlayerDead = [];
+    for (let i = 0; i < 5; i++) {
+        spritesPlayerDead.push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
+    }
+
+    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, x, y, width, height, 6, spritesPlayerDead)
+    let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, width, height)
+    return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+}
+

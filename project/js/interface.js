@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Player, Enemy_Turret, Obstacle, Enemy_Chasing, Bonus_Invicibility }
+import { My_Object, Enemy_Chasing, create_object }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -191,28 +191,8 @@ function create_game_test() {
 
 
     //PLAYER
-    // sprites
-    let imgPlayerName = "RedDeathFrame_";
-    let spritesPlayerDefault = [];
-    for (let i = 0; i < 5; i++) {
-        spritesPlayerDefault.push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
-    }
-    let spritesPlayerDead = [];
-    for (let i = 0; i < 5; i++) {
-        spritesPlayerDead.push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
-    }
-
-    let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
-    // animated img
-    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, 6, spritesPlayerDead)
-    // hitbox
-    // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
-    //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
-    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, 30, 50)
-
-    // object
-    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso);
-
+    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
+    
 
 
     //(next instances are in another scope so variables can easily be reused by copy/paste)
@@ -225,33 +205,11 @@ function create_game_test() {
         let y_objs = [y_mid-60, y_mid+60, y_mid+60, y_mid-60]
         //with circle hitBox
         for (let i = 0; i < 2; i++) {
-            let imgName = "vassels_";
-            let spritesDefault = [];
-            for (let i = 0; i < 6; i++) {
-                spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
-            }
-
-            let X = x_objs[i]
-            let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
-            //hitBox
-            let hitBoxObj = new HitBox_Circle(X, Y, 30)
-            new Obstacle(X, Y, imgObj, hitBoxObj)
+            create_object("vassel circle", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60});
         }
         //with mask hitBox
         for (let i = 2; i < 4; i++) {
-            let imgName = "vassels_";
-            let spritesDefault = [];
-            for (let i = 0; i < 6; i++) {
-                spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
-            }
-
-            let X = x_objs[i]
-            let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
-            //hitBox
-            let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 60, 60)
-            new Obstacle(X, Y, imgObj, hitBoxObj)
+            create_object("vassel mask", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60});
         }
     }
 
@@ -262,23 +220,7 @@ function create_game_test() {
         let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
         let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
         for (let i = 0; i < 4; i++) {
-            let imgName = "towers_";
-            let nb = [6, 6, 7, 7, 8, 8, 7, 7];
-            let spritesDefault = [];
-            for (let i = 0; i < nb.length; i++) {
-                spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
-            }
-            let sprites_explosion_src = [];
-            for (let i = 0; i < 8; i++) {
-                sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-            }
-
-            let X = x_objs[i]
-            let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 5, sprites_explosion_src);
-            // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-            let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
-            new Enemy_Turret(X, Y, imgObj, hitBoxObj)
+            create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": 40, "height": 40})
         }
     }
 
@@ -291,19 +233,7 @@ function create_game_test() {
         let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
         let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
         for (let i = 0; i < 4; i++) {
-            let imgName = "stars_";
-            let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
-            let spritesDefault = [];
-            for (let i = 0; i < nb.length; i++) {
-                spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
-            }
-
-            let X = x_objs[i]
-            let Y = y_objs[i]
-            let imgObj = new My_Img_Animated(spritesDefault, X, Y, 50, 50, 3);
-            // let hitBoxObj = new HitBox_Circle(X, Y, 20)
-            let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 50, 50)
-            new Bonus_Invicibility(X, Y, imgObj, hitBoxObj)
+            create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": 50, "height": 50})
         }
     }
 
@@ -331,151 +261,33 @@ function create_game_survive() {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
-    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
+    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF");
     }
     else {
-        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF");
     }
 
     construct_map();
 
-    let cnvMidX = CNV.width/2
-    let cnvMidY = CNV.height/2
-    let mapWidth = CNV.width*8
-    let mapHeight = CNV.height*8
+    // let cnvMidX = CNV.width/2
+    // let cnvMidY = CNV.height/2
+    // let mapWidth = CNV.width*8
+    // let mapHeight = CNV.height*8
 
-    let limits = {
-        "x":      cnvMidX-(mapWidth/2),
-        "y":      cnvMidY-(mapHeight/2),
-        "width":  mapWidth,
-        "height": mapHeight,
-    }
+    // let limits = {
+    //     "x":      cnvMidX-(mapWidth/2),
+    //     "y":      cnvMidY-(mapHeight/2),
+    //     "width":  mapWidth,
+    //     "height": mapHeight,
+    // }
 
 
 
     //PLAYER
-    // sprites
-    let imgPlayerName = "RedDeathFrame_";
-    let spritesPlayerDefault = [];
-    for (let i = 0; i < 5; i++) {
-        spritesPlayerDefault.push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
-    }
-    let spritesPlayerDead = [];
-    for (let i = 0; i < 5; i++) {
-        spritesPlayerDead.push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
-    }
-
-    let xPlayer = CNV.width/2; let yPlayer = CNV.height/2;
-    // animated img
-    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, xPlayer, yPlayer, 30, 50, 6, spritesPlayerDead)
-    // hitbox
-    // let hitBoxPerso = new HitBox_Circle(xPlayer, yPlayer, 
-    //     (imgAnimatedPlayer.width + imgAnimatedPlayer.height) / 5)
-    let hitBoxPerso = new HitBox_Mask(xPlayer, yPlayer, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, 30, 50)
-
-    // object
-    let objectPlayer = new Player(xPlayer, yPlayer, imgAnimatedPlayer, hitBoxPerso, 10);
-
-
-    // // OBSTACLES
-    // {
-    //     let imgName = "vassels_";
-    //     let radius = 30;
-    //     let rows = Math.floor(limits.width / (radius*2))
-    //     let columns = Math.floor(limits.height / (radius*2))
-        
-
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
     
-    //     //limits obstacles
-    //     for (let i = 1; i <= rows; i++) {
-    //         for (let j = 1; j <= columns ; j++) {
-    //             if (!(i == 1 || i == rows || j == 1 || j == columns)) { continue; }
-    //             //get here only if it's a border
-    //             let X = limits.x + (i*(radius*2)) - radius
-    //             let Y = limits.y + (j* (radius*2)) - radius
-
-    //             let spritesDefault = [];
-    //             for (let i = 0; i < 6; i++) {
-    //                 spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
-    //             }
-
-    //             // let imgObj = new My_Img_Animated(spritesDefault, X, Y, 60, 60, 10);
-    //             let imgObj = new My_Circle(X, Y, 30, "#0000FF");
-    //             //hitBox
-    //             let hitBoxObj = new HitBox_Circle(X, Y, 30)
-    //             new Obstacle(X, Y, imgObj, hitBoxObj)
-    //         }
-    //     }
-    // }
-
-
-
-    // // TOWERS
-    // {
-    //     let offset = ((limits.width+limits.height) /2) /4;
-    //     // let offset = 30;
-    //     let coords = [
-    //         {"x": limits.x + offset,     "y": limits.y + offset},
-    //         {"x": limits.x + offset,     "y": limits.y + limits.height - offset},
-    //         {"x": limits.x + limits.width - offset, "y": limits.y + offset},
-    //         {"x": limits.x + limits.width - offset, "y": limits.y + limits.height - offset},
-    //     ]
-    //     // let coords = [
-    //     //     {"x": -offset,     "y": offset},
-    //     //     {"x": -offset,     "y": CNV.height - offset},
-    //     //     {"x": CNV.width - offset, "y": offset},
-    //     //     {"x": CNV.width - offset, "y": CNV.height - offset},
-    //     // ]
-    //     for (let i = 0; i < coords.length; i++) {
-    //         let imgName = "towers_";
-    //         let nb = [6, 6, 7, 7, 8, 8, 7, 7];
-    //         let spritesDefault = [];
-    //         for (let i = 0; i < nb.length; i++) {
-    //             spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
-    //         }
-    //         let sprites_explosion_src = [];
-    //         for (let i = 0; i < 8; i++) {
-    //             sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-    //         }
-
-    //         let X = coords[i].x
-    //         let Y = coords[i].y
-    //         let imgObj = new My_Img_Animated(spritesDefault, X, Y, 40, 40, 3, sprites_explosion_src, ASSETS_DIR+"towers_9"+PNG_EXT);
-    //         // let hitBoxObj = new HitBox_Circle(X, Y, 15)
-    //         let hitBoxObj = new HitBox_Mask(X, Y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, 40, 40)
-    //         new Enemy_Turret(X, Y, imgObj, hitBoxObj)
-    //     }
-    // }
-
-
-    // // MOBS
-    // {
-    //     let nombreObj = 10;
-    //     for (let i = 0; i < nombreObj; i++) {
-    //         //define position
-    //         let X = getRandom(10, CNV.width-10);
-    //         let Y = getRandom(cnvMidX+20, CNV.height-10);
-    //         let restart = false;
-    //         if (!is_in_rect(X, Y, 10, 10, CNV.width-10, CNV.height-10)) {
-    //             restart = true;
-    //         }
-    //         if (is_in_rect(X, Y, cnvMidX-50, cnvMidY-50, cnvMidX+50, cnvMidY+50)) {
-    //             restart = true;
-    //         }
-    //         if (restart) {
-    //             i--;
-    //             continue;
-    //         }
-
-    //         //create object
-    //         // let objImg = new My_Circle(X, Y, 20, "green")
-    //         let objImg = new My_Img(ASSETS_DIR+"test_mob"+PNG_EXT, X, Y, 40, 40, ASSETS_DIR+"test_mob"+PNG_EXT)
-    //         let objHitBox = new HitBox_Circle(X, Y, 20);
-    //         new Enemy_Chasing(X, Y, objImg, objHitBox, objectPlayer);
-    //     }
-    // }
 }
 
 

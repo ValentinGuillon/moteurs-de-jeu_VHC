@@ -1,6 +1,6 @@
 
 import { CTX } from "./script.js";
-import { distance, convert } from "./tools.js";
+import { distance, convert, rect_is_in_rect } from "./tools.js";
 import { draw_rect, draw_point, draw_circle_stroke, draw_circle_fill } from "./imgs.js";
 
 export class HitBox_Circle {
@@ -118,16 +118,9 @@ export class HitBox_Mask {
     collide_with_mask(obj) {
         //pre check
         //check if objects overlaps
-        let overlapX = this.x+this.width >= obj.x && this.x < obj.x+obj.width
-        let overlapY = this.y+this.height >= obj.y && this.y < obj.y+obj.height
-        let englobeX = this.x < obj.x && this.x+this.width > obj.x+obj.width
-        let englobeY = this.y < obj.y && this.y+this.height > obj.y+obj.height
-        let insideX = this.x > obj.x && this.x+this.width < obj.x+obj.width
-        let insideY = this.y > obj.y && this.y+this.height < obj.y+obj.height
-        if (!(
-            (overlapX && overlapY) ||
-            ((englobeX || insideX || overlapX) && (englobeY || insideY || overlapY))
-        )) { return false; }
+        const rect1 = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
+        const rect2 = {"x1": obj.x, "y1": obj.y, "x2": obj.x+obj.width, "y2": obj.y+obj.height};
+        if(!rect_is_in_rect(rect1, rect2)) { return false; }
 
         // console.log("overlap")
         //check
