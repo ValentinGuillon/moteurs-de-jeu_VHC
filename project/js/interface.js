@@ -224,44 +224,44 @@ function create_game_test() {
     }
 
 
-    // // TOWERS
-    // {
-    //     let diff = 30;
-    //     let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
-    //     let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
-    //     for (let i = 0; i < 4; i++) {
-    //         create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": 40, "height": 40})
-    //     }
-    // }
+    // TOWERS
+    {
+        let diff = 30;
+        let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
+        let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
+        for (let i = 0; i < 4; i++) {
+            create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": 40, "height": 40})
+        }
+    }
 
 
-    // // BONUS
-    // {
-    //     let x_mid = CNV.width / 2
-    //     let y_mid = CNV.height / 2
-    //     let diff = 40;
-    //     let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
-    //     let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
-    //     for (let i = 0; i < 4; i++) {
-    //         create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": 50, "height": 50})
-    //     }
-    // }
+    // BONUS
+    {
+        let x_mid = CNV.width / 2
+        let y_mid = CNV.height / 2
+        let diff = 40;
+        let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
+        let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
+        for (let i = 0; i < 4; i++) {
+            create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": 50, "height": 50})
+        }
+    }
 
 
-    // // instances des mobs
-    // {
-    //     //Ennemis qui poursuivent le joueur
-    //     let nombreEnnemis = 10;
-    //     for (let i = 0; i < nombreEnnemis; i++) {
-    //         let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
-    //         let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
+    // instances des mobs
+    {
+        //Ennemis qui poursuivent le joueur
+        let nombreEnnemis = 10;
+        for (let i = 0; i < nombreEnnemis; i++) {
+            let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
+            let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
 
-    //         let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
-    //         //Hitbox sous forme de cercle
-    //         let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
-    //         new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
-    //     }
-    // }
+            let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
+            //Hitbox sous forme de cercle
+            let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
+            new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
+        }
+    }
 }
 
 
