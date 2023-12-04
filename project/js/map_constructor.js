@@ -96,6 +96,7 @@ function roadTileName(col, row) {
 
 
 export function construct_map() {
+    const DIR = ASSETS_DIR + "forest/"
     const tileSize = {"width": 100, "height": Math.floor(100*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
     const rows = FOREST.length;
@@ -116,14 +117,14 @@ export function construct_map() {
 
             //ground ONLY
             if (tile == -1 || tile == 0) {
-                name = ASSETS_DIR + "forest_ground" + PNG_EXT
+                name = DIR + "ground" + PNG_EXT
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
                 continue;
             }
             //road
             if (tile == 1 || tile == 2) {
-                name = ASSETS_DIR + "forest_" + roadTileName(j, i) + PNG_EXT;
+                name = DIR + roadTileName(j, i) + PNG_EXT;
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
             }
@@ -141,7 +142,7 @@ export function construct_map() {
             }
             //border
             else if (tile == 9) {
-                name = ASSETS_DIR + "forest_ground" + PNG_EXT;
+                name = DIR + "ground" + PNG_EXT;
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
                 create_object("border", {"x": x, "y": y, "width": tileSize.width, "height": tileSize.height});

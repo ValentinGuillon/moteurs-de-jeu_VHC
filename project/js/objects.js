@@ -893,7 +893,7 @@ function create_bonus(x, y, width, height) {
 
 function create_tree(x, y, width, height) {
     // prepare sprite
-    let imgName = "forest_";
+    let imgName = "forest/";
     if (getRandom(0, 1)) {
         imgName += "tree_large"
     }
@@ -910,7 +910,7 @@ function create_tree(x, y, width, height) {
 
 function create_border(x, y, width, height) {
     // prepare sprite
-    let imgName = "forest_tree_large";
+    let imgName = "forest/tree_large";
     // create object
     let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
     let hitBox = new HitBox_Rect(x, y, width, height)
