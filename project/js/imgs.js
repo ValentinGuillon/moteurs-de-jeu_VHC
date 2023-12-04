@@ -11,6 +11,16 @@ export function draw_rect(x, y, width, height, color) {
 }
 
 
+export function draw_rect_stroke(x, y, width, height, color, thickness = 1) {
+    CTX.beginPath();
+    CTX.rect(x, y, width, height);
+    CTX.lineWidth = thickness;
+    CTX.strokeStyle = color
+    CTX.stroke();
+    CTX.closePath();
+}
+
+
 export function draw_point(x, y, color) {
     draw_rect(x, y, 1, 1, color);
 }

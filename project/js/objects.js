@@ -1,7 +1,7 @@
 
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
-import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
+import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, normalize } from "./tools.js";
 import { My_Button } from "./interface.js";
 
@@ -311,6 +311,18 @@ export class My_Object {
     recul(obj) {
         let vel = direction(obj.x, obj.y, this.x, this.y);
         vel = normalize(vel.x, vel.y);
+        if (obj.hitBox instanceof HitBox_Rect) {
+            if (Math.abs(vel.x) > Math.abs(vel.y)) {
+                vel.y = 0;
+                if (vel.x < 0) { vel.x = -0.1; }
+                else { vel.x = 0.1; }
+            }
+            else {
+                vel.x = 0;
+                if (vel.y < 0) { vel.y = -0.1; }
+                else {vel.y = 0.1; }
+            }
+        }
         this.add_to_position(vel.x, vel.y);
         if (this.hitBox.is_colliding(obj.hitBox)) {
             this.recul(obj);
@@ -845,6 +857,9 @@ export function create_object(name, args) {
         case "vassel mask":
             create_vassel("mask", args.x, args.y, args.width, args.height);
             break;
+        case "vassel rect":
+            create_vassel("rect", args.x, args.y, args.width, args.height);
+            break;
         case "tower":
             create_tower(args.x, args.y, args.width, args.height);
             break;
@@ -898,7 +913,7 @@ function create_border(x, y, width, height) {
     let imgName = "forest_tree_large";
     // create object
     let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
-    let hitBox = new HitBox_Circle(x, y, (width+height)/4)
+    let hitBox = new HitBox_Rect(x, y, width, height)
     new Obstacle(x, y, imgObj, hitBox)
 }
 
@@ -919,6 +934,9 @@ function create_vassel(type, x, y, width, height) {
     }
     else if (type == "mask") {
         hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
+    }
+    else if (type == "rect") {
+        hitBoxObj = new HitBox_Rect(x, y, width, height)
     }
     new Obstacle(x, y, imgObj, hitBoxObj)
 
@@ -960,6 +978,8 @@ function create_player(x, y, width, height) {
 
     let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, x, y, width, height, 6, spritesPlayerDead)
     let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, width, height)
+    // let hitBoxPerso = new HitBox_Circle(x, y, (width+height)/4)
+    // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
     return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
 }
 

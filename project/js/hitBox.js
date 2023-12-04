@@ -1,7 +1,7 @@
 
 import { CTX } from "./script.js";
-import { distance, convert, rect_is_in_rect } from "./tools.js";
-import { draw_rect, draw_point, draw_circle_stroke, draw_circle_fill } from "./imgs.js";
+import { distance, convert, rect_is_in_rect, circle_is_in_rect, is_in_rect } from "./tools.js";
+import { draw_rect, draw_point, draw_circle_stroke, draw_rect_stroke } from "./imgs.js";
 
 export class HitBox_Circle {
     constructor(x, y, radius) {
@@ -28,6 +28,9 @@ export class HitBox_Circle {
         else if (obj instanceof HitBox_Circle) {
             return this.collide_with_circle(obj);
         }
+        else if (obj instanceof HitBox_Rect) {
+            return obj.collide_with_circle(this);
+        }
         return false;
     }
 
@@ -51,6 +54,70 @@ export class HitBox_Circle {
         }
 
         draw_circle_stroke(this.x, this.y, this.radius, color, thickness)
+    }
+}
+
+
+
+export class HitBox_Rect {
+    constructor(x, y, width, height) {
+        this.x = x - width/2;
+        this.y = y - height/2;
+        this.width = width;
+        this.height = height;
+
+        //dat.GUI
+        this.collision = true;
+        this.contours = false;
+    }
+
+
+    is_colliding(obj) {
+        if (!this.collision) { return false; }
+
+        //collision disabled
+        if (!this.collision) { return false; }
+        //collide with a Mask
+        if (obj instanceof HitBox_Mask) {
+            return obj.collide_with_rect(this);
+        }
+        //collide with Circle
+        else if (obj instanceof HitBox_Circle) {
+            return this.collide_with_circle(obj);
+        }
+        //collide with another Rect
+        else if (obj instanceof HitBox_Rect) {
+            return this.collide_with_rect(obj)
+        }
+        return false;
+    }
+
+    collide_with_circle(obj) {
+        const circle = {"x": obj.x, "y": obj.y, "radius": obj.radius};
+        const rect = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
+        return circle_is_in_rect(circle, rect);
+    }
+
+
+    collide_with_rect(obj) {
+        const rect1 = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
+        const rect2 = {"x1": obj.x, "y1": obj.y, "x2": obj.x+obj.width, "y2": obj.y+obj.height};
+        if (rect_is_in_rect(rect1, rect2)) { return true; }
+        return false
+    }
+
+
+    draw_contours() {
+        if (!this.contours) { return; }
+
+        let thickness = 2;
+        let color = "#FF0000";
+        if (!this.collision) {
+            thickness = 2;
+            color = "#FF0000AA";
+        }
+
+        draw_rect_stroke(this.x, this.y, this.width, this.height, color, thickness);
     }
 }
 
@@ -108,6 +175,9 @@ export class HitBox_Mask {
         //collide with Circle
         else if (obj instanceof HitBox_Circle) {
             return this.collide_with_circle(obj);
+        }
+        else if(obj instanceof HitBox_Rect) {
+            return this.collide_with_rect(obj);
         }
 
         return false;
@@ -188,6 +258,33 @@ export class HitBox_Mask {
                     // draw_rect(this.x+i-1, this.y+j-1, 3, 3, "#FF0000")
                     // console.log("collision")
                     return true; }
+            }
+        }
+        return false;
+    }
+
+
+    //return true if any true pixel of this.mask is in obj (rect)
+    collide_with_rect(obj) {
+        //pre check
+        //check if objects overlaps
+        const rect1 = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
+        const rect2 = {"x1": obj.x, "y1": obj.y, "x2": obj.x+obj.width, "y2": obj.y+obj.height};
+        if(!rect_is_in_rect(rect1, rect2)) { return false; }
+        
+
+        /*
+         * pour chaque pixel true de this.mask
+         *   s'il est dans obj (rectangle), return true
+         * return false
+         */
+        for (let j = 0; j < this.height; j++) {
+            for (let i = 0; i < this.width; i++) {
+                if (!this.mask[i + j*this.width]) { continue; }
+
+                if (is_in_rect(this.x+i, this.y+j, obj.x, obj.y, obj.x+obj.width, obj.y+obj.height)) {
+                    return true;
+                }
             }
         }
         return false;

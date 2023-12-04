@@ -80,6 +80,32 @@ export function rect_is_in_rect(rect1, rect2) {
 }
 
 
+export function circle_is_in_rect(circle, rect) {
+    // Function to check if a point (x, y) is inside the rectangle
+    function isPointInRect(x, y, rect) {
+        return x >= rect.x1 && x <= rect.x2 && y >= rect.y1 && y <= rect.y2;
+    }
+
+    // Function to calculate the closest point on the rectangle to the circle
+    function closestPointInRect(circle, rect) {
+        let closestX = Math.max(rect.x1, Math.min(circle.x, rect.x2));
+        let closestY = Math.max(rect.y1, Math.min(circle.y, rect.y2));
+        return { x: closestX, y: closestY };
+    }
+
+    // Check if the center of the circle is inside the rectangle
+    if (isPointInRect(circle.x, circle.y, rect)) {
+        return true;
+    }
+
+    // Calculate the closest point on the rectangle to the circle
+    const closestPoint = closestPointInRect(circle, rect);
+
+    // Check if the closest point is inside the circle
+    const distance = Math.sqrt((circle.x - closestPoint.x) ** 2 + (circle.y - closestPoint.y) ** 2);
+    return distance < circle.radius;
+}
+
 
 export function min(a, b) {
     if (a < b) { return a; }
