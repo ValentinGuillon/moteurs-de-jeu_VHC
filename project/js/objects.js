@@ -17,6 +17,7 @@ import { My_Button } from "./interface.js";
 function check_collisions(obj = My_Object, other_objects = Array(My_Object) , timestamp) {
     // if object has no hitBox
     if (!obj.hitBox) { return 1; }
+    if (obj.group == "obstacle") { return 1; }
 
     for (const other of other_objects) {
         if (other == obj) { continue; }
@@ -384,6 +385,10 @@ export class My_Object {
 
     status_update(timestamp) {
         this.additionnal_update(timestamp);
+
+        if (this.hitBox instanceof HitBox_Mask) {
+            this.hitBox.update_mask();
+        }
 
         if (this.is_dead) { return; }
         if (!this.dying) { return; }
@@ -866,6 +871,9 @@ export function create_object(name, args) {
         case "player":
             return create_player(args.x, args.y, args.width, args.height);
             break;
+        case "obstacle":
+            return create_obstacle(args.x, args.y, args.width, args.height, args.name);
+            break;
         default:
             console.log("error: there is no method to create this abject (\"" + name + "\").")
             console.log("In create_object in objects.js.")
@@ -983,3 +991,10 @@ function create_player(x, y, width, height) {
     return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
 }
 
+
+
+function create_obstacle(x, y, width, height, name) {
+    let image = new My_Img(name+PNG_EXT, x, y, width, height);
+    let hitBox = new HitBox_Mask(x, y, name+"_mask"+PNG_EXT, width, height);
+    new Obstacle(x, y, image, hitBox);
+}

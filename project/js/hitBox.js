@@ -156,14 +156,6 @@ export class HitBox_Mask {
     }
 
     is_colliding(obj) {
-        //creation of the mask
-        if (!this.mask_created) {
-            this.update_mask();
-            if (!this.is_mask_empty()) {
-                this.mask_created = true;
-            }
-        }
-
         //collision disabled
         if (!this.collision) { return false; }
 
@@ -292,7 +284,13 @@ export class HitBox_Mask {
 
 
     update_mask() {
+        if (this.mask_created) { return; }
+
         this.mask = this.create_mask();
+
+        if (!this.is_mask_empty()) {
+            this.mask_created = true;
+        }
     }
 
 
