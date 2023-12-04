@@ -7,7 +7,7 @@ import { My_Object, Enemy_Chasing, create_object }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
-import { construct_map } from "./map_constructor.js";
+import { construct_map, construct_terrain } from "./map_constructor.js";
 
 
 
@@ -71,6 +71,11 @@ export class My_Button {
             case "play_game":
                 console.log("plAy game survive")
                 create_game_survive()
+                break;
+
+            case "play_test_map":
+                console.log("plAy test map")
+                create_test_maps();
                 break;
 
             case "go_main-menu":
@@ -155,6 +160,7 @@ function create_main_menu() {
     My_Object.destroy_objects();
     new Button_with_text("Test", "play_test", CNV.width/2-100, 200, 100, 100, "#00FFFF")
     new Button_with_text("Play", "play_game", CNV.width/2-100, 320, 100, 100, "#00FFFF")
+    new Button_with_text("Test Map", "play_test_map", CNV.width/2 +20, 200, 100, 100, "#00FFFF")
     if (jukebox.muted) {
         new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
     }
@@ -295,3 +301,22 @@ function create_game_survive() {
 }
 
 
+
+function create_test_maps() {
+    jukebox.play_game();
+    My_Button.destroy_buttons();
+    My_Object.destroy_objects();
+    My_Img.destroy_imgs();
+    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
+    if (jukebox.muted) {
+        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+    }
+    else {
+        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+    }
+
+    construct_terrain();
+
+    //PLAYER
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
+}
