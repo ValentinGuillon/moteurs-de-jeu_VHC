@@ -370,6 +370,10 @@ export class My_Object {
         if (this.hitBox) {
             this.hitBox.x += add_X;
             this.hitBox.y += add_Y;
+            if (this.hitBox instanceof HitBox_Mask) {
+                this.hitBox.centerMaskX += add_X;
+                this.hitBox.centerMaskY += add_Y;
+            }
         }
     }
 

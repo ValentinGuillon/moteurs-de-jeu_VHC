@@ -132,6 +132,8 @@ export class HitBox_Mask {
     constructor(x, y, img, width, height) {
         this.x = x - (width/2);
         this.y = y - (height/2);
+        this.centerMaskX = this.x;
+        this.centerMaskY = this.y;
         this.width = width;
         this.height = height;
         this.mask = [] //boolens correspondant aux pixels d'une image
@@ -289,8 +291,32 @@ export class HitBox_Mask {
         this.mask = this.create_mask();
 
         if (!this.is_mask_empty()) {
+            this.update_center();
             this.mask_created = true;
         }
+    }
+
+
+    //set the center of the mask
+    update_center() {
+        let minX = this.width
+        let maxX = 0;
+        let minY = this.height;
+        let maxY = 0;
+
+        let i = 0;
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++, i++) {
+                if (!this.mask[i]) { continue; }
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+            }
+        }
+
+        this.centerMaskX = this.x + Math.floor((minX + maxX) / 2)
+        this.centerMaskY = this.y + Math.floor((minY + maxY) / 2)
     }
 
 
@@ -343,6 +369,8 @@ export class HitBox_Mask {
                 draw_point(this.x+k, this.y+j, color)
             }
         }
+
+        draw_rect(this.centerMaskX-2, this.centerMaskY-2, 4, 4, "#000000")
     }
 
 
