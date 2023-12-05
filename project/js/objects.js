@@ -18,6 +18,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
     // if object has no hitBox
     if (!obj.hitBox) { return 1; }
     if (obj.group == "obstacle") { return 1; }
+    if (obj.group == "bonus_invicibility") { return 1; }
 
     for (const other of other_objects) {
         if (other == obj) { continue; }
@@ -41,6 +42,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         other.die();
                         return 0;
                     case "bonus_invicibility":
+                        other.die();
                         obj.give_invicibility(timestamp);
                         break;
                     case "obstacle":
@@ -124,15 +126,6 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                     case "enemy_turret":
                         obj.recul(other);
                         break;
-                }
-                break;
-
-            case "bonus_invicibility":
-                switch (other.group) {
-                    case "player":
-                        obj.die()
-                        other.give_invicibility(timestamp);
-                        return 0;
                 }
                 break;
         }
