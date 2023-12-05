@@ -1,0 +1,9 @@
+ - Faire que la hitBox mask ai un autre x/y indiquant le centre de la collision. Pour avoir un recul avec ce centre, et non celui de l'objet.
+ - HitBox square (pour les bordures de map).
+ - Player ne vise pas les objets hors-canvas.
+ - retravailler dat.GUI
+
+Dans les constructeurs:
+    x => xCenter
+    y => yCenter
+
