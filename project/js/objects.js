@@ -686,7 +686,7 @@ export class Player extends My_Object {
 
 
     draw_invincible() {
-        let radius = (this.hitBox.width+this.hitBox.height) / 4
+        let radius = (this.image.width+this.image.height) / 4
         draw_circle_stroke(this.x, this.y, radius, "#AeAeA7", 3)
     }
 
