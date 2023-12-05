@@ -8,6 +8,14 @@ import { My_Button } from "./interface.js";
 
 
 
+export function get_player_object() {
+    for (const obj of My_Object.instances) {
+        if (obj.group == "player") {
+            return obj;
+        }
+    }
+    return undefined;
+}
 
 
 // Function that checks if the given object collides with any other objects.

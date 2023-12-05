@@ -9,7 +9,7 @@
  * */
 
 
-import { My_Object } from "./objects.js";
+import { My_Object, get_player_object } from "./objects.js";
 import { My_Button, create_home_page, camera } from "./interface.js";
 import { My_Img } from "./imgs.js";
 
@@ -143,16 +143,6 @@ function execute_click(pos, btns) {
 }
 
 
-function get_player_object() {
-    for (const obj of My_Object.instances) {
-        if (obj.group == "player") {
-            return obj;
-        }
-    }
-    return undefined;
-}
-
-
 function execute_inputs() {
     let rightPressed = false;
     let leftPressed = false;
@@ -261,5 +251,6 @@ function refresh(timestamp) {
     requestAnimationFrame(refresh);
 }
 
+initialise_listener();
 create_home_page();
 requestAnimationFrame(refresh);
