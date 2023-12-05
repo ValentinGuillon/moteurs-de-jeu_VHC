@@ -1,12 +1,22 @@
 
 import { CNV, CTX } from "./script.js";
-import { is_in_rect, distance, min } from "./tools.js";
+import { is_in_rect, distance, min, rect_is_in_rect } from "./tools.js";
 
 export function draw_rect(x, y, width, height, color) {
     CTX.beginPath();
     CTX.rect(x, y, width, height);
     CTX.fillStyle = color
     CTX.fill();
+    CTX.closePath();
+}
+
+
+export function draw_rect_stroke(x, y, width, height, color, thickness = 1) {
+    CTX.beginPath();
+    CTX.rect(x, y, width, height);
+    CTX.lineWidth = thickness;
+    CTX.strokeStyle = color
+    CTX.stroke();
     CTX.closePath();
 }
 
@@ -37,10 +47,10 @@ export function draw_circle_fill(x, y, radius, color) {
 
 
 export class My_Img {
-    constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc = undefined, background_component = false) {
+    constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc = undefined, is_background_component = false) {
         this.imgSrc = imgSrc;
         this.iconeSrc = iconeSrc
-        this.background_component = background_component;
+        this.is_background_component = is_background_component;
     
         //size
         this.width = width;
@@ -63,7 +73,7 @@ export class My_Img {
         }
 
         //dat.GUI
-        this.visible = true;
+        this.is_visible = true;
     }
 
 
@@ -82,11 +92,14 @@ export class My_Img {
 
     draw() {
         if (!this.imgSrc) { return; }
-        if (!this.visible) { return; }
+        if (!this.is_visible) { return; }
         if (this.iconeSrc && this.is_out_of_canvas()) {
             this.draw_icone();
         }
-        if (this.background_component || !this.is_entirely_out_of_canvas()) {
+
+        const rect1 = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
+        const rect2 = {"x1": 0, "y1": 0, "x2": CNV.width, "y2": CNV.height};
+        if (this.is_background_component || rect_is_in_rect(rect1, rect2)) {
             CTX.drawImage(this.img, this.x, this.y, this.width, this.height);
         }
     }
@@ -147,26 +160,6 @@ export class My_Img {
         }
         return false;
     }
-
-    is_entirely_out_of_canvas() {
-        let left = this.x - this.width/2;
-        let right = this.x + this.width/2;
-        let up = this.y - this.height/2;
-        let down = this.y + this.height/2;
-        let coords = [
-            {"x": left, "y": up},
-            {"x": right, "y": up},
-            {"x": left, "y": down},
-            {"x": right, "y": down},
-        ]
-
-        for (let i = 0; i < 4; i++) {
-            if (is_in_rect(coords[i].x, coords[i].y, 0, 0, CNV.width, CNV.height)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }
 
 
@@ -179,7 +172,7 @@ export class My_Img_Animated extends My_Img {
         this.sprites = sprites;
         this.sprites_death = sprites_death;
 
-        this.dead = false;
+        this.is_dead = false;
 
         this.fps = fps;
         this.previousTimestamp = undefined;
@@ -201,7 +194,7 @@ export class My_Img_Animated extends My_Img {
         this.previousTimestamp = timestamp;
 
         if (this.sprites.length == 0) {
-            this.dead = true;
+            this.is_dead = true;
             return 0;
         }
         
@@ -234,12 +227,12 @@ export class My_Circle {
         this.rad = rad;
         this.color = color;
 
-        this.visible = true;
+        this.is_visible = true;
     }
 
 
     draw() {
-        if (!this.visible) { return; }
+        if (!this.is_visible) { return; }
 
         draw_circle_fill(this.x, this.y, this.rad, this.color);
     }

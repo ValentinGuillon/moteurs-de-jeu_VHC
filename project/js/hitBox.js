@@ -1,7 +1,7 @@
 
 import { CTX } from "./script.js";
-import { distance, convert } from "./tools.js";
-import { draw_rect, draw_point, draw_circle_stroke, draw_circle_fill } from "./imgs.js";
+import { distance, convert, rect_is_in_rect, circle_is_in_rect, is_in_rect } from "./tools.js";
+import { draw_rect, draw_point, draw_circle_stroke, draw_rect_stroke } from "./imgs.js";
 
 export class HitBox_Circle {
     constructor(x, y, radius) {
@@ -22,21 +22,19 @@ export class HitBox_Circle {
         if (!this.collision) { return false; }
         //collide with another mask
         if (obj instanceof HitBox_Mask) {
-            return obj.collide_with_circle(this);
+            // return obj.collide_with_circle(this);
+            return is_collide_mask_with_circle(obj, this);
         }
         //collide with Circle
         else if (obj instanceof HitBox_Circle) {
-            return this.collide_with_circle(obj);
+            // return this.collide_with_circle(obj);
+            return is_collide_circle_with_circle(this, obj);
+        }
+        else if (obj instanceof HitBox_Rect) {
+            // return obj.collide_with_circle(this);
+            return is_collide_rect_with_circle(obj, this);
         }
         return false;
-    }
-
-    collide_with_circle(obj) {
-        let distanceX = this.x - obj.x;
-        let distanceY = this.y - obj.y;
-        let distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
-
-        return distance < this.radius + obj.radius;
     }
 
 
@@ -56,6 +54,59 @@ export class HitBox_Circle {
 
 
 
+export class HitBox_Rect {
+    constructor(x, y, width, height) {
+        this.x = x - width/2;
+        this.y = y - height/2;
+        this.width = width;
+        this.height = height;
+
+        //dat.GUI
+        this.collision = true;
+        this.contours = false;
+    }
+
+
+    is_colliding(obj) {
+        if (!this.collision) { return false; }
+
+        //collision disabled
+        if (!this.collision) { return false; }
+        //collide with a Mask
+        if (obj instanceof HitBox_Mask) {
+            // return obj.collide_with_rect(this);
+            return is_collide_mask_with_rect(obj, this);
+        }
+        //collide with Circle
+        else if (obj instanceof HitBox_Circle) {
+            // return this.collide_with_circle(obj);
+            return is_collide_rect_with_circle(this, obj);
+        }
+        //collide with another Rect
+        else if (obj instanceof HitBox_Rect) {
+            // return this.collide_with_rect(obj)
+            return is_collide_rect_with_rect(this, obj);
+        }
+        return false;
+    }
+
+
+    draw_contours() {
+        if (!this.contours) { return; }
+
+        let thickness = 2;
+        let color = "#FF0000";
+        if (!this.collision) {
+            thickness = 2;
+            color = "#FF0000AA";
+        }
+
+        draw_rect_stroke(this.x, this.y, this.width, this.height, color, thickness);
+    }
+}
+
+
+
 /*
  * !!! cette class doit recevoir une image respectant les règles suivantes:
  * A la même taille que l'image dont elle est le mask
@@ -65,6 +116,8 @@ export class HitBox_Mask {
     constructor(x, y, img, width, height) {
         this.x = x - (width/2);
         this.y = y - (height/2);
+        this.centerMaskX = this.x;
+        this.centerMaskY = this.y;
         this.width = width;
         this.height = height;
         this.mask = [] //boolens correspondant aux pixels d'une image
@@ -89,120 +142,58 @@ export class HitBox_Mask {
     }
 
     is_colliding(obj) {
-        //creation of the mask
-        if (!this.mask_created) {
-            this.update_mask();
-            if (!this.is_mask_empty()) {
-                this.mask_created = true;
-            }
-        }
-
         //collision disabled
         if (!this.collision) { return false; }
 
         //collide with other mask
         if (obj instanceof HitBox_Mask) {
             // draw_rect(this.x, this.y, this.width, this.height, "#55555511")
-            return this.collide_with_mask(obj);
+            return is_collide_mask_with_mask(this, obj);
         }
         //collide with Circle
         else if (obj instanceof HitBox_Circle) {
-            return this.collide_with_circle(obj);
+            return is_collide_mask_with_circle(this, obj);
+        }
+        else if(obj instanceof HitBox_Rect) {
+            return is_collide_mask_with_rect(this, obj);
         }
 
-        return false;
-    }
-
-
-    //return true if at least one pixel of this.mask and obj.mask are both true
-    collide_with_mask(obj) {
-        //pre check
-        //check if objects overlaps
-        let overlapX = this.x+this.width >= obj.x && this.x < obj.x+obj.width
-        let overlapY = this.y+this.height >= obj.y && this.y < obj.y+obj.height
-        let englobeX = this.x < obj.x && this.x+this.width > obj.x+obj.width
-        let englobeY = this.y < obj.y && this.y+this.height > obj.y+obj.height
-        let insideX = this.x > obj.x && this.x+this.width < obj.x+obj.width
-        let insideY = this.y > obj.y && this.y+this.height < obj.y+obj.height
-        if (!(
-            (overlapX && overlapY) ||
-            ((englobeX || insideX || overlapX) && (englobeY || insideY || overlapY))
-        )) { return false; }
-
-        // console.log("overlap")
-        //check
-        let count = 0
-        for (let j = 0; j < this.height; j++) {
-            for (let i = 0; i < this.width; i++, count++) {
-                //coordonnées générales du pixel
-                let X = this.x + i;
-                let Y = this.y + j;
-
-                //si le point n'est pas surperposé à obj
-                if (X < obj.x || X > obj.x + obj.width) { continue;}
-                if (Y < obj.y || Y > obj.y + obj.height) { continue; }
-
-                //index dans this.mask
-                let iThis = i + (j * this.width);
-
-                //index dans obj.mask
-                let xOther = Math.floor(X - obj.x)
-                let yOther = Math.floor(Y - obj.y)
-                let iOther = xOther + (yOther * obj.width);
-
-                // if (this.mask[iThis]) {
-                //     draw_point(X, Y, "#00FF0055")
-                // }
-
-                if (this.mask[iThis] && obj.mask[iOther]) {
-                    // draw_rect(X-1, Y-1, 3, 3, "#FF0000")
-                    // console.log("collision")
-                    return true; // Collision detected
-                }
-            }
-        }
-        return false;
-    }
-
-    //return true if the distance between the center of obj and at least one true pixel of this.mask is smaller than obj.radius
-    collide_with_circle(obj) {
-        //opti pour réduire par 4 le parcours de this.mask:
-        //pre check pour vérifier la position relative de obj (haut ou haut-droite ou haut-gauche...) dans les 8 directions
-        //ex: si l'obj est en haut à gauche, il faut vérifier ignorer les pixels dans la partie bas-droite de this.mask (donc x > width/2 && y > height/2)
-        //ex: --   obj ----   bas, il faut ignore les pixels d'en haut (donc y < this.height/2)
-
-        // draw_rect(obj.x-10, obj.y-10, 20, 20, "#FF000055")
-        
-        // draw_circle_fill(obj.x, obj.y, obj.radius, "#0000FF55")
-
-        //pre check
-        //check if objects overlaps
-        let overlapX = this.x+this.width >= obj.x-obj.radius && this.x < obj.x+obj.radius
-        let overlapY = this.y+this.height >= obj.y-obj.radius && this.y < obj.y+obj.radius
-        if (!overlapX || !overlapY) { return false; }
-
-        /*
-         * pour chaque pixel true de this.mask
-         *   si la distance avec le centre de obj est plus petite que rayon de obj, return true
-         * return false
-         */
-        for (let j = 0; j < this.height; j++) {
-            for (let i = 0; i < this.width; i++) {
-                if (!this.mask[i + j*this.width]) { continue; }
-                // draw_point(this.x+i, this.y+j, "#00FF00")
-                let dist = distance(obj.x, obj.y, this.x+i, this.y+j)
-                if (dist < obj.radius) { 
-                    // draw_rect(this.x+i-1, this.y+j-1, 3, 3, "#FF0000")
-                    // console.log("collision")
-                    return true; }
-            }
-        }
         return false;
     }
 
 
     update_mask() {
+        if (this.mask_created) { return; }
+
         this.mask = this.create_mask();
+
+        if (!this.is_mask_empty()) {
+            this.update_center();
+            this.mask_created = true;
+        }
+    }
+
+
+    //set the center of the mask
+    update_center() {
+        let minX = this.width
+        let maxX = 0;
+        let minY = this.height;
+        let maxY = 0;
+
+        let i = 0;
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++, i++) {
+                if (!this.mask[i]) { continue; }
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
+            }
+        }
+
+        this.centerMaskX = this.x + Math.floor((minX + maxX) / 2)
+        this.centerMaskY = this.y + Math.floor((minY + maxY) / 2)
     }
 
 
@@ -255,6 +246,8 @@ export class HitBox_Mask {
                 draw_point(this.x+k, this.y+j, color)
             }
         }
+
+        draw_rect(this.centerMaskX-2, this.centerMaskY-2, 4, 4, "#000000")
     }
 
 
@@ -264,4 +257,147 @@ export class HitBox_Mask {
         }
         this.draw_mask()
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+function is_collide_circle_with_circle(c1, c2) {
+    let distanceX = c1.x - c2.x;
+    let distanceY = c1.y - c2.y;
+    let distance = Math.sqrt((distanceX * distanceX) + (distanceY * distanceY));
+
+    return distance < c1.radius + c2.radius;
+}
+
+
+function is_collide_rect_with_rect(r1, r2) {
+    const rect1 = {"x1": r1.x, "y1": r1.y, "x2": r1.x+r1.width, "y2": r1.y+r1.height};
+    const rect2 = {"x1": r2.x, "y1": r2.y, "x2": r2.x+r2.width, "y2": r2.y+r2.height};
+    if (rect_is_in_rect(rect1, rect2)) { return true; }
+    return false
+}
+
+
+function is_collide_rect_with_circle(r, c) {
+    const circle = {"x": c.x, "y": c.y, "radius": c.radius};
+    const rect = {"x1": r.x, "y1": r.y, "x2": r.x+r.width, "y2": r.y+r.height};
+    return circle_is_in_rect(circle, rect);
+}
+
+
+//return true if at least one pixel of this.mask and obj.mask are both true
+function is_collide_mask_with_mask(m1, m2) {
+    //pre check
+    //check if objects overlaps
+    const rect1 = {"x1": m1.x, "y1": m1.y, "x2": m1.x+m1.width, "y2": m1.y+m1.height};
+    const rect2 = {"x1": m2.x, "y1": m2.y, "x2": m2.x+m2.width, "y2": m2.y+m2.height};
+    if(!rect_is_in_rect(rect1, rect2)) { return false; }
+
+    // console.log("overlap")
+    //check
+    let count = 0
+    for (let j = 0; j < m1.height; j++) {
+        for (let i = 0; i < m1.width; i++, count++) {
+            //coordonnées générales du pixel
+            let X = m1.x + i;
+            let Y = m1.y + j;
+
+            //si le point n'est pas surperposé à m2
+            if (X < m2.x || X > m2.x + m2.width) { continue;}
+            if (Y < m2.y || Y > m2.y + m2.height) { continue; }
+
+            //index dans m1.mask
+            let iM1 = i + (j * m1.width);
+
+            //index dans m2.mask
+            let xOther = Math.floor(X - m2.x)
+            let yOther = Math.floor(Y - m2.y)
+            let iOther = xOther + (yOther * m2.width);
+
+            // if (m1.mask[iM1]) {
+            //     draw_point(X, Y, "#00FF0055")
+            // }
+
+            if (m1.mask[iM1] && m2.mask[iOther]) {
+                // draw_rect(X-1, Y-1, 3, 3, "#FF0000")
+                // console.log("collision")
+                return true; // Collision detected
+            }
+        }
+    }
+    return false;
+}
+
+
+//return true if the distance between the center of circle and at least one true pixel of mask.mask is smaller than circle.radius
+function is_collide_mask_with_circle(mask, circle) {
+    //opti pour réduire par 4 le parcours de mask.mask:
+    //pre check pour vérifier la position relative de circle (haut ou haut-droite ou haut-gauche...) dans les 8 directions
+    //ex: si l'circle est en haut à gauche, il faut vérifier ignorer les pixels dans la partie bas-droite de mask.mask (donc x > width/2 && y > height/2)
+    //ex: --   circle ----   bas, il faut ignore les pixels d'en haut (donc y < mask.height/2)
+
+    // draw_rect(circle.x-10, circle.y-10, 20, 20, "#FF000055")
+    
+    // draw_circle_fill(circle.x, circle.y, circle.radius, "#0000FF55")
+
+    //pre check
+    //check if objects overlaps
+    let overlapX = mask.x+mask.width >= circle.x-circle.radius && mask.x < circle.x+circle.radius
+    let overlapY = mask.y+mask.height >= circle.y-circle.radius && mask.y < circle.y+circle.radius
+    if (!overlapX || !overlapY) { return false; }
+
+    /*
+        * pour chaque pixel true de mask.mask
+        *   si la distance avec le centre de circle est plus petite que rayon de circle, return true
+        * return false
+        */
+    for (let j = 0; j < mask.height; j++) {
+        for (let i = 0; i < mask.width; i++) {
+            if (!mask.mask[i + j*mask.width]) { continue; }
+            // draw_point(mask.x+i, mask.y+j, "#00FF00")
+            let dist = distance(circle.x, circle.y, mask.x+i, mask.y+j)
+            if (dist < circle.radius) { 
+                // draw_rect(mask.x+i-1, mask.y+j-1, 3, 3, "#FF0000")
+                // console.log("collision")
+                return true; }
+        }
+    }
+    return false;
+}
+
+
+//return true if any true pixel of mask.mask is in rect
+function is_collide_mask_with_rect(mask, rect) {
+    //pre check
+    //check if objects overlaps
+    const rect1 = {"x1": mask.x, "y1": mask.y, "x2": mask.x+mask.width, "y2": mask.y+mask.height};
+    const rect2 = {"x1": rect.x, "y1": rect.y, "x2": rect.x+rect.width, "y2": rect.y+rect.height};
+    if(!rect_is_in_rect(rect1, rect2)) { return false; }
+    
+
+    /*
+        * pour chaque pixel true de mask.mask
+        *   s'il est dans rect, return true
+        * return false
+        */
+    for (let j = 0; j < mask.height; j++) {
+        for (let i = 0; i < mask.width; i++) {
+            if (!mask.mask[i + j*mask.width]) { continue; }
+
+            if (is_in_rect(mask.x+i, mask.y+j, rect.x, rect.y, rect.x+rect.width, rect.y+rect.height)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
