@@ -14,9 +14,13 @@ import { construct_map, construct_terrain } from "./map_constructor.js";
 
 
 
-export let camera = new Camera()
-export let jukebox = new Jukebox()
+export let camera = undefined
+export let jukebox = undefined
 
+export function init_interface() {
+    camera = new Camera()
+    jukebox = new Jukebox()
+}
 
 
 
@@ -147,25 +151,27 @@ export class Button_with_text extends My_Button {
 
 
 export function create_home_page() {
-    new Button_with_text("Launch Game", "home", 200, 100, 100, 100, "#00FFFF")
-    new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+    const btnSize = CNV.height*0.1;
+    new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
+    new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
 }
 
 
 
 function create_main_menu() {
+    const btnSize = CNV.height*0.1;
     jukebox.play_main_menu()
     My_Img.destroy_imgs();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
-    new Button_with_text("Test", "play_test", CNV.width/2-100, 200, 100, 100, "#00FFFF")
-    new Button_with_text("Play", "play_game", CNV.width/2-100, 320, 100, 100, "#00FFFF")
-    new Button_with_text("Test Map", "play_test_map", CNV.width/2 +20, 200, 100, 100, "#00FFFF")
+    new Button_with_text("Test", "play_test", CNV.width/2, CNV.height*0.3, btnSize*2, btnSize*2, "#00FFFF")
+    new Button_with_text("Play", "play_game", CNV.width/2, CNV.height*0.3*2, btnSize*2, btnSize*2, "#00FFFF")
+    new Button_with_text("Test Map", "play_test_map", CNV.width/2, CNV.height*0.3*3, btnSize*2, btnSize*2, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
     }
     else {
-        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
     }
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
@@ -176,15 +182,16 @@ function create_main_menu() {
 
 
 function create_game_test() {
+    const btnSize = CNV.height*0.1;
     jukebox.play_game()
     My_Button.destroy_buttons()
     My_Img.destroy_imgs();
-    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF")
+    new Button_with_text("X", "go_main-menu", CNV.width - btnSize*2, btnSize*2, btnSize, btnSize, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Unmute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
     }
     else {
-        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF")
+        new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
     }
 
 
@@ -197,7 +204,7 @@ function create_game_test() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
+    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": Math.floor(btnSize*1.6), "height": Math.floor(btnSize*2)});
     
 
 

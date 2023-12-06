@@ -10,13 +10,16 @@
 
 
 import { My_Object, get_player_object } from "./objects.js";
-import { My_Button, create_home_page, camera } from "./interface.js";
+import { My_Button, create_home_page, camera , init_interface} from "./interface.js";
 import { My_Img } from "./imgs.js";
 import { initialise_listener, execute_inputs } from "./input.js";
 
 
 export const CNV = document.getElementById("myCanvas");
 export const CTX = CNV.getContext("2d");
+let temp = Math.max(Math.min(window.innerWidth, window.innerHeight), 500);
+CNV.width = temp
+CNV.height = temp * 0.7
 
 CTX.imageSmoothingEnabled = false;
 
@@ -163,6 +166,7 @@ function refresh(timestamp) {
     requestAnimationFrame(refresh);
 }
 
+init_interface();
 initialise_listener();
 create_home_page();
 requestAnimationFrame(refresh);

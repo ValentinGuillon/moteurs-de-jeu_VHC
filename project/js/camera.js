@@ -6,7 +6,7 @@ import { CNV, CTX } from "./script.js";
 
 export class Camera {
     constructor() {
-        this.smoothness = 10; //a small value made a harder camera
+        this.smoothness = CNV.width * 0.03; //a small value made a harder camera
     }
 
 
