@@ -256,9 +256,22 @@ function create_game_test() {
             let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
             let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
 
-            let enemyImage = new My_Circle(enemyX, enemyY, 15, "green")
+            let imgEnemyName = "BAT";
+            let spritesEnemy = [];
+            let spritesEnemyDead = [];
+
+            for (let i = 0; i < 3; i++) {
+                spritesEnemy.push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
+            }
+
+            for (let i = 0; i < 8; i++) {
+                spritesEnemyDead.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+            }
+
+
+            let enemyImage = new My_Img_Animated(spritesEnemy, enemyX, enemyY, 64, 64, 10, spritesEnemyDead);
             //Hitbox sous forme de cercle
-            let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 15);
+            let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
             new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
         }
     }
