@@ -145,9 +145,9 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
 
 
 export class My_Object {
-    constructor(x, y, image, hitBox, group = "", speed = 1, velocityX = 0.0, velocityY = 0.0) {
-        this.x = x;
-        this.y = y;
+    constructor(xCenter, yCenter, image, hitBox, group = "", speed = 1, velocityX = 0.0, velocityY = 0.0) {
+        this.x = xCenter;
+        this.y = yCenter;
 
         this.image = image;
         this.hitBox = hitBox;
@@ -496,8 +496,8 @@ export class My_Object {
 
 
 export class Obstacle extends My_Object {
-    constructor(x, y, image, hitBox) {
-        super(x, y, image, hitBox, "obstacle");
+    constructor(xCenter, yCenter, image, hitBox) {
+        super(xCenter, yCenter, image, hitBox, "obstacle");
     }
 }
 
@@ -505,8 +505,8 @@ export class Obstacle extends My_Object {
 
 
 export class Bonus_Invicibility extends My_Object {
-    constructor(x, y, image, hitBox) {
-        super(x, y, image, hitBox, "bonus_invicibility");
+    constructor(xCenter, yCenter, image, hitBox) {
+        super(xCenter, yCenter, image, hitBox, "bonus_invicibility");
     }
 }
 
@@ -514,8 +514,8 @@ export class Bonus_Invicibility extends My_Object {
 
 
 export class Player extends My_Object {
-    constructor(x, y, image, hitBox, speed = 10) {
-        super(x, y, image, hitBox, "player", speed);
+    constructor(xCenter, yCenter, image, hitBox, speed) {
+        super(xCenter, yCenter, image, hitBox, "player", speed);
         this.is_invincible = false;
         this.invicibility_duration = 5; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
@@ -621,7 +621,7 @@ export class Player extends My_Object {
 
         let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, 4, sprites_explosion_src)
         let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, vel.x, vel.y);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, 8, vel.x, vel.y);
 
     }
 
@@ -710,8 +710,8 @@ export class Player extends My_Object {
 
 
 export class Enemy_Turret extends My_Object {
-    constructor(x, y, image, hitBox) {
-        super(x, y, image, hitBox, "enemy_turret");
+    constructor(xCenter, yCenter, image, hitBox) {
+        super(xCenter, yCenter, image, hitBox, "enemy_turret");
 
         this.shoot = false;
         this.shot_by_seconds = 3; // 1/X, to shot every X seconds
@@ -757,7 +757,7 @@ export class Enemy_Turret extends My_Object {
         let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, 12, sprites_explosion_src)
         // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
         let hitBoxBall = new HitBox_Mask(x-10, y-7.5, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, 20, 15)
-        new Enemy_Projectile(x, y, imgBall, hitBoxBall, velX, velY);
+        new Enemy_Projectile(x, y, imgBall, hitBoxBall, 10, velX, velY);
     }
 
 
@@ -782,8 +782,8 @@ export class Enemy_Turret extends My_Object {
 
 
 export class Enemy_Projectile extends My_Object {
-    constructor(x, y, image, hitBox, velocityX, velocityY, speed = 10) {
-        super(x, y, image, hitBox, "enemy_projectile", speed, velocityX, velocityY);
+    constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY) {
+        super(xCenter, yCenter, image, hitBox, "enemy_projectile", speed, velocityX, velocityY);
     }
 
     auto_actions(timestamp) {
@@ -805,8 +805,8 @@ export class Enemy_Projectile extends My_Object {
 
 
 export class Ally_Projectile extends My_Object {
-    constructor(x, y, image, hitBox, velocityX = 0.0, velocityY = 0.0, speed = 8)  {
-        super(x, y, image, hitBox, "ally_projectile", speed, velocityX, velocityY);
+    constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY)  {
+        super(xCenter, yCenter, image, hitBox, "ally_projectile", speed, velocityX, velocityY);
     }
 
     auto_actions(timestamp) {
@@ -828,8 +828,8 @@ export class Ally_Projectile extends My_Object {
 
 
 export class Enemy_Chasing extends My_Object {
-    constructor(x, y, image, hitBox, player, speed = 6) {
-        super(x, y, image, hitBox, "enemy_chasing", speed);
+    constructor(xCenter, yCenter, image, hitBox, speed, player) {
+        super(xCenter, yCenter, image, hitBox, "enemy_chasing", speed);
         this.player = player; // Référence à l'objet joueur
         // this.chaseSpeed = 6; // Vitesse de poursuite de l'ennemi
     }

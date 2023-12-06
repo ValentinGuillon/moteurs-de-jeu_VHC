@@ -47,7 +47,7 @@ export function draw_circle_fill(x, y, radius, color) {
 
 
 export class My_Img {
-    constructor(imgSrc, x, y, width = 25, height = 25, iconeSrc = undefined, is_background_component = false) {
+    constructor(imgSrc, xCenter, yCenter, width, height, iconeSrc = undefined, is_background_component = false) {
         this.imgSrc = imgSrc;
         this.iconeSrc = iconeSrc
         this.is_background_component = is_background_component;
@@ -57,8 +57,8 @@ export class My_Img {
         this.height = height;
     
         //position
-        this.x = x - (width/2);
-        this.y = y - (height/2);
+        this.x = xCenter - (width/2);
+        this.y = yCenter - (height/2);
     
         //predefined Image class
         this.img = new Image();
@@ -167,8 +167,8 @@ export class My_Img {
 
 //animated sprite with a SINGLE animation
 export class My_Img_Animated extends My_Img {
-    constructor(sprites, x, y, width, height, fps, sprites_death = [], iconeSrc = undefined) {
-        super(sprites[0], x, y, width, height, iconeSrc);
+    constructor(sprites, xCenter, yCenter, width, height, fps, sprites_death = [], iconeSrc = undefined) {
+        super(sprites[0], xCenter, yCenter, width, height, iconeSrc);
         this.sprites = sprites;
         this.sprites_death = sprites_death;
 

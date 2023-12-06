@@ -25,10 +25,10 @@ export function init_interface() {
 
 
 export class My_Button {
-    constructor(type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
+    constructor(type, xCenter, yCenter, width, height, font_color = "#FFFFFF", back_color = "#000000") {
         this.type = type
-        this.x = x;
-        this.y = y;
+        this.x = xCenter;
+        this.y = yCenter;
         this.width = width;
         this.height = height;
         this.font_color = font_color;
@@ -279,7 +279,7 @@ function create_game_test() {
             let enemyImage = new My_Img_Animated(spritesEnemy, enemyX, enemyY, 64, 64, 10, spritesEnemyDead);
             //Hitbox sous forme de cercle
             let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
-            new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, objectPlayer);
+            new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
         }
     }
 }

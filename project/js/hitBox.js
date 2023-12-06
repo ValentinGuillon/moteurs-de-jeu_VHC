@@ -55,9 +55,9 @@ export class HitBox_Circle {
 
 
 export class HitBox_Rect {
-    constructor(x, y, width, height) {
-        this.x = x - width/2;
-        this.y = y - height/2;
+    constructor(xCenter, yCenter, width, height) {
+        this.x = xCenter - width/2;
+        this.y = yCenter - height/2;
         this.width = width;
         this.height = height;
 
@@ -113,9 +113,9 @@ export class HitBox_Rect {
  * Le fond doit être transparent
  */
 export class HitBox_Mask {
-    constructor(x, y, img, width, height) {
-        this.x = x - (width/2);
-        this.y = y - (height/2);
+    constructor(xCenter, yCenter, img, width, height) {
+        this.x = xCenter - (width/2);
+        this.y = yCenter - (height/2);
         this.centerMaskX = this.x;
         this.centerMaskY = this.y;
         this.width = width;
