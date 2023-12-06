@@ -1,6 +1,6 @@
 
 
-import { CNV } from "./script.js";
+import { CNV, gui } from "./script.js";
 import { get_player_object } from "./objects.js";
 import { My_Button } from "./interface.js";
 
@@ -80,6 +80,12 @@ export function execute_inputs() {
                 break;
             case "d":
                 rightPressed = true;
+                break;
+            case "l":
+                gui.hide();
+                break;
+            case "m":
+                gui.show();
                 break;
         }
     }

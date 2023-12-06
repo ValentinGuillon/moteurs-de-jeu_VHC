@@ -20,7 +20,8 @@ export const CTX = CNV.getContext("2d");
 
 CTX.imageSmoothingEnabled = false;
 
-let gui = new dat.gui.GUI();
+export let gui = new dat.gui.GUI();
+gui.hide()
 
 export const ASSETS_DIR = "./assets/"
 export const PNG_EXT = ".png";
