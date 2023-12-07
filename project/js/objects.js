@@ -4,6 +4,7 @@ import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
 import { My_Button } from "./interface.js";
+import { generate_mobs } from './interface.js';
 
 
 
@@ -861,6 +862,11 @@ export class Enemy_Chasing extends My_Object {
             dy = (dy / dist);
             this.update_velocity(dx, dy);
         }
+    }
+
+    die() {
+        super.die();
+        generate_mobs(this.player); // Générer de nouvel ennemi lors de la mort de cet ennemi
     }
 
     generate_on_death() {

@@ -221,6 +221,29 @@ function create_main_menu() {
     My_Img.add_instance(imgBackground);
 }
 
+export function generate_mobs(objectPlayer) {
+    let enemyX = getRandom((CNV.width/3)*2, CNV.width);
+    let enemyY = getRandom(0, CNV.height);
+
+    let imgEnemyName = "BAT";
+    let sprites = {
+        "standing": {"fps": 10, "frames": []},
+        "dying": {"fps": 10, "frames": []}
+    };
+
+    for (let i = 0; i < 3; i++) {
+        sprites["standing"]["frames"].push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
+    }
+    for (let i = 0; i < 8; i++) {
+        sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    }
+
+    let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
+    let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 32);
+    new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
+}
+
+
 
 
 function create_game_test() {
@@ -247,7 +270,10 @@ function create_game_test() {
 
     //PLAYER
     let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": Math.floor(btnSize*1.6), "height": Math.floor(btnSize*2), "player auto": true});
-    
+    // Génération des ennemis initiaux
+    for (let i = 0; i < 2; i++) {
+        generate_mobs(objectPlayer);
+    }
 
 
     //(next instances are in another scope so variables can easily be reused by copy/paste)
@@ -298,37 +324,37 @@ function create_game_test() {
 
 
     // instances des mobs
-    {
-        //Ennemis qui poursuivent le joueur
-        let nombreEnnemis = 10;
-        for (let i = 0; i < nombreEnnemis; i++) {
-            let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
-            let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
+    // {
+    //     //Ennemis qui poursuivent le joueur
+    //     let nombreEnnemis = 10;
+    //     for (let i = 0; i < nombreEnnemis; i++) {
+    //         let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
+    //         let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
 
-            let imgEnemyName = "BAT";
-            let sprites = {};
-            let spritesEnemy = [];
-            let spritesEnemyDead = [];
+    //         let imgEnemyName = "BAT";
+    //         let sprites = {};
+    //         let spritesEnemy = [];
+    //         let spritesEnemyDead = [];
 
-            for (let i = 0; i < 3; i++) {
-                spritesEnemy.push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
-            }
-            sprites["standing"] = {"fps": 10, "frames": spritesEnemy};
+    //         for (let i = 0; i < 3; i++) {
+    //             spritesEnemy.push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
+    //         }
+    //         sprites["standing"] = {"fps": 10, "frames": spritesEnemy};
 
-            for (let i = 0; i < 8; i++) {
-                spritesEnemyDead.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-            }
-            sprites["dying"] = {"fps": 10, "frames": spritesEnemyDead};
+    //         for (let i = 0; i < 8; i++) {
+    //             spritesEnemyDead.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    //         }
+    //         sprites["dying"] = {"fps": 10, "frames": spritesEnemyDead};
 
 
-            let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
-            //Hitbox sous forme de cercle
-            let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
-            new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
+    //         let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
+    //         //Hitbox sous forme de cercle
+    //         let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
+    //         new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
 
-            // create_object("")
-        }
-    }
+    //         // create_object("")
+    //     }
+    // }
 }
 
 
