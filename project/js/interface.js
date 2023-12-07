@@ -87,10 +87,12 @@ export class My_Button {
             case "mute_music":
                 jukebox.mute_music();
                 if (jukebox.muted) {
-                    this.update_text("Unmute")
+                    // this.update_text("Unmute")
+                    this.set("off")
                 }
                 else {
-                    this.update_text("Mute")
+                    // this.update_text("Mute")
+                    this.set("on")
                 }
 
                 break;
@@ -193,7 +195,7 @@ export class Button_with_Image extends My_Button {
 export function create_home_page() {
     const btnSize = CNV.height*0.1;
     new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
-    new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
+    new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
 }
 
 
@@ -208,10 +210,10 @@ function create_main_menu() {
     new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/2, btnSize*8, btnSize*4)
     new Button_with_text("Test Map", "play_test_map", CNV.width/2, CNV.height*0.3*3, btnSize*2, btnSize*2, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
     else {
-        new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
     }
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
@@ -228,10 +230,10 @@ function create_game_test() {
     My_Img.destroy_imgs();
     new Button_with_text("X", "go_main-menu", CNV.width - btnSize*2, btnSize*2, btnSize, btnSize, "#00FFFF")
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
     else {
-        new Button_with_text("Mute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
     }
 
 
@@ -330,16 +332,17 @@ function create_game_test() {
 
 
 function create_game_survive() {
+    const btnSize = CNV.height*0.1;
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
     new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
     else {
-        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
     }
 
     construct_map();
@@ -366,16 +369,17 @@ function create_game_survive() {
 
 
 function create_test_maps() {
+    const btnSize = CNV.height*0.1;
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
     new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
     if (jukebox.muted) {
-        new Button_with_text("Unmute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
     else {
-        new Button_with_text("Mute", "mute_music", 40, 40, 30, 30, "#00FFFF");
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
     }
 
     construct_terrain();
