@@ -146,7 +146,7 @@ export class Button_with_text extends My_Button {
 
 
 export class Button_with_Image extends My_Button {
-    constructor(image_src = {"default": "", "hover": ""}, type, x, y, width, height) {
+    constructor(image_src = {"default": "", "hover": ""}, type, x, y, width, height, play = "default") {
         super(type, x, y, width, height)
         this.change_when_hover = false;
         if (image_src["hover"]) {
@@ -157,7 +157,7 @@ export class Button_with_Image extends My_Button {
         this.image_src = image_src;
 
         this.img = new Image();
-        this.set("default");
+        this.set(play);
     }
 
     set(name) {
