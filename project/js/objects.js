@@ -8,9 +8,9 @@ import { My_Button } from "./interface.js";
 
 
 
-export function get_player_object() {
+export function get_object(group_name) {
     for (const obj of My_Object.instances) {
-        if (obj.group == "player") {
+        if (obj.group == group_name) {
             return obj;
         }
     }

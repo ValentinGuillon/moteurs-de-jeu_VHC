@@ -1,7 +1,7 @@
 
 
 import { CNV, gui } from "./script.js";
-import { get_player_object } from "./objects.js";
+import { get_object } from "./objects.js";
 import { My_Button } from "./interface.js";
 
 
@@ -93,7 +93,7 @@ export function execute_inputs() {
         }
     }
 
-    let objPlayer = get_player_object();
+    let objPlayer = get_object("player");
     if (objPlayer) {
         //horizontal
         if (rightPressed && !leftPressed) {
