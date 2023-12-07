@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object }
+import { My_Object, Enemy_Chasing, create_object, Player2 }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -390,8 +390,27 @@ function create_game_survive() {
 
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50, "player auto": true});
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50, "player auto": false});
     
+    // prepare sprites
+    let imgPlayerName = "RedDeathFrame_";
+    let sprites = {"standing": {"fps": 6, "frames": []}, "dying": {"fps": 6, "frames": []}};
+    for (let i = 0; i < 5; i++) {
+        sprites["standing"]["frames"].push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
+    }
+    for (let i = 0; i < 5; i++) {
+        sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
+    }
+
+    let x = CNV.width/4
+    let y = CNV.height/2
+    let imgAnimatedPlayer = new My_Img_Animated(x, y, Math.floor(btnSize*1.6), Math.floor(btnSize*2), sprites)
+    let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, Math.floor(btnSize*1.6), Math.floor(btnSize*2))
+    // let hitBoxPerso = new HitBox_Circle(x, y, (width+height)/4)
+    // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
+    // return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+    new Player2(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+
 }
 
 
