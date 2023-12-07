@@ -88,18 +88,6 @@ export function execute_inputs() {
             case "d":
                 rightPressed = true;
                 break;
-            case "u":
-                upPressed2 = true;
-                break;
-            case "h":
-                leftPressed2 = true;
-                break;
-            case "j":
-                downPressed2 = true;
-                break;
-            case "k":
-                rightPressed2 = true;
-                break;
             case "l":
                 gui.hide();
                 break;
@@ -124,23 +112,6 @@ export function execute_inputs() {
         }
         else if (!downPressed && upPressed) {
             objPlayer.give_direction("up")
-        }
-    }
-    let objPlayer2 = get_object("player2");
-    if (objPlayer2) {
-        //horizontal
-        if (rightPressed2 && !leftPressed2) {
-            objPlayer2.give_direction("right")
-        }
-        else if (!rightPressed2 && leftPressed2) {
-            objPlayer2.give_direction("left")
-        }
-        //vertical
-        if (downPressed2 && !upPressed2) {
-            objPlayer2.give_direction("down")
-        }
-        else if (!downPressed2 && upPressed2) {
-            objPlayer2.give_direction("up")
         }
     }
 }

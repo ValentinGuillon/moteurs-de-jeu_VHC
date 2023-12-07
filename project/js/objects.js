@@ -723,18 +723,6 @@ export class Player extends My_Object {
 
 
 
-export class Player2 extends Player {
-    constructor(xCenter, yCenter, image, hitBox, speed) {
-        super(xCenter, yCenter, image, hitBox, speed);
-        this.group = "player2"
-    }
-
-}
-
-
-
-
-
 export class Enemy_Turret extends My_Object {
     constructor(xCenter, yCenter, image, hitBox) {
         super(xCenter, yCenter, image, hitBox, "enemy_turret");
