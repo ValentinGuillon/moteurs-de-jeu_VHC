@@ -65,7 +65,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                 break;
 
             case "ally_projectile":
-                switch(other.group) {
+                switch(otherGroup) {
                     case "enemy_turret":
                         obj.die();
                         other.die();
@@ -85,7 +85,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                 break;
 
             case "enemy_turret":
-                switch(other.group) {
+                switch(otherGroup) {
                     case "player":
                         obj.die();
                         other.recul(obj)
@@ -102,7 +102,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                 break;
 
             case "enemy_projectile":
-                switch (other.group) {
+                switch (otherGroup) {
                     case "obstacle":
                         obj.die();
                         return 0;
@@ -120,7 +120,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                 break;
 
             case "enemy_chasing":
-                switch (other.group) {
+                switch (otherGroup) {
                     case "enemy_chasing":
                         obj.recul(other)
                         return 0;
@@ -863,7 +863,7 @@ export class Player_Auto extends My_Object {
         this.invicibility_duration = 5; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
     
-        this.shoot = false;
+        this.shoot = true;
         this.shot_by_seconds = 1; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
     }
@@ -911,7 +911,9 @@ export class Player_Auto extends My_Object {
 
 
     choose_direction() {
+        const good = ["bonus_invicibility"];
         const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
+        let go_to = []
         let flee_to = []
 
         //found all targets
@@ -920,6 +922,18 @@ export class Player_Auto extends My_Object {
             if (obj == this) { continue; }
             
             let found = false;
+            //good
+            for (const name of good) {
+                if (obj.group == name) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                go_to.push(obj);
+                continue;
+            }
+
             //bad
             if (is_out_of_screen(obj.x, obj.y)) { continue; }
             for (const name of bad) {
@@ -935,9 +949,19 @@ export class Player_Auto extends My_Object {
         }
 
         //nearest
+        let near_good = undefined;
         let near_bad = undefined;
 
         let near_dist = Math.max(CNV.width, CNV.height);
+        //good
+        for (const obj of go_to) {
+            let dist = distance(obj.x, obj.y, this.x, this.y);
+            if (dist < near_dist) {
+                near_dist = dist;
+                near_good = obj;
+            }
+        }
+        near_dist = Math.max(CNV.width, CNV.height);
         //bad
         for (const obj of flee_to) {
             let dist = distance(obj.x, obj.y, this.x, this.y);
@@ -947,11 +971,20 @@ export class Player_Auto extends My_Object {
             }
         }
 
-        if (near_bad) {
-            let dir = direction(near_bad.x, near_bad.y, this.x, this.y);
-
-            this.update_velocity(dir.x, dir.y);
+        //final direction
+        let dir_good = {"x": 0, "y": 0};
+        let dir_bad = {"x": 0, "y": 0};
+        
+        if (near_good) {
+            dir_good = direction(this.x, this.y, near_good.x, near_good.y);
         }
+        if (near_bad) {
+            dir_bad = direction(near_bad.x, near_bad.y, this.x, this.y);
+        }
+        
+
+
+        this.update_velocity(dir_good.x*1.1 + dir_bad.x, dir_good.y*1.1 + dir_bad.y);
     }
 
 
@@ -1057,7 +1090,7 @@ export class Player_Auto extends My_Object {
 
 
 
-export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "obstacle filename": "", "player auto": false}) {
+export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "filename": "", "player auto": false}) {
     switch (name) {
         case "bonus":
             create_bonus(args.x, args.y, args.width, args.height);
@@ -1078,8 +1111,10 @@ export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height"
             return create_player(args.x, args.y, args.width, args.height, args["player auto"]);
             break;
         case "obstacle":
-            return create_obstacle(args.x, args.y, args.width, args.height, args["obstacle filename"]);
+            return create_obstacle(args.x, args.y, args.width, args.height, args["filename"]);
             break;
+        case "enemy chasing":
+            create_enemy_chasing(args.x, args.y, args.width, args.height, args["filename"])
         default:
             console.log("error: there is no method to create this abject (\"" + name + "\").")
             console.log("In create_object in objects.js.")
@@ -1208,3 +1243,29 @@ function create_obstacle(x, y, width, height, name) {
     let hitBox = new HitBox_Mask(x, y, name+"_mask"+PNG_EXT, width, height);
     new Obstacle(x, y, image, hitBox);
 }
+
+
+
+
+function create_enemy_chasing(x, y, width, height, name) {
+    let sprites = {"standing": {"fps": 10, "frames": []}, "dying": {"fps": 10, "frames": []}};
+
+    for (let i = 0; i < 3; i++) {
+        sprites["standing"]["frames"].push(ASSETS_DIR + name + (i+1) + PNG_EXT);
+    }
+
+    for (let i = 0; i < 8; i++) {
+        sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    }
+
+
+    let enemyImage = new My_Img_Animated(x, y, 64, 64, sprites);
+    //Hitbox sous forme de cercle
+    let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
+    let object = get_object("player");
+    if (!object) {
+        object = get_object("player_auto")
+    }
+    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, 6, object);
+}
+

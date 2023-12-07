@@ -325,6 +325,8 @@ function create_game_test() {
             //Hitbox sous forme de cercle
             let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
             new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
+
+            // create_object("")
         }
     }
 }
@@ -362,7 +364,7 @@ function create_game_survive() {
 
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50, "player auto": true});
     
 }
 
