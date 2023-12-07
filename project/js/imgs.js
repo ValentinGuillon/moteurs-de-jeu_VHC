@@ -167,15 +167,15 @@ export class My_Img {
 
 //animated sprite with a SINGLE animation
 export class My_Img_Animated extends My_Img {
-    constructor(xCenter, yCenter, width, height, fps, sprites, iconeSrc = undefined) {
+    constructor(xCenter, yCenter, width, height, sprites, iconeSrc = undefined) {
         const temp = My_Img_Animated.get_default_animation(sprites);
-        super(temp[0], xCenter, yCenter, width, height, iconeSrc);
-        this.actual_sprites = temp;
-        this.sprites = sprites;
+        super(temp["frames"][0], xCenter, yCenter, width, height, iconeSrc);
+        this.actual_sprites = temp["frames"];
+        this.sprites = sprites; //dict de dict {"nom anim" : {"fps": int, "frames": list(str)}, ...}
 
         this.is_dead = false;
 
-        this.fps = fps;
+        this.fps = temp["fps"];
         this.previousTimestamp = undefined;
 
         //dat.GUI
@@ -231,7 +231,8 @@ export class My_Img_Animated extends My_Img {
     die() {
         const anim = this.sprites["dying"];
         if (anim) {
-            this.actual_sprites = anim
+            this.actual_sprites = anim["frames"];
+            this.fps = anim["fps"];
         }
         else {
             this.actual_sprites = []

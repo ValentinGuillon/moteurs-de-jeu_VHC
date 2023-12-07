@@ -271,15 +271,15 @@ function create_game_test() {
             for (let i = 0; i < 3; i++) {
                 spritesEnemy.push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
             }
-            sprites["standing"] = spritesEnemy;
+            sprites["standing"] = {"fps": 10, "frames": spritesEnemy};
 
             for (let i = 0; i < 8; i++) {
                 spritesEnemyDead.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
             }
-            sprites["dying"] = spritesEnemyDead;
+            sprites["dying"] = {"fps": 10, "frames": spritesEnemyDead};
 
 
-            let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, 10, sprites);
+            let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
             //Hitbox sous forme de cercle
             let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
             new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
