@@ -48,6 +48,14 @@ export class My_Button {
         return;
     }
 
+    is_inside(x, y) {
+        const X1 = this.x - this.width/2
+        const Y1 = this.y - this.height/2
+        const X2 = X1 + this.width
+        const Y2 = Y1 + this.height
+        return is_in_rect(x, y, X1, Y1, X2, Y2);
+    }
+
 
     action () {
         switch (this.type) {
@@ -124,6 +132,14 @@ export class Button_with_text extends My_Button {
 
     update_text(new_text) {
         this.text = new_text;
+    }
+
+    is_inside(x, y) {
+        const X1 = this.x
+        const Y1 = this.y - this.height
+        const X2 = X1 + this.width
+        const Y2 = Y1 + this.height
+        return is_in_rect(x, y, X1, Y1, X2, Y2);
     }
 }
 

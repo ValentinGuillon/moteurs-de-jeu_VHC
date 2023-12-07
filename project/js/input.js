@@ -42,11 +42,7 @@ function getMousePos(event) {
 //execute button action
 function execute_click(pos, btns) {
     for (const btn of btns) {
-        let X1 = btn.x;
-        let Y1 = btn.y - btn.height;
-        let X2 = btn.x + btn.width;
-        let Y2 = btn.y;
-        let inside = pos.x > X1 && pos.x < X2 && pos.y > Y1 && pos.y < Y2
+        const inside = btn.is_inside(pos.x, pos.y);
         if (inside) {
             btn.action();
             return;
