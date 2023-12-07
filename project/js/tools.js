@@ -1,4 +1,6 @@
 
+import { CNV } from "./script.js";
+
 
 export function getRandom(min, max) {
     return Math.round(Math.random() * (max - min) + min);
@@ -50,6 +52,11 @@ export function is_in_rect(x, y, x1, y1, x2, y2) {
     let in_x = x > x1 && x <= x2;
     let in_y = y > y1 && y <= y2;
     return in_x && in_y;
+}
+
+
+export function is_out_of_screen(x, y) {
+    return !is_in_rect(x, y, 0, 0, CNV.width, CNV.height);
 }
 
 

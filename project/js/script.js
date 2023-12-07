@@ -164,8 +164,12 @@ function refresh(timestamp) {
     //the camera follows either the player or the canvas's center
     if (camera) {
         let objPlayer = get_object("player")
+        let objPlayerAuto = get_object("player_auto");
         if (objPlayer) {
             camera.update(objPlayer);
+        }
+        else if(objPlayerAuto) {
+            camera.update(objPlayerAuto);
         }
         else {
             camera.update(undefined, CNV.width/2, CNV.height/2);

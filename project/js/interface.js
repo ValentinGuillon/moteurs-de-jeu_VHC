@@ -246,7 +246,7 @@ function create_game_test() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": Math.floor(btnSize*1.6), "height": Math.floor(btnSize*2)});
+    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": Math.floor(btnSize*1.6), "height": Math.floor(btnSize*2), "player auto": true});
     
 
 

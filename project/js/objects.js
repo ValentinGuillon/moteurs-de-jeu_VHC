@@ -2,7 +2,7 @@
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
-import { direction, distance, getRandom, normalize } from "./tools.js";
+import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
 import { My_Button } from "./interface.js";
 
 
@@ -28,6 +28,9 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
     if (obj.group == "obstacle") { return 1; }
     if (obj.group == "bonus_invicibility") { return 1; }
 
+    let objGroup = obj.group;
+    if (objGroup == "player_auto") { objGroup = "player"};
+
     for (const other of other_objects) {
         if (other == obj) { continue; }
         if (!other.hitBox) { continue; }
@@ -36,9 +39,11 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
         if (!other.can_move) { continue; }
         if (!(obj.hitBox.is_colliding(other.hitBox))) { continue; }
 
-        switch (obj.group) {
+        let otherGroup = other.group;
+        if (otherGroup == "player_auto") { otherGroup = "player"};
+        switch (objGroup) {
             case "player":
-                switch(other.group) {
+                switch(otherGroup) {
                     case "enemy_projectile":
                         obj.recul(other);
                         obj.die();
@@ -851,6 +856,198 @@ export class Enemy_Chasing extends My_Object {
 }
 
 
+export class Player_Auto extends My_Object {
+    constructor(xCenter, yCenter, image, hitBox, speed) {
+        super(xCenter, yCenter, image, hitBox, "player_auto", speed);
+        this.is_invincible = false;
+        this.invicibility_duration = 5; //seconds
+        this.timestampWhenInvicibililtyGiven = undefined;
+    
+        this.shoot = false;
+        this.shot_by_seconds = 1; //1 / x, to shot every x seconds
+        this.timestampWhenLastShot = undefined;
+    }
+
+
+    give_invicibility(timestamp) {
+        this.is_invincible = true;
+        this.timestampWhenInvicibililtyGiven = timestamp;
+    }
+
+
+    die() {
+        if (this.is_invincible) { return; }
+        this.collision = false;
+        if (this.hitBox) {
+            this.hitBox.collision = false;
+        }
+        this.dying = true;
+        if (this.image instanceof My_Img_Animated) {
+            this.image.die();
+        }
+    }
+
+
+    additionnal_update(timestamp) {
+        if (this.is_invincible) {
+            if (this.timestampWhenInvicibililtyGiven == undefined) {
+                this.timestampWhenInvicibililtyGiven = timestamp;
+                return;
+            }
+            let elapsed = timestamp - this.timestampWhenInvicibililtyGiven;
+            let delay = this.invicibility_duration * 1000
+            if (elapsed >= delay) {
+                this.is_invincible = false;
+            }
+        }
+    }
+
+
+    auto_actions(timestamp) {
+        this.update_velocity(0, 0);
+        this.tirer(timestamp);
+        this.choose_direction();
+    }
+
+
+    choose_direction() {
+        const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
+        let flee_to = []
+
+        //found all targets
+        for (const obj of My_Object.instances) {
+            if (obj.dying || obj.dead) { continue; }
+            if (obj == this) { continue; }
+            
+            let found = false;
+            //bad
+            if (is_out_of_screen(obj.x, obj.y)) { continue; }
+            for (const name of bad) {
+                if (obj.group == name) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found) {
+                flee_to.push(obj);
+                continue;
+            }
+        }
+
+        //nearest
+        let near_bad = undefined;
+
+        let near_dist = Math.max(CNV.width, CNV.height);
+        //bad
+        for (const obj of flee_to) {
+            let dist = distance(obj.x, obj.y, this.x, this.y);
+            if (dist < near_dist) {
+                near_dist = dist;
+                near_bad = obj;
+            }
+        }
+
+        if (near_bad) {
+            let dir = direction(near_bad.x, near_bad.y, this.x, this.y);
+
+            this.update_velocity(dir.x, dir.y);
+        }
+    }
+
+
+    generate_projectile(x, y){
+        //found the nearest ennemy
+        let nearest_obj = undefined;
+        let smallest_dist = undefined;
+        const targets = ["enemy_chasing", "enemy_turret"];
+        for (const obj of My_Object.instances) {
+            if (obj.is_dead || obj.dying) { continue; }
+            //check if obj is a possible target
+            let is_a_target = false;
+            for (const target of targets) {
+                if (obj.group != target) { continue; }
+                is_a_target = true;
+            }
+            if (!is_a_target) { continue; }
+
+            //obj is a target
+            let dist = distance(this.x, this.y, obj.x, obj.y);
+            //update nearest_obj based on distance
+            if ((smallest_dist == undefined) || (dist < smallest_dist)) {
+                nearest_obj = obj;
+                smallest_dist = dist;
+            }
+        }
+
+        let vel = {"x": 0, "y": 0};
+        //random direction
+        if (nearest_obj == undefined) {
+            vel.x = Math.random();
+            vel.y = Math.random();
+            if (getRandom(0, 1)) {
+                vel.x *= -1;
+            }
+            if (getRandom(0, 1)) {
+                vel.y *= -1;
+            }
+        }
+        //direction toward nearest_obj
+        else {
+            vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
+        }
+    
+        //create projectile
+        let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
+        for (let i = 0; i < 4; i++) {
+            sprites["standing"]["frames"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
+        }
+
+        for (let i = 0; i < 8; i++) {
+            sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+        }
+
+        let imgBall = new My_Img_Animated(x, y, 20, 15, sprites)
+        let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, 8, vel.x, vel.y);
+
+    }
+
+
+    tirer(timestamp){
+        if (!this.shoot) { return; }
+        if (!My_Object.moving) { return; }
+
+        if (this.timestampWhenLastShot == undefined) {
+            this.timestampWhenLastShot = timestamp;
+        }
+        let elapsed = timestamp - this.timestampWhenLastShot;
+        let delay = 1000 / this.shot_by_seconds
+        if (elapsed >= delay){
+            this.generate_projectile(this.x, this.y);
+            this.timestampWhenLastShot = timestamp;
+        }
+    }
+
+
+    draw_invincible() {
+        let radius = (this.image.width+this.image.height) / 4
+        draw_circle_stroke(this.x, this.y, radius, "#AeAeA7", 3)
+    }
+
+
+    draw() {
+        if (this.is_dead) { return ; }
+        if (this.image) { 
+            this.image.draw();
+        }
+        if (this.is_invincible) {
+            this.draw_invincible();
+        }
+        if (this.hitBox) {
+            this.hitBox.draw_contours();
+        }
+    }
+}
 
 
 
@@ -860,7 +1057,7 @@ export class Enemy_Chasing extends My_Object {
 
 
 
-export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "obstacle filename": ""}) {
+export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "obstacle filename": "", "player auto": false}) {
     switch (name) {
         case "bonus":
             create_bonus(args.x, args.y, args.width, args.height);
@@ -878,7 +1075,7 @@ export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height"
             create_tower(args.x, args.y, args.width, args.height);
             break;
         case "player":
-            return create_player(args.x, args.y, args.width, args.height);
+            return create_player(args.x, args.y, args.width, args.height, args["player auto"]);
             break;
         case "obstacle":
             return create_obstacle(args.x, args.y, args.width, args.height, args["obstacle filename"]);
@@ -980,7 +1177,7 @@ function create_tower(x, y, width, height) {
 
 
 
-function create_player(x, y, width, height) {
+function create_player(x, y, width, height, auto = false) {
     // prepare sprites
     let imgPlayerName = "RedDeathFrame_";
     let sprites = {"standing": {"fps": 6, "frames": []}, "dying": {"fps": 6, "frames": []}};
@@ -995,7 +1192,13 @@ function create_player(x, y, width, height) {
     let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, width, height)
     // let hitBoxPerso = new HitBox_Circle(x, y, (width+height)/4)
     // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
-    return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+    // return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+    if (auto) {
+        return new Player_Auto(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+    }
+    else {
+        return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+    }
 }
 
 
