@@ -609,17 +609,16 @@ export class Player extends My_Object {
         }
     
         //create projectile
-        let sprite_ball_src = [];
+        let sprites = {"standing": [], "dying": []};
         for (let i = 0; i < 4; i++) {
-            sprite_ball_src.push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
+            sprites["standing"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
         }
 
-        let sprites_explosion_src = [];
         for (let i = 0; i < 8; i++) {
-            sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+            sprites["dying"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(sprite_ball_src, x, y, 20, 15, 4, sprites_explosion_src)
+        let imgBall = new My_Img_Animated(x, y, 20, 15, 4, sprites)
         let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
         new Ally_Projectile(x, y, imgBall, hitBoxBall, 8, vel.x, vel.y);
 
@@ -744,17 +743,15 @@ export class Enemy_Turret extends My_Object {
         if (getRandom(0, 1)) {
             velY *= -1;
         }
-        let sprite_ball_src = [];
+        let sprites = {"standing": [], "dying": []};
         for (let i = 0; i < 4; i++) {
-            sprite_ball_src.push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
+            sprites["standing"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
         }
-
-        let sprites_explosion_src = [];
         for (let i = 0; i < 8; i++) {
-            sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+            sprites[this.dying].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(sprite_ball_src, x-10, y-7.5, 20, 15, 12, sprites_explosion_src)
+        let imgBall = new My_Img_Animated(x-10, y-7.5, 20, 15, 12, sprites)
         // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
         let hitBoxBall = new HitBox_Mask(x-10, y-7.5, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, 20, 15)
         new Enemy_Projectile(x, y, imgBall, hitBoxBall, 10, velX, velY);
@@ -905,12 +902,12 @@ function create_bonus(x, y, width, height) {
     // prepare sprites
     let imgName = "stars_";
     let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
-    let spritesDefault = [];
+    let sprites = {"standing": []};
     for (let i = 0; i < nb.length; i++) {
-        spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
+        sprites["standing"].push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
     }
     // create object
-    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 10, [], spritesDefault[0]);
+    let imgObj = new My_Img_Animated(x, y, width, height, 10, sprites, sprites["standing"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
     new Bonus_Invicibility(x, y, imgObj, hitBoxObj)
 }
@@ -948,12 +945,12 @@ function create_border(x, y, width, height) {
 function create_vassel(type, x, y, width, height) {
     // prepare sprites
     let imgName = "vassels_";
-    let spritesDefault = [];
+    let sprites = {"standing": []};
     for (let i = 0; i < 6; i++) {
-        spritesDefault.push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
+        sprites["standing"].push(ASSETS_DIR + imgName + (i+1) + PNG_EXT);
     }
     // create object
-    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 10);
+    let imgObj = new My_Img_Animated(x, y, width, height, 10, sprites);
     let hitBoxObj = undefined;
     if (type == "circle") {
         hitBoxObj = new HitBox_Circle(x, y, 30)
@@ -974,16 +971,15 @@ function create_tower(x, y, width, height) {
     // prepare sprites
     let imgName = "towers_";
     let nb = [6, 6, 7, 7, 8, 8, 7, 7];
-    let spritesDefault = [];
+    let sprites = {"standing": [], "dying": []};
     for (let i = 0; i < nb.length; i++) {
-        spritesDefault.push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
+        sprites["standing"].push(ASSETS_DIR + imgName + nb[i] + PNG_EXT);
     }
-    let sprites_explosion_src = [];
     for (let i = 0; i < 8; i++) {
-        sprites_explosion_src.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+        sprites["dying"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
     }
     // create object
-    let imgObj = new My_Img_Animated(spritesDefault, x, y, width, height, 5, sprites_explosion_src);
+    let imgObj = new My_Img_Animated(x, y, width, height, 5, sprites);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
     new Enemy_Turret(x, y, imgObj, hitBoxObj)
 }
@@ -993,16 +989,15 @@ function create_tower(x, y, width, height) {
 function create_player(x, y, width, height) {
     // prepare sprites
     let imgPlayerName = "RedDeathFrame_";
-    let spritesPlayerDefault = [];
+    let sprites = {"standing": [], "dying": []};
     for (let i = 0; i < 5; i++) {
-        spritesPlayerDefault.push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
+        sprites["standing"].push(ASSETS_DIR + imgPlayerName + (i+1) + PNG_EXT);
     }
-    let spritesPlayerDead = [];
     for (let i = 0; i < 5; i++) {
-        spritesPlayerDead.push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
+        sprites["dying"].push(ASSETS_DIR + "explosion_perso_" + (i+1) + PNG_EXT);
     }
 
-    let imgAnimatedPlayer = new My_Img_Animated(spritesPlayerDefault, x, y, width, height, 6, spritesPlayerDead)
+    let imgAnimatedPlayer = new My_Img_Animated(x, y, width, height, 6, sprites)
     let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, width, height)
     // let hitBoxPerso = new HitBox_Circle(x, y, (width+height)/4)
     // let hitBoxPerso = new HitBox_Rect(x, y, width, height)

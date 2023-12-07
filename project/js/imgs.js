@@ -167,10 +167,11 @@ export class My_Img {
 
 //animated sprite with a SINGLE animation
 export class My_Img_Animated extends My_Img {
-    constructor(sprites, xCenter, yCenter, width, height, fps, sprites_death = [], iconeSrc = undefined) {
-        super(sprites[0], xCenter, yCenter, width, height, iconeSrc);
+    constructor(xCenter, yCenter, width, height, fps, sprites, iconeSrc = undefined) {
+        const temp = My_Img_Animated.get_default_animation(sprites);
+        super(temp[0], xCenter, yCenter, width, height, iconeSrc);
+        this.actual_sprites = temp;
         this.sprites = sprites;
-        this.sprites_death = sprites_death;
 
         this.is_dead = false;
 
@@ -179,6 +180,22 @@ export class My_Img_Animated extends My_Img {
 
         //dat.GUI
         this.animated = true;
+    }
+
+
+    static get_default_animation(sprites) {
+        const animations = ["standing", "walking"] //sorted by priority
+
+        for (const anim of animations) {
+            const temp = sprites[anim]
+            if (temp) {
+                return temp;
+            }
+        }
+
+        console.log("error: My_Img_Animated has no default animation", animations)
+        console.log("In imgs.js: My_Img_Animated.get_default_animation().")
+        return []
     }
 
     // return 0 if there is no sprite left
@@ -193,26 +210,32 @@ export class My_Img_Animated extends My_Img {
 
         this.previousTimestamp = timestamp;
 
-        if (this.sprites.length == 0) {
+        if (this.actual_sprites.length == 0) {
             this.is_dead = true;
-            return 0;
+            return;
         }
         
         if (!this.animated) {
             this.img.src = this.imgSrc;
-            return 1;
+            return;
         }
 
-        let next = this.sprites.shift(); //remove the first list's element
-        this.img.src = next;             //update current Img source
+        let next = this.actual_sprites.shift(); //remove the first list's element
+        this.img.src = next;                    //update current Img source
         if (loop) {
-            this.sprites.push(next);     //push it at the end
+            this.actual_sprites.push(next);     //push it at the end
         }
-        return 1;
+        return;
     }
 
     die() {
-        this.sprites = this.sprites_death;
+        const anim = this.sprites["dying"];
+        if (anim) {
+            this.actual_sprites = anim
+        }
+        else {
+            this.actual_sprites = []
+        }
     }
 
 }
