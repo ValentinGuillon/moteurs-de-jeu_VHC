@@ -25,14 +25,12 @@ export function init_interface() {
 
 
 export class My_Button {
-    constructor(type, xCenter, yCenter, width, height, font_color = "#FFFFFF", back_color = "#000000") {
+    constructor(type, xCenter, yCenter, width, height) {
         this.type = type
         this.x = xCenter;
         this.y = yCenter;
         this.width = width;
         this.height = height;
-        this.font_color = font_color;
-        this.back_color = back_color;
         this.add_instance(this);
     }
 
@@ -42,15 +40,6 @@ export class My_Button {
 
     static destroy_buttons () {
         My_Button.instances = [];
-    }
-
-    static get_mute_button() {
-        for (const btn of My_Button.instances) {
-            if (btn.type == "mute_music") {
-                return btn;
-            }
-        }
-        return undefined;
     }
 
 
@@ -89,13 +78,11 @@ export class My_Button {
 
             case "mute_music":
                 jukebox.mute_music();
-                let btn = My_Button.get_mute_button();
-                if (!btn) { break; }
                 if (jukebox.muted) {
-                    btn.update_text("Unmute")
+                    this.update_text("Unmute")
                 }
                 else {
-                    btn.update_text("Mute")
+                    this.update_text("Mute")
                 }
 
                 break;
@@ -103,11 +90,6 @@ export class My_Button {
             default:
                 console.log("no effect")
         }
-    }
-
-
-    draw_zone() {
-        draw_rect(this.x, this.y-this.height, this.width, this.height, this.back_color);
     }
 
 
@@ -124,6 +106,8 @@ export class Button_with_text extends My_Button {
     constructor(text, type, x, y, width, height, font_color = "#FFFFFF", back_color = "#000000") {
         super(type, x, y, width, height, font_color, back_color)
         this.text = text;
+        this.font_color = font_color;
+        this.back_color = back_color;
     }
 
     draw() {
@@ -132,6 +116,11 @@ export class Button_with_text extends My_Button {
         CTX.fillStyle = this.font_color;
         CTX.fillText(this.text, this.x, this.y);
     }
+
+    draw_zone() {
+        draw_rect(this.x, this.y-this.height, this.width, this.height, this.back_color);
+    }
+
 
     update_text(new_text) {
         this.text = new_text;
