@@ -1,7 +1,7 @@
 
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { getRandom, is_in_rect } from "./tools.js";
-import { My_Img, My_Img_Animated, My_Circle, draw_rect } from "./imgs.js";
+import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Enemy_Chasing, create_object }
     from "./objects.js";
@@ -145,6 +145,41 @@ export class Button_with_text extends My_Button {
 
 
 
+export class Button_with_Image extends My_Button {
+    constructor(image_src = {"default": "", "hover": ""}, type, x, y, width, height) {
+        super(type, x, y, width, height)
+        this.x = x - this.width / 2;
+        this.y = y - this.height / 2;
+        this.image_src = image_src;
+
+        this.img = new Image();
+        this.set("default");
+    }
+
+    set(name) {
+        const old = this.img.src;
+        if (name == old) { return; }
+        this.img.src = this.image_src[name];
+    }
+
+
+    draw() {
+        // draw_rect(this.x, this.y, this.width, this.height, "#FF0000")
+        draw_point(this.x, this.y, "#FFFFFF");
+        draw_point(this.x+this.width-1, this.y+this.height-1, "#FFFFFF");
+        CTX.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+
+
+    is_inside(x, y) {
+        const X1 = this.x
+        const Y1 = this.y
+        const X2 = X1 + this.width
+        const Y2 = Y1 + this.height
+        draw_rect(X1, Y1, X2-X1, Y2-Y1, "#000000")
+        return is_in_rect(x, y, X1, Y1, X2, Y2);
+    }
+}
 
 
 
@@ -170,7 +205,7 @@ function create_main_menu() {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     new Button_with_text("Test", "play_test", CNV.width/2, CNV.height*0.3, btnSize*2, btnSize*2, "#00FFFF")
-    new Button_with_text("Play", "play_game", CNV.width/2, CNV.height*0.3*2, btnSize*2, btnSize*2, "#00FFFF")
+    new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/2, btnSize*8, btnSize*4)
     new Button_with_text("Test Map", "play_test_map", CNV.width/2, CNV.height*0.3*3, btnSize*2, btnSize*2, "#00FFFF")
     if (jukebox.muted) {
         new Button_with_text("Unmute", "mute_music", btnSize, btnSize*2, btnSize, btnSize, "#00FFFF")

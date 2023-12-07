@@ -10,9 +10,9 @@
 
 
 import { My_Object, get_player_object } from "./objects.js";
-import { My_Button, create_home_page, camera , init_interface} from "./interface.js";
+import { My_Button, create_home_page, camera , init_interface, Button_with_Image} from "./interface.js";
 import { My_Img } from "./imgs.js";
-import { initialise_listener, execute_inputs } from "./input.js";
+import { initialise_listener, execute_inputs, MOUSE } from "./input.js";
 
 
 export const CNV = document.getElementById("myCanvas");
@@ -102,7 +102,18 @@ towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_to
 
 
 
-
+function update_btn_with_img() {
+    for (const btn of My_Button.instances) {
+        if (!(btn instanceof Button_with_Image)) { continue; }
+        const inside = btn.is_inside(MOUSE.x, MOUSE.y);
+        if (inside) {
+            btn.set("hover");
+        }
+        else {
+            btn.set("default")
+        }
+    }
+}
 
 
 function animations(timestamp) {
@@ -160,6 +171,7 @@ function refresh(timestamp) {
         }
     }
 
+    update_btn_with_img();
     draw();
 
     updateGui()
