@@ -105,6 +105,7 @@ towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_to
 function update_btn_with_img() {
     for (const btn of My_Button.instances) {
         if (!(btn instanceof Button_with_Image)) { continue; }
+        if (!(btn.change_when_hover)) { continue; }
         const inside = btn.is_inside(MOUSE.x, MOUSE.y);
         if (inside) {
             btn.set("hover");

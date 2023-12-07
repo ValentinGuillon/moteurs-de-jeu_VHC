@@ -148,6 +148,10 @@ export class Button_with_text extends My_Button {
 export class Button_with_Image extends My_Button {
     constructor(image_src = {"default": "", "hover": ""}, type, x, y, width, height) {
         super(type, x, y, width, height)
+        this.change_when_hover = false;
+        if (image_src["hover"]) {
+            this.change_when_hover = true;
+        }
         this.x = x - this.width / 2;
         this.y = y - this.height / 2;
         this.image_src = image_src;
@@ -164,9 +168,6 @@ export class Button_with_Image extends My_Button {
 
 
     draw() {
-        // draw_rect(this.x, this.y, this.width, this.height, "#FF0000")
-        draw_point(this.x, this.y, "#FFFFFF");
-        draw_point(this.x+this.width-1, this.y+this.height-1, "#FFFFFF");
         CTX.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
@@ -176,7 +177,6 @@ export class Button_with_Image extends My_Button {
         const Y1 = this.y
         const X2 = X1 + this.width
         const Y2 = Y1 + this.height
-        draw_rect(X1, Y1, X2-X1, Y2-Y1, "#000000")
         return is_in_rect(x, y, X1, Y1, X2, Y2);
     }
 }
