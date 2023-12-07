@@ -5,7 +5,7 @@ import { get_player_object } from "./objects.js";
 import { My_Button } from "./interface.js";
 
 
-
+export const MOUSE = {"x": 0, "y": 0};
 
 var key_map = {};
 
@@ -21,6 +21,13 @@ export function initialise_listener() {
     onkeydown = onkeyup = function(e){
         key_map[e.key] = e.type == 'keydown';
     }
+    
+    // mouve position
+    CNV.onmousemove = (event) => {
+        var mousePos = getMousePos(event);
+        MOUSE.x = mousePos.x
+        MOUSE.y = mousePos.y
+      }
 }
 
 
