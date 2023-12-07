@@ -248,7 +248,7 @@ export function construct_terrain() {
                 name = getTerrainTile(j, i, "obstacle_1/", tile)
                 if (name != "error") {
                     name = DIR + name;
-                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "name": name})
+                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "obstacle filename": name})
                 }
                 else {
                     name = DIR + "terrain";
@@ -262,7 +262,7 @@ export function construct_terrain() {
                 name = getTerrainTile(j, i, "water/", tile)
                 if (name != "error") {
                     name = DIR + name;
-                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "name": name});
+                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "obstacle filename": name});
                 }
                 else {
                     name = DIR + "terrain";

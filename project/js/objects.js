@@ -860,7 +860,7 @@ export class Enemy_Chasing extends My_Object {
 
 
 
-export function create_object(name, args) {
+export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "obstacle filename": ""}) {
     switch (name) {
         case "bonus":
             create_bonus(args.x, args.y, args.width, args.height);
@@ -871,14 +871,8 @@ export function create_object(name, args) {
         case "border":
             create_border(args.x, args.y, args.width, args.height);
             break;
-        case "vassel circle":
-            create_vassel("circle", args.x, args.y, args.width, args.height);
-            break;
-        case "vassel mask":
-            create_vassel("mask", args.x, args.y, args.width, args.height);
-            break;
-        case "vassel rect":
-            create_vassel("rect", args.x, args.y, args.width, args.height);
+        case "vassel":
+            create_vassel(args["vassel hitbox"], args.x, args.y, args.width, args.height);
             break;
         case "tower":
             create_tower(args.x, args.y, args.width, args.height);
@@ -887,7 +881,7 @@ export function create_object(name, args) {
             return create_player(args.x, args.y, args.width, args.height);
             break;
         case "obstacle":
-            return create_obstacle(args.x, args.y, args.width, args.height, args.name);
+            return create_obstacle(args.x, args.y, args.width, args.height, args["obstacle filename"]);
             break;
         default:
             console.log("error: there is no method to create this abject (\"" + name + "\").")

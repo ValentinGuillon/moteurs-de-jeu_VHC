@@ -260,15 +260,15 @@ function create_game_test() {
         let y_objs = [y_mid-60, y_mid+60, y_mid+60, y_mid-60]
         //with circle hitBox
         for (let i = 0; i < 2; i++) {
-            create_object("vassel circle", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60});
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "circle"});
         }
         //with mask hitBox
         for (let i = 2; i < 3; i++) {
-            create_object("vassel mask", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60});
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "mask"});
         }
         //with rect hitBox
         for (let i = 3; i < 4; i++) {
-            create_object("vassel rect", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60});
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "rect"});
         }
     }
 
