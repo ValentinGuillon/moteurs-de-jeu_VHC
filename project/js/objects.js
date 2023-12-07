@@ -248,6 +248,11 @@ export class My_Object {
     }
 
 
+    generate_on_death() {
+        return;
+    }
+
+
 
     /*
      * MAIN METHODS (called outside)
@@ -423,6 +428,10 @@ export class My_Object {
         }
         else {
             this.is_dead = true;
+        }
+
+        if (this.is_dead) {
+            this.generate_on_death();
         }
     }
 
@@ -853,14 +862,30 @@ export class Enemy_Chasing extends My_Object {
             this.update_velocity(dx, dy);
         }
     }
+
+    generate_on_death() {
+        const chance_bonus = getRandom(0, 2);
+        if (!chance_bonus) {
+            create_bonus(this.x, this.y, 50, 50);
+            return;
+        }
+        const chance_mobs = getRandom(0, 1);
+        if(!chance_mobs) {
+            const nb = getRandom(1, 3);
+            for (let i = 0; i < nb; i++) {
+                create_enemy_chasing(this.x+i*1, this.y, 20, 20, "BAT");
+            }
+            return;
+        }
+    }
 }
 
 
 export class Player_Auto extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
-        super(xCenter, yCenter, image, hitBox, "player_auto", speed);
+        super(xCenter, yCenter, image, hitBox, "player_auto", 12);
         this.is_invincible = false;
-        this.invicibility_duration = 5; //seconds
+        this.invicibility_duration = 2; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
     
         this.shoot = true;
@@ -910,6 +935,7 @@ export class Player_Auto extends My_Object {
     }
 
 
+    //define the velocity based on nearest enemy and bonus
     choose_direction() {
         const good = ["bonus_invicibility"];
         const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
@@ -949,23 +975,24 @@ export class Player_Auto extends My_Object {
         }
 
         //nearest
+        let weight = 1.2;
         let near_good = undefined;
         let near_bad = undefined;
 
-        let near_dist = Math.max(CNV.width, CNV.height);
+        let near_dist = undefined;
         //good
         for (const obj of go_to) {
             let dist = distance(obj.x, obj.y, this.x, this.y);
-            if (dist < near_dist) {
+            if (near_dist == undefined || dist < near_dist) {
                 near_dist = dist;
                 near_good = obj;
             }
         }
-        near_dist = Math.max(CNV.width, CNV.height);
+        near_dist = undefined;
         //bad
         for (const obj of flee_to) {
             let dist = distance(obj.x, obj.y, this.x, this.y);
-            if (dist < near_dist) {
+            if (near_dist == undefined ||  dist < near_dist) {
                 near_dist = dist;
                 near_bad = obj;
             }
@@ -982,9 +1009,15 @@ export class Player_Auto extends My_Object {
             dir_bad = direction(near_bad.x, near_bad.y, this.x, this.y);
         }
         
+        //add weight
+        if (near_good && near_bad) {
+            let dist_bad = distance(this.x, this.y, near_bad.x, near_bad.y);
+            if (dist_bad < CNV.width*0.1) {
+                weight = 0.6;
+            }
+        }
 
-
-        this.update_velocity(dir_good.x*1.1 + dir_bad.x, dir_good.y*1.1 + dir_bad.y);
+        this.update_velocity(dir_good.x*weight + dir_bad.x, dir_good.y*weight + dir_bad.y);
     }
 
 
