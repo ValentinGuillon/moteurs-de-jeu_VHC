@@ -1,6 +1,6 @@
 
 import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
-import { getRandom, is_in_rect } from "./tools.js";
+import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { My_Object, Enemy_Chasing, create_object }
@@ -228,7 +228,7 @@ function create_game_test() {
     jukebox.play_game()
     My_Button.destroy_buttons()
     My_Img.destroy_imgs();
-    new Button_with_text("X", "go_main-menu", CNV.width - btnSize*2, btnSize*2, btnSize, btnSize, "#00FFFF")
+    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
     if (jukebox.muted) {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
@@ -337,7 +337,7 @@ function create_game_survive() {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
-    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
+    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
     if (jukebox.muted) {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
@@ -374,7 +374,7 @@ function create_test_maps() {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
-    new Button_with_text("X", "go_main-menu", CNV.width-40, 40, 30, 30, "#00FFFF");
+    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
     if (jukebox.muted) {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
     }
