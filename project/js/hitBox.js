@@ -118,6 +118,7 @@ export class HitBox_Mask {
         this.y = yCenter - (height/2);
         this.centerMaskX = this.x;
         this.centerMaskY = this.y;
+        this.maskSquare = {"x1": 0, "y1": 0, "x2": 0, "y2": 0};
         this.width = Math.floor(width);
         this.height = Math.floor(height);
         this.mask = [] //boolens correspondant aux pixels d'une image
@@ -194,6 +195,10 @@ export class HitBox_Mask {
 
         this.centerMaskX = this.x + Math.floor((minX + maxX) / 2)
         this.centerMaskY = this.y + Math.floor((minY + maxY) / 2)
+        this.maskSquare.x1 = minX
+        this.maskSquare.y1 = minY
+        this.maskSquare.x2 = maxX
+        this.maskSquare.y2 = maxY
     }
 
 
@@ -235,6 +240,7 @@ export class HitBox_Mask {
 
 
     draw_mask() {
+        draw_rect_stroke(this.x+this.maskSquare.x1, this.y+this.maskSquare.y1, this.maskSquare.x2-this.maskSquare.x1, this.maskSquare.y2-this.maskSquare.y1, "#00FF00", 1);
         let color = "#FF0000BB"
         if (!this.collision) {
             color = "#FF000055";
@@ -306,8 +312,12 @@ function is_collide_mask_with_mask(m1, m2) {
     // console.log("overlap")
     //check
     let count = 0
-    for (let j = 0; j < m1.height; j++) {
-        for (let i = 0; i < m1.width; i++, count++) {
+    const x_start = m1.maskSquare.x1
+    const x_end = m1.maskSquare.x2
+    const y_start = m1.maskSquare.y1
+    const y_end = m1.maskSquare.y2
+    for (let j = y_start; j < y_end; j++) {
+        for (let i = x_start; i < x_end; i++, count++) {
             //coordonnées générales du pixel
             let X = m1.x + i;
             let Y = m1.y + j;
@@ -361,8 +371,12 @@ function is_collide_mask_with_circle(mask, circle) {
         *   si la distance avec le centre de circle est plus petite que rayon de circle, return true
         * return false
         */
-    for (let j = 0; j < mask.height; j++) {
-        for (let i = 0; i < mask.width; i++) {
+    const x_start = mask.maskSquare.x1
+    const x_end = mask.maskSquare.x2
+    const y_start = mask.maskSquare.y1
+    const y_end = mask.maskSquare.y2
+    for (let j = y_start; j < y_end; j++) {
+        for (let i = x_start; i < x_end; i++) {
             if (!mask.mask[i + j*mask.width]) { continue; }
             // draw_point(mask.x+i, mask.y+j, "#00FF00")
             let dist = distance(circle.x, circle.y, mask.x+i, mask.y+j)
@@ -390,8 +404,12 @@ function is_collide_mask_with_rect(mask, rect) {
         *   s'il est dans rect, return true
         * return false
         */
-    for (let j = 0; j < mask.height; j++) {
-        for (let i = 0; i < mask.width; i++) {
+    const x_start = mask.maskSquare.x1
+    const x_end = mask.maskSquare.x2
+    const y_start = mask.maskSquare.y1
+    const y_end = mask.maskSquare.y2
+    for (let j = y_start; j < y_end; j++) {
+        for (let i = x_start; i < x_end; i++) {
             if (!mask.mask[i + j*mask.width]) { continue; }
 
             if (is_in_rect(mask.x+i, mask.y+j, rect.x, rect.y, rect.x+rect.width, rect.y+rect.height)) {
