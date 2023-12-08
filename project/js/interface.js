@@ -392,7 +392,10 @@ function create_game_survive() {
 
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2, "player auto": true});
+    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2, "player auto": true});
+    for (let i = 0; i < 2; i++) {
+        generate_mobs(objectPlayer);
+    }
 }
 
 
