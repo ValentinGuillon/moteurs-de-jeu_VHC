@@ -589,6 +589,7 @@ export class Player extends My_Object {
         const targets = ["enemy_chasing", "enemy_turret"];
         for (const obj of My_Object.instances) {
             if (obj.is_dead || obj.dying) { continue; }
+            if (is_out_of_screen(obj.x, obj.y)) { continue; }
             //check if obj is a possible target
             let is_a_target = false;
             for (const target of targets) {
@@ -607,17 +608,9 @@ export class Player extends My_Object {
         }
 
         let vel = {"x": 0, "y": 0};
-        //random direction
-        if (nearest_obj == undefined) {
-            vel.x = Math.random();
-            vel.y = Math.random();
-            if (getRandom(0, 1)) {
-                vel.x *= -1;
-            }
-            if (getRandom(0, 1)) {
-                vel.y *= -1;
-            }
-        }
+        //don't shoot if their is no target
+        if (nearest_obj == undefined) { return; }
+
         //direction toward nearest_obj
         else {
             vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
@@ -1037,6 +1030,7 @@ export class Player_Auto extends My_Object {
         const targets = ["enemy_chasing", "enemy_turret"];
         for (const obj of My_Object.instances) {
             if (obj.is_dead || obj.dying) { continue; }
+            if (is_out_of_screen(obj.x, obj.y)) { continue; }
             //check if obj is a possible target
             let is_a_target = false;
             for (const target of targets) {
@@ -1055,17 +1049,9 @@ export class Player_Auto extends My_Object {
         }
 
         let vel = {"x": 0, "y": 0};
-        //random direction
-        if (nearest_obj == undefined) {
-            vel.x = Math.random();
-            vel.y = Math.random();
-            if (getRandom(0, 1)) {
-                vel.x *= -1;
-            }
-            if (getRandom(0, 1)) {
-                vel.y *= -1;
-            }
-        }
+        //don't shoot if their is no targets
+        if (nearest_obj == undefined) { return; }
+
         //direction toward nearest_obj
         else {
             vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
