@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object }
+import { My_Object, Enemy_Chasing, create_object, Moving_Background }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -217,8 +217,8 @@ function create_main_menu() {
     }
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, true);
-    My_Img.add_instance(imgBackground);
+    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*1.5, CNV.height*1.2);
+    new Moving_Background(CNV.width/2, CNV.height/2, imgBackground, 0.5)
 }
 
 export function generate_mobs(objectPlayer) {
@@ -251,6 +251,7 @@ function create_game_test() {
     jukebox.play_game()
     My_Button.destroy_buttons()
     My_Img.destroy_imgs();
+    My_Object.destroy_objects();
     new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
     if (jukebox.muted) {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")

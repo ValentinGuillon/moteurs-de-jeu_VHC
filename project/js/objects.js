@@ -1123,6 +1123,50 @@ export class Player_Auto extends My_Object {
 
 
 
+export class Moving_Background extends My_Object {
+    constructor(x, y, image, speed /*you can add brand new properties*/) {
+        super(x, y, image, undefined, "", speed, -1.0);
+        /*you can add brand new this.properties*/
+
+        this.moveTo = "right";
+        if (getRandom(0, 1)) {
+            this.moveTo = "left";
+            this.velocityX = 1.0;
+        }
+    }
+
+
+    auto_actions(timestamp) {
+        this.slide();
+    }
+
+    slide() {
+        const right = this.image.x + this.image.width*0.9
+        const left = this.image.x + this.image.width*0.1
+        switch (this.moveTo) {
+            case "right":
+                if (right < CNV.width) {
+                    this.moveTo = "left";
+                    this.update_velocity(1, 0);
+                } 
+                break;
+            case "left":
+                if (left > 0) {
+                    this.moveTo = "right"
+                    this.update_velocity(-1, 0);
+                } 
+        
+            default:
+                break;
+        }
+    }
+}
+
+
+
+
+
+
 
 
 
