@@ -240,7 +240,7 @@ export class HitBox_Mask {
 
 
     draw_mask() {
-        draw_rect_stroke(this.x+this.maskSquare.x1, this.y+this.maskSquare.y1, this.maskSquare.x2-this.maskSquare.x1, this.maskSquare.y2-this.maskSquare.y1, "#00FF00", 1);
+        // draw_rect_stroke(this.x+this.maskSquare.x1, this.y+this.maskSquare.y1, this.maskSquare.x2-this.maskSquare.x1, this.maskSquare.y2-this.maskSquare.y1, "#00FF00", 1);
         let color = "#FF0000BB"
         if (!this.collision) {
             color = "#FF000055";
@@ -249,12 +249,37 @@ export class HitBox_Mask {
         for (let j = 0; j < this.height; j++) {
             for (let k = 0; k < this.width; k++, i++) {
                 if (!this.mask[i]) { continue; }
+                //draw if there no previous/next column/row
+                if(    this.mask[i-this.width] == undefined
+                    || this.mask[i+this.width] == undefined
+                    || this.mask[i-1] == undefined
+                    || this.mask[i+1] == undefined
+                    ) {
+                    draw_point(this.x+k, this.y+j, color); 
+                    console.log(j, k)
+                    continue;
+                }
+
+
+                let surrounded = true;
+                for(let l = j-1; l <= j+1; l++) {
+                    if (!surrounded) { break; }
+                    for(let m = k-1; m <= k+1; m++) {
+                        if (l == 1 && m == 1) { continue; }
+                        if (!this.mask[l*this.width+m]) {
+                            surrounded = false;
+                            break;
+                        }
+                    }
+                }
+                if (surrounded) { continue; }
                 draw_point(this.x+k, this.y+j, color)
             }
         }
 
         draw_rect(this.centerMaskX-2, this.centerMaskY-2, 4, 4, "#000000")
     }
+
 
 
     draw_contours() {
