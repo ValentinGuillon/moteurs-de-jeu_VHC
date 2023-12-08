@@ -47,9 +47,10 @@ export function draw_circle_fill(x, y, radius, color) {
 
 
 export class My_Img {
-    constructor(imgSrc, xCenter, yCenter, width, height, iconeSrc = undefined, is_background_component = false) {
+    constructor(imgSrc, xCenter, yCenter, width, height, iconeSrc = undefined, icone_color = {"in": "#000000", "border": "#FFFFFF"}, is_background_component = false) {
         this.imgSrc = imgSrc;
         this.iconeSrc = iconeSrc
+        this.iconeColor = icone_color
         this.is_background_component = is_background_component;
     
         //size
@@ -152,8 +153,8 @@ export class My_Img {
         }
 
         let subSize = size * 0.8;
-        draw_circle_fill(X, Y, size/2, "#000000");
-        draw_circle_stroke(X, Y, size/2, "#FFFFFF", thickness);
+        draw_circle_fill(X, Y, size/2, this.iconeColor["in"]);
+        draw_circle_stroke(X, Y, size/2, this.iconeColor["border"], thickness);
         CTX.drawImage(this.icone, X-subSize/2, Y-subSize/2, subSize, subSize);
     }
 
@@ -170,9 +171,9 @@ export class My_Img {
 
 //animated sprite with a SINGLE animation
 export class My_Img_Animated extends My_Img {
-    constructor(xCenter, yCenter, width, height, sprites, iconeSrc = undefined) {
+    constructor(xCenter, yCenter, width, height, sprites, iconeSrc = undefined, iconeColor = {"in": "#000000", "border": "#FFFFFF"}) {
         const temp = My_Img_Animated.get_default_animation(sprites);
-        super(temp["frames"][0], xCenter, yCenter, width, height, iconeSrc);
+        super(temp["frames"][0], xCenter, yCenter, width, height, iconeSrc, iconeColor);
         this.actual_sprites = temp["frames"];
         this.sprites = sprites; //dict de dict {"nom anim" : {"fps": int, "frames": list(str)}, ...}
 

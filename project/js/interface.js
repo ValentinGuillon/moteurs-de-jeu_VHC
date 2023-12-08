@@ -238,7 +238,7 @@ export function generate_mobs(objectPlayer) {
         sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
     }
 
-    let enemyImage = new My_Img_Animated(enemyX, enemyY, CNV10, CNV10, sprites, sprites["standing"]["frames"][2]);
+    let enemyImage = new My_Img_Animated(enemyX, enemyY, CNV10, CNV10, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
     let enemyHitBox = new HitBox_Circle(enemyX, enemyY, CNV10*0.2);
     new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, CNV10*0.2, objectPlayer);
 }

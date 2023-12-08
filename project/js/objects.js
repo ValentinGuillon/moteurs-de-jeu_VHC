@@ -1333,7 +1333,7 @@ function create_enemy_chasing(x, y, width, height, name) {
     }
 
 
-    let enemyImage = new My_Img_Animated(x, y, width, height, sprites);
+    let enemyImage = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
     //Hitbox sous forme de cercle
     let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
     let object = get_object("player");
