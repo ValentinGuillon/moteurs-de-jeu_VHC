@@ -207,12 +207,22 @@ export class My_Object {
         let list = My_Object.instances
         for (let i = 0; i < length-1; i++) {
             for (let j = i; j < length-1; j++) {
+                const obj1 = list[j];
+                const obj2 = list[j+1];
+                let y1 = obj1.y;
+                let y2 = obj2.y;
+                if (obj1.hitBox instanceof HitBox_Mask) {
+                    y1 = obj1.hitBox.centerMaskY;
+                }
+                if (obj2.hitBox instanceof HitBox_Mask) {
+                    y2 = obj2.hitBox.centerMaskY;
+                }
+
                 let switch_obj = false;
-                if (list[j].y > list[j+1].y) { switch_obj = true; }
+                if (y1 > y2) { switch_obj = true; }
                 if (!switch_obj) { continue; }
-                let temp = list[j];
-                list[j] = list[j+1];
-                list[j+1] = temp;
+                list[j] = obj2;
+                list[j+1] = obj1;
             }
         }
     }
