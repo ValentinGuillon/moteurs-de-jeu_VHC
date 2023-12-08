@@ -1298,7 +1298,7 @@ function create_player(x, y, width, height, auto = false) {
     }
 
     let imgAnimatedPlayer = new My_Img_Animated(x, y, width, height, sprites)
-    let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v2"+PNG_EXT, width, height)
+    let hitBoxPerso = new HitBox_Mask(x, y, ASSETS_DIR+imgPlayerName+"mask_v3"+PNG_EXT, width, height)
     // let hitBoxPerso = new HitBox_Circle(x, y, (width+height)/4)
     // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
     // return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
