@@ -1350,6 +1350,7 @@ function create_enemy_chasing(x, y, width, height, name) {
     if (!object) {
         object = get_object("player_auto")
     }
+    if (!object || object.dying || object.dead) { return; }
     new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.2, object);
 }
 
