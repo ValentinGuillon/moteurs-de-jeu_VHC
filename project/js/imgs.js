@@ -1,5 +1,5 @@
 
-import { CNV, CTX } from "./script.js";
+import { CNV, CNV10, CTX } from "./script.js";
 import { is_in_rect, distance, min, rect_is_in_rect } from "./tools.js";
 
 export function draw_rect(x, y, width, height, color) {
@@ -53,8 +53,8 @@ export class My_Img {
         this.is_background_component = is_background_component;
     
         //size
-        this.width = width;
-        this.height = height;
+        this.width = Math.floor(width);
+        this.height = Math.floor(height);
     
         //position
         this.x = xCenter - (width/2);
@@ -69,7 +69,7 @@ export class My_Img {
         this.icone = new Image();
         if(iconeSrc) {
             this.icone.src = this.iconeSrc;
-            this.iconeSize = 40;
+            this.iconeSize = CNV10;
         }
 
         //dat.GUI
@@ -116,7 +116,7 @@ export class My_Img {
         let distFromBorder = CNV.width + CNV.height;
 
         //move the origin to the target until he's near the border
-        while (distFromBorder > 30) {
+        while (distFromBorder > CNV10/2) {
             origin.x += vector.x;
             origin.y += vector.y;
 
@@ -131,21 +131,24 @@ export class My_Img {
         dist = distance(target.x, target.y, X, Y);
         let size = this.iconeSize;
         let thickness = 2;
-        if (dist > 800) {
+        if (dist > CNV10*13) {
             size = Math.abs(size*0.2);
             thickness *= 0.2;
         }
-        else if (dist > 500) {
+        else if (dist > CNV10*10) {
             size = Math.abs(size*0.4);
             thickness *= 0.4;
         }
-        else if (dist > 200) {
+        else if (dist > CNV10*5) {
             size = Math.abs(size*0.6);
             thickness *= 0.6;
         }
-        else if (dist > 100) {
+        else if (dist > CNV10*3) {
             size = Math.abs(size*0.8);
             thickness *= 0.8;
+        }
+        else {
+            size = Math.abs(size*0.9);
         }
 
         let subSize = size * 0.8;

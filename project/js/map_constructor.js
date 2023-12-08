@@ -1,6 +1,6 @@
 
 import { FOREST, TERRAIN } from "./map.js"
-import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js"
+import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js"
 import { My_Img, My_Img_Animated } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
 import { Bonus_Invicibility, My_Object, Obstacle, create_object } from "./objects.js";
@@ -97,7 +97,7 @@ function roadTileName(col, row) {
 
 export function construct_map() {
     const DIR = ASSETS_DIR + "forest/"
-    const tileSize = {"width": 100, "height": Math.floor(100*0.8)};
+    const tileSize = {"width": CNV10*3, "height": Math.floor(CNV10*3*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
     const rows = FOREST.length;
     const cols = FOREST[0].length;
@@ -137,7 +137,7 @@ export function construct_map() {
             }
             //bonus
             else if (tile == 2) {
-                create_object("bonus", {"x": x, "y": y, "width": 50, "height": 50});
+                create_object("bonus", {"x": x, "y": y, "width": tileSize.width*0.75, "height": tileSize.height*0.75});
                 
             }
             //border
@@ -220,7 +220,7 @@ function getTerrainTile(col, row, set, tileValue) {
 
 export function construct_terrain() {
     const DIR = ASSETS_DIR + "terrain/"
-    const tileSize = {"width": 50, "height": Math.floor(50*0.8)};
+    const tileSize = {"width": CNV10*2, "height": Math.floor(CNV10*2*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
     const rows = TERRAIN.length;
     const cols = TERRAIN[0].length;
@@ -262,7 +262,7 @@ export function construct_terrain() {
                 name = getTerrainTile(j, i, "water/", tile)
                 if (name != "error") {
                     name = DIR + name;
-                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "filename": name});
+                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width, "height": tileSize.height, "filename": name});
                 }
                 else {
                     name = DIR + "terrain";

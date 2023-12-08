@@ -58,8 +58,8 @@ export class HitBox_Rect {
     constructor(xCenter, yCenter, width, height) {
         this.x = xCenter - width/2;
         this.y = yCenter - height/2;
-        this.width = width;
-        this.height = height;
+        this.width = Math.floor(width);
+        this.height = Math.floor(height);
 
         //dat.GUI
         this.collision = true;
@@ -118,8 +118,8 @@ export class HitBox_Mask {
         this.y = yCenter - (height/2);
         this.centerMaskX = this.x;
         this.centerMaskY = this.y;
-        this.width = width;
-        this.height = height;
+        this.width = Math.floor(width);
+        this.height = Math.floor(height);
         this.mask = [] //boolens correspondant aux pixels d'une image
         this.mask_created = false;
         

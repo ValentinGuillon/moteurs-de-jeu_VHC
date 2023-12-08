@@ -1,5 +1,5 @@
 
-import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
+import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
@@ -633,9 +633,11 @@ export class Player extends My_Object {
             sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(x, y, 20, 15, sprites)
-        let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, 8, vel.x, vel.y);
+        const w = CNV10*0.7;
+        const h = CNV10*0.5
+        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
+        let hitBoxBall = new HitBox_Circle(x, y, (w+h)/4);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, vel.x, vel.y);
 
     }
 
@@ -727,7 +729,7 @@ export class Enemy_Turret extends My_Object {
     constructor(xCenter, yCenter, image, hitBox) {
         super(xCenter, yCenter, image, hitBox, "enemy_turret");
 
-        this.shoot = false;
+        this.shoot = true;
         this.shot_by_seconds = 3; // 1/X, to shot every X seconds
         this.timestampWhenLastShot = undefined;
     }
@@ -766,10 +768,11 @@ export class Enemy_Turret extends My_Object {
             sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(x-10, y-7.5, 20, 15, sprites)
-        // let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        let hitBoxBall = new HitBox_Mask(x-10, y-7.5, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, 20, 15)
-        new Enemy_Projectile(x, y, imgBall, hitBoxBall, 10, velX, velY);
+        const w = CNV10*0.7;
+        const h = CNV10*0.5
+        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
+        let hitBoxBall = new HitBox_Mask(x, y, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, w, h);
+        new Enemy_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
     }
 
 
@@ -784,7 +787,7 @@ export class Enemy_Turret extends My_Object {
         let elapsed = timestamp - this.timestampWhenLastShot;
         let delay = 1000 / this.shot_by_seconds
         if (elapsed >= delay){
-            this.generate_projectile(this.x, this.y - 20);
+            this.generate_projectile(this.x, this.y - this.image.height*0.5);
             this.timestampWhenLastShot = timestamp;
         }
     }
@@ -872,14 +875,14 @@ export class Enemy_Chasing extends My_Object {
     generate_on_death() {
         const chance_bonus = getRandom(0, 2);
         if (!chance_bonus) {
-            create_bonus(this.x, this.y, 50, 50);
+            create_bonus(this.x, this.y, CNV10*0.75, CNV10*0.75*0.8);
             return;
         }
         const chance_mobs = getRandom(0, 1);
         if(!chance_mobs) {
             const nb = getRandom(1, 3);
             for (let i = 0; i < nb; i++) {
-                create_enemy_chasing(this.x+i*1, this.y, 20, 20, "BAT");
+                create_enemy_chasing(this.x+i*1, this.y, CNV10, CNV10, "BAT");
             }
             return;
         }
@@ -889,7 +892,7 @@ export class Enemy_Chasing extends My_Object {
 
 export class Player_Auto extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
-        super(xCenter, yCenter, image, hitBox, "player_auto", 12);
+        super(xCenter, yCenter, image, hitBox, "player_auto", speed);
         this.is_invincible = false;
         this.invicibility_duration = 2; //seconds
         this.timestampWhenInvicibililtyGiven = undefined;
@@ -1078,9 +1081,11 @@ export class Player_Auto extends My_Object {
             sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
         }
 
-        let imgBall = new My_Img_Animated(x, y, 20, 15, sprites)
-        let hitBoxBall = new HitBox_Circle(x, y, (imgBall.height + imgBall.width) / 4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, 8, vel.x, vel.y);
+        const w = CNV10*0.7;
+        const h = CNV10*0.5
+        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
+        let hitBoxBall = new HitBox_Circle(x, y, (w+h)/4);
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, vel.x, vel.y);
 
     }
 
@@ -1262,7 +1267,7 @@ function create_vassel(type, x, y, width, height) {
     let imgObj = new My_Img_Animated(x, y, width, height, sprites);
     let hitBoxObj = undefined;
     if (type == "circle") {
-        hitBoxObj = new HitBox_Circle(x, y, 30)
+        hitBoxObj = new HitBox_Circle(x, y, (width+height)/4)
     }
     else if (type == "mask") {
         hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
@@ -1312,10 +1317,10 @@ function create_player(x, y, width, height, auto = false) {
     // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
     // return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
     if (auto) {
-        return new Player_Auto(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+        return new Player_Auto(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.5);
     }
     else {
-        return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
+        return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.5);
     }
 }
 
@@ -1342,13 +1347,13 @@ function create_enemy_chasing(x, y, width, height, name) {
     }
 
 
-    let enemyImage = new My_Img_Animated(x, y, 64, 64, sprites);
+    let enemyImage = new My_Img_Animated(x, y, width, height, sprites);
     //Hitbox sous forme de cercle
     let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
     let object = get_object("player");
     if (!object) {
         object = get_object("player_auto")
     }
-    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, 6, object);
+    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.2, object);
 }
 

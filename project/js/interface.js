@@ -1,5 +1,5 @@
 
-import { CNV, CTX, ASSETS_DIR, PNG_EXT } from "./script.js";
+import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
@@ -193,7 +193,7 @@ export class Button_with_Image extends My_Button {
 
 
 export function create_home_page() {
-    const btnSize = CNV.height*0.1;
+    const btnSize = CNV10;
     new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
     new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
 }
@@ -201,7 +201,7 @@ export function create_home_page() {
 
 
 function create_main_menu() {
-    const btnSize = CNV.height*0.1;
+    const btnSize = CNV10;
     jukebox.play_main_menu()
     My_Img.destroy_imgs();
     My_Button.destroy_buttons();
@@ -218,12 +218,12 @@ function create_main_menu() {
     let imgBackgroundName = "arena";
     let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
     let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*1.5, CNV.height*1.2);
-    new Moving_Background(CNV.width/2, CNV.height/2, imgBackground, 0.5)
+    new Moving_Background(CNV.width/2, CNV.height/2, imgBackground, CNV10*0.02)
 }
 
 export function generate_mobs(objectPlayer) {
-    let enemyX = getRandom((CNV.width/3)*2, CNV.width);
-    let enemyY = getRandom(0, CNV.height);
+    let enemyX = getRandom((CNV.width/3)*2, CNV.width*1.2);
+    let enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
 
     let imgEnemyName = "BAT";
     let sprites = {
@@ -238,16 +238,16 @@ export function generate_mobs(objectPlayer) {
         sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
     }
 
-    let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
-    let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 32);
-    new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
+    let enemyImage = new My_Img_Animated(enemyX, enemyY, CNV10, CNV10, sprites, sprites["standing"]["frames"][2]);
+    let enemyHitBox = new HitBox_Circle(enemyX, enemyY, CNV10*0.2);
+    new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, CNV10*0.2, objectPlayer);
 }
 
 
 
 
 function create_game_test() {
-    const btnSize = CNV.height*0.1;
+    const btnSize = Math.floor(CNV10);
     jukebox.play_game()
     My_Button.destroy_buttons()
     My_Img.destroy_imgs();
@@ -270,7 +270,7 @@ function create_game_test() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": Math.floor(btnSize*1.6), "height": Math.floor(btnSize*2), "player auto": true});
+    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": btnSize*1.6, "height": btnSize*2, "player auto": true});
     // Génération des ennemis initiaux
     for (let i = 0; i < 2; i++) {
         generate_mobs(objectPlayer);
@@ -283,30 +283,31 @@ function create_game_test() {
     {
         let x_mid = CNV.width / 2
         let y_mid = CNV.height / 2
-        let x_objs = [x_mid+60, x_mid-60, x_mid+60, x_mid-60]
-        let y_objs = [y_mid-60, y_mid+60, y_mid+60, y_mid-60]
+        let x_objs = [x_mid+(CNV10*2), x_mid-(CNV10*2), x_mid+(CNV10*2), x_mid-(CNV10*2)]
+        let y_objs = [y_mid-(CNV10*2), y_mid+(CNV10*2), y_mid+(CNV10*2), y_mid-(CNV10*2)]
         //with circle hitBox
         for (let i = 0; i < 2; i++) {
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "circle"});
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "circle"});
         }
         //with mask hitBox
         for (let i = 2; i < 3; i++) {
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "mask"});
+            console.log(CNV10*1.5)
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "mask"});
         }
         //with rect hitBox
         for (let i = 3; i < 4; i++) {
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": 60, "height": 60, "vassel hitbox": "rect"});
+            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "rect"});
         }
     }
 
 
     // TOWERS
     {
-        let diff = 30;
+        let diff = CNV10*1.5;
         let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
         let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
         for (let i = 0; i < 4; i++) {
-            create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": 40, "height": 40})
+            create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5})
         }
     }
 
@@ -315,11 +316,11 @@ function create_game_test() {
     {
         let x_mid = CNV.width / 2
         let y_mid = CNV.height / 2
-        let diff = 40;
+        let diff = CNV10*1.6;
         let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
         let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
         for (let i = 0; i < 4; i++) {
-            create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": 50, "height": 50})
+            create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5})
         }
     }
 
@@ -361,7 +362,7 @@ function create_game_test() {
 
 
 function create_game_survive() {
-    const btnSize = CNV.height*0.1;
+    const btnSize = CNV10;
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
@@ -391,13 +392,13 @@ function create_game_survive() {
 
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50, "player auto": true});
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2, "player auto": true});
 }
 
 
 
 function create_test_maps() {
-    const btnSize = CNV.height*0.1;
+    const btnSize = CNV10;
     jukebox.play_game();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
@@ -413,5 +414,5 @@ function create_test_maps() {
     construct_terrain();
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": 30, "height": 50});
+    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2});
 }
