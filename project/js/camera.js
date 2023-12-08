@@ -11,8 +11,8 @@ export class Camera {
 
 
     move_objects(addX, addY) {
-        if (addX < 1 && addX > -1) { addX = 0; }
-        if (addY < 1 && addY > -1) { addY = 0; }
+        if (Math.abs(addX) < 0.1 ) { addX = 0; }
+        if (Math.abs(addY) < 0.1 ) { addY = 0; }
 
         for (const img of My_Img.instances) {
             img.x += addX;
