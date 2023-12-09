@@ -18,7 +18,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
     // if object has no hitBox
     if (!obj.hitBox) { return 1; }
     if (obj.group == "obstacle") { return 1; }
-    if (obj instanceof Bonus) { return 1; }
+    if (obj.group == "bonus") { return 1; }
 
     let objGroup = obj.group;
     if (objGroup == "player_auto") { objGroup = "player"};
@@ -46,17 +46,9 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         obj.die();
                         other.die();
                         return 0;
-                    case "bonus_invicibility":
+                    case "bonus":
                         other.die();
-                        obj.give_bonus("invicibility", timestamp);
-                        break;
-                    case "bonus_gatling":
-                        other.die();
-                        obj.give_bonus("gatling", timestamp);
-                        break;
-                    case "bonus_spliter":
-                        other.die();
-                        obj.give_bonus("spliter", timestamp);
+                        obj.give_bonus(other.effect, timestamp);
                         break;
                     case "obstacle":
                         obj.recul(other)
@@ -251,15 +243,14 @@ export class My_Object {
 
 
     static draw_player_bonus() {
-        let obj = My_Object.get_object("player");
-        if (!obj) {
-            obj = My_Object.get_object("player_auto");
-            if (!obj) { return; }
+        let player = My_Object.get_object("player");
+        if (!player) {
+            player = My_Object.get_object("player_auto");
+            if (!player) { return; }
         }
 
         //set size
-        const bonus = obj.bonus_is_active;
-        const len = Object.keys(bonus).length;
+        const len = Bonus.effects.length;
         let i = 0;
         const bonusSize = CNV10*1.5;
         const split = (bonusSize/3)
@@ -291,10 +282,10 @@ export class My_Object {
         }
 
         //draw each bonus
-        for (const [key, value] of Object.entries(bonus)) {
+        for (const effect of Bonus.effects) {
             let img = new Image();
-            let file = ASSETS_DIR + "bonus_" + key;
-            if (value) {
+            let file = ASSETS_DIR + "bonus_" + effect;
+            if (player.bonus_is_active[effect]) {
                 img.src = file + "_on" + PNG_EXT;
             }
             else {
@@ -598,9 +589,12 @@ export class Obstacle extends My_Object {
 
 
 export class Bonus extends My_Object {
-    constructor(xCenter, yCenter, image, hitBox, type = {"invicibility || gatling ||": undefined}) {
-        super(xCenter, yCenter, image, hitBox, "bonus_"+type);
+    constructor(xCenter, yCenter, image, hitBox, effect = {"invicibility || gatling || spliter": undefined}) {
+        super(xCenter, yCenter, image, hitBox, "bonus");
+        this.effect = effect;
     }
+
+    static effects = ["invicibility", "gatling", "spliter"];
 }
 
 
@@ -646,39 +640,18 @@ export class Player extends My_Object {
 
     additionnal_update(timestamp) {
         // update bonuses activity
-        if (this.bonus_is_active["invicibility"]) {
-            if (this.timestampBonus["invicibility"] == undefined) {
-                this.timestampBonus["invicibility"] = timestamp;
-                return;
-            }
-            let elapsed = timestamp - this.timestampBonus["invicibility"];
-            let delay = this.bonus_duration["invicibility"] * 1000
-            if (elapsed >= delay) {
-                this.bonus_is_active["invicibility"] = false;
-            }
-        }
+        for (const effect of Bonus.effects) {
 
-        if (this.bonus_is_active["gatling"]) {
-            if (this.timestampBonus["gatling"] == undefined) {
-                this.timestampBonus["gatling"] = timestamp;
-                return;
-            }
-            let elapsed = timestamp - this.timestampBonus["gatling"];
-            let delay = this.bonus_duration["gatling"] * 1000
-            if (elapsed >= delay) {
-                this.bonus_is_active["gatling"] = false;
-            }
-        }
-
-        if (this.bonus_is_active["spliter"]) {
-            if (this.timestampBonus["spliter"] == undefined) {
-                this.timestampBonus["spliter"] = timestamp;
-                return;
-            }
-            let elapsed = timestamp - this.timestampBonus["spliter"];
-            let delay = this.bonus_duration["spliter"] * 1000
-            if (elapsed >= delay) {
-                this.bonus_is_active["spliter"] = false;
+            if (this.bonus_is_active[effect]) {
+                if (this.timestampBonus[effect] == undefined) {
+                    this.timestampBonus[effect] = timestamp;
+                    return;
+                }
+                let elapsed = timestamp - this.timestampBonus[effect];
+                let delay = this.bonus_duration[effect] * 1000
+                if (elapsed >= delay) {
+                    this.bonus_is_active[effect] = false;
+                }
             }
         }
 
@@ -1243,9 +1216,8 @@ function create_random_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     let imgObj = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
     
-    const bonus = ["invicibility", "gatling", "spliter"];
-    const b = bonus[getRandom(0, 1)]
-    new Bonus(x, y, imgObj, hitBoxObj, b);
+    const effect = Bonus.effects[getRandom(0, Bonus.effects.length-1)]
+    new Bonus(x, y, imgObj, hitBoxObj, effect);
 }
 
 
