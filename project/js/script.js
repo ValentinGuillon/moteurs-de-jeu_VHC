@@ -146,6 +146,8 @@ function draw() {
     for (const btn of My_Button.instances) {
         btn.draw()
     }
+
+    My_Object.draw_player_bonus();
 }
 
 

@@ -1,6 +1,6 @@
 
 import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
-import { My_Img, My_Img_Animated, draw_circle_stroke } from "./imgs.js"
+import { My_Img, My_Img_Animated, draw_circle_stroke, draw_rect } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
 import { My_Button, create_menu } from "./interface.js";
@@ -242,6 +242,38 @@ export class My_Object {
         obj.id = My_Object.id;
         My_Object.id++;
         My_Object.instances.push(obj);
+    }
+
+
+
+    static draw_player_bonus() {
+        let obj = get_object("player");
+        if (!obj) {
+            obj = get_object("player_auto");
+            if (!obj) { return; }
+        }
+
+        const bonus = obj.bonus_is_active;
+        const len = Object.keys(bonus).length;
+        let i = 0;
+        const bonusSize = CNV10*1.5;
+        const split = (bonusSize/3)
+        const barSize = len*bonusSize + (len-1)*split
+        draw_rect(CNV.width/2-barSize/2, CNV10, barSize, bonusSize, "#333333BB")
+        for (const [key, value] of Object.entries(bonus)) {
+            let file = ASSETS_DIR + "bonus_" + key;
+            let img = new Image()
+            if (value) {
+                img.src = file + "_on" + PNG_EXT;
+            }
+            else {
+                img.src = file + "_off" + PNG_EXT;
+            }
+            let xoffset = i * (bonusSize + split)
+            CTX.drawImage(img, CNV.width/2-barSize/2+xoffset, CNV10, bonusSize, bonusSize);
+            
+            i++
+        }
     }
 
 
