@@ -9,7 +9,7 @@
  * */
 
 
-import { My_Object, get_object } from "./objects.js";
+import { My_Object } from "./objects.js";
 import { My_Button, create_home_page, camera , init_interface, Button_with_Image} from "./interface.js";
 import { My_Img } from "./imgs.js";
 import { initialise_listener, execute_inputs, MOUSE } from "./input.js";
@@ -166,8 +166,8 @@ function refresh(timestamp) {
     
     //the camera follows either the player or the canvas's center
     if (camera) {
-        let objPlayer = get_object("player")
-        let objPlayerAuto = get_object("player_auto");
+        let objPlayer = My_Object.get_object("player")
+        let objPlayerAuto = My_Object.get_object("player_auto");
         if (objPlayer) {
             camera.update(objPlayer);
         }

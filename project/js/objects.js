@@ -9,15 +9,6 @@ import { generate_mobs } from './interface.js';
 
 
 
-export function get_object(group_name) {
-    for (const obj of My_Object.instances) {
-        if (obj.group == group_name) {
-            return obj;
-        }
-    }
-    return undefined;
-}
-
 
 // Function that checks if the given object collides with any other objects.
 // If collide with an object, compare their group, then call corresponding effect for each objects.
@@ -203,6 +194,15 @@ export class My_Object {
         My_Object.instances = newList;
     }
 
+    static get_object(group_name) {
+        for (const obj of My_Object.instances) {
+            if (obj.group == group_name) {
+                return obj;
+            }
+        }
+        return undefined;
+    }
+
 
     //sort My_Objects.instances bases on element.y
     //bubble sort
@@ -247,9 +247,9 @@ export class My_Object {
 
 
     static draw_player_bonus() {
-        let obj = get_object("player");
+        let obj = My_Object.get_object("player");
         if (!obj) {
-            obj = get_object("player_auto");
+            obj = My_Object.get_object("player_auto");
             if (!obj) { return; }
         }
 
@@ -1309,9 +1309,9 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
     let enemyImage = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
     //Hitbox sous forme de cercle
     let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
-    let object = get_object("player");
+    let object = My_Object.get_object("player");
     if (!object) {
-        object = get_object("player_auto")
+        object = My_Object.get_object("player_auto")
     }
     if (!object || object.dying || object.dead) { return; }
     new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.2, object);
