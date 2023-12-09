@@ -54,6 +54,10 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         other.die();
                         obj.give_bonus("gatling", timestamp);
                         break;
+                    case "bonus_spliter":
+                        other.die();
+                        obj.give_bonus("spliter", timestamp);
+                        break;
                     case "obstacle":
                         obj.recul(other)
                         break;
@@ -605,9 +609,9 @@ export class Bonus extends My_Object {
 export class Player extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
         super(xCenter, yCenter, image, hitBox, "player", speed);
-        this.bonus_is_active = {"invicibility": false,     "gatling": false};
-        this.bonus_duration =  {"invicibility": 2,         "gatling": 5}; //seconds
-        this.timestampBonus =  {"invicibility": undefined, "gatling": undefined};
+        this.bonus_is_active = {"invicibility": false, "gatling": false, "spliter": false};
+        this.bonus_duration =  {"invicibility": 2, "gatling": 5, "spliter": 2}; //seconds
+        this.timestampBonus =  {"invicibility": undefined, "gatling": undefined, "spliter": undefined};
     
         this.shoot = true;
         this.shot_by_seconds = 1/2; //1 / x, to shot every x seconds
@@ -666,6 +670,19 @@ export class Player extends My_Object {
             }
         }
 
+        if (this.bonus_is_active["spliter"]) {
+            if (this.timestampBonus["spliter"] == undefined) {
+                this.timestampBonus["spliter"] = timestamp;
+                return;
+            }
+            let elapsed = timestamp - this.timestampBonus["spliter"];
+            let delay = this.bonus_duration["spliter"] * 1000
+            if (elapsed >= delay) {
+                this.bonus_is_active["spliter"] = false;
+            }
+        }
+
+
         // update Player properties based on active bonuses
         if (this.bonus_is_active["gatling"]) {
             this.real_values["shot_by_seconds"] = this.shot_by_seconds * 5;
@@ -719,7 +736,12 @@ export class Player extends My_Object {
         }
     
         //create projectile
-        create_projectile(x, y, vel.x, vel.y, "ally");
+        if (this.bonus_is_active["spliter"]) {
+            create_projectile(x, y, vel.x, vel.y, "ally spliter");
+        }
+        else {
+            create_projectile(x, y, vel.x, vel.y, "ally");
+        }
 
     }
 
@@ -1221,7 +1243,7 @@ function create_random_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     let imgObj = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
     
-    const bonus = ["invicibility", "gatling"];
+    const bonus = ["invicibility", "gatling", "spliter"];
     const b = bonus[getRandom(0, 1)]
     new Bonus(x, y, imgObj, hitBoxObj, b);
 }

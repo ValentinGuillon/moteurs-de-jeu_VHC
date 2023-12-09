@@ -71,6 +71,7 @@ const guiVariables = {
     "playerSpeed": 15,
     "giveInvicibility": function() {give_bonus("invicibility")},
     "giveGatling": function() {give_bonus("gatling")},
+    "giveSpliter": function() {give_bonus("spliter")},
 }
 
 
@@ -88,6 +89,7 @@ playerFolder.add(guiVariables, "player_shoot").onChange(val => {
  })
  playerFolder.add(guiVariables, "giveInvicibility");
  playerFolder.add(guiVariables, "giveGatling");
+ playerFolder.add(guiVariables, "giveSpliter");
 
 
 // OBJECTS
