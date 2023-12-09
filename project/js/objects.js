@@ -885,7 +885,7 @@ export class Player_Auto extends My_Object {
     }
 
     generate_on_death() {
-        create_menu("game test");
+        create_menu("game test", false);
     }
 
 

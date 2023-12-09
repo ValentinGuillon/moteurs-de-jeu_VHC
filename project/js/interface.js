@@ -83,7 +83,10 @@ export class My_Button {
                 console.log("back menu")
                 create_main_menu()
                 break;
-
+            case "exit game over":
+                console.log("exot game over")
+                create_main_menu(false);
+                break;
             case "mute_music":
                 jukebox.mute_music();
                 if (jukebox.muted) {
@@ -187,10 +190,10 @@ export class Button_with_Image extends My_Button {
 
 
 
-export function create_menu(name = {"game test, game over": undefined}) {
+export function create_menu(name = {"game test, game over": undefined}, reload_music = true) {
     switch (name) {
         case "game test":
-            create_game_test();
+            create_game_test(reload_music);
             break;
         case "game over":
             create_game_over();
@@ -217,9 +220,11 @@ export function create_home_page() {
 
 
 
-function create_main_menu() {
+function create_main_menu(reload_music = true) {
     const btnSize = CNV10;
-    jukebox.play_main_menu()
+    if (reload_music) {
+        jukebox.play_main_menu()
+    }
     My_Img.destroy_imgs();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
@@ -245,9 +250,11 @@ export function generate_mobs(objectPlayer) {
 
 
 
-function create_game_test() {
+function create_game_test(reload_music = true) {
     const btnSize = Math.floor(CNV10);
-    jukebox.play_game()
+    if (reload_music) {
+        jukebox.play_game()
+    }
     My_Button.destroy_buttons()
     My_Img.destroy_imgs();
     My_Object.destroy_objects();
@@ -437,7 +444,7 @@ function create_game_over() {
     }
 
 
-    new Button_with_text("Game Over", "go_main-menu", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
+    new Button_with_text("Game Over", "exit game over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
 
 }
 
