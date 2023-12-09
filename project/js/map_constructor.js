@@ -3,7 +3,7 @@ import { FOREST, TERRAIN } from "./map.js"
 import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js"
 import { My_Img, My_Img_Animated } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { Bonus_Invicibility, My_Object, Obstacle, create_object } from "./objects.js";
+import { Bonus, My_Object, Obstacle, create_object } from "./objects.js";
 import { getRandom } from "./tools.js";
 
 

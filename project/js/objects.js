@@ -27,7 +27,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
     // if object has no hitBox
     if (!obj.hitBox) { return 1; }
     if (obj.group == "obstacle") { return 1; }
-    if (obj.group == "bonus_invicibility") { return 1; }
+    if (obj instanceof Bonus) { return 1; }
 
     let objGroup = obj.group;
     if (objGroup == "player_auto") { objGroup = "player"};
@@ -529,9 +529,9 @@ export class Obstacle extends My_Object {
 
 
 
-export class Bonus_Invicibility extends My_Object {
-    constructor(xCenter, yCenter, image, hitBox) {
-        super(xCenter, yCenter, image, hitBox, "bonus_invicibility");
+export class Bonus extends My_Object {
+    constructor(xCenter, yCenter, image, hitBox, type = {"invicibility ||": undefined}) {
+        super(xCenter, yCenter, image, hitBox, "bonus_"+type);
     }
 }
 
@@ -541,9 +541,9 @@ export class Bonus_Invicibility extends My_Object {
 export class Player extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
         super(xCenter, yCenter, image, hitBox, "player", speed);
-        this.is_invincible = false;
-        this.invicibility_duration = 5; //seconds
-        this.timestampWhenInvicibililtyGiven = undefined;
+        this.bonus_is_active = {"invicibility": false};
+        this.bonus_duration = {"invicibility": 2}; //seconds
+        this.timestampBonus = {"invicibility": undefined}
     
         this.shoot = true;
         this.shot_by_seconds = 1; //1 / x, to shot every x seconds
@@ -556,13 +556,17 @@ export class Player extends My_Object {
     }
 
     give_invicibility(timestamp) {
-        this.is_invincible = true;
-        this.timestampWhenInvicibililtyGiven = timestamp;
+        this.bonus_is_active["invicibility"] = true;
+        this.timestampBonus["invicibility"] = timestamp;
+    }
+
+    give_gatling() {
+
     }
 
 
     die() {
-        if (this.is_invincible) { return; }
+        if (this.bonus_is_active["invicibility"]) { return; }
         this.collision = false;
         if (this.hitBox) {
             this.hitBox.collision = false;
@@ -575,15 +579,15 @@ export class Player extends My_Object {
 
 
     additionnal_update(timestamp) {
-        if (this.is_invincible) {
-            if (this.timestampWhenInvicibililtyGiven == undefined) {
-                this.timestampWhenInvicibililtyGiven = timestamp;
+        if (this.bonus_is_active["invicibility"]) {
+            if (this.timestampBonus["invicibility"] == undefined) {
+                this.timestampBonus["invicibility"] = timestamp;
                 return;
             }
-            let elapsed = timestamp - this.timestampWhenInvicibililtyGiven;
-            let delay = this.invicibility_duration * 1000
+            let elapsed = timestamp - this.timestampBonus["invicibility"];
+            let delay = this.bonus_duration["invicibility"] * 1000
             if (elapsed >= delay) {
-                this.is_invincible = false;
+                this.bonus_is_active["invicibility"] = false;
             }
         }
     }
@@ -707,7 +711,7 @@ export class Player extends My_Object {
         if (this.image) { 
             this.image.draw();
         }
-        if (this.is_invincible) {
+        if (this.bonus_is_active["invicibility"]) {
             this.draw_invincible();
         }
         if (this.hitBox) {
@@ -1027,7 +1031,7 @@ export class Moving_Background extends My_Object {
 
 
 
-export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "bonus type": "invicibility"}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
     // console.log("new", name);
     if (changeDefaults) {
         switch (name) {
@@ -1067,7 +1071,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
     else {
         switch (name) {
             case "bonus":
-                create_bonus(x, y);
+                create_bonus(x, y, args["bonus type"]);
                 break;
             case "tree":
                 create_tree(x, y);
@@ -1103,7 +1107,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
 
 
 
-function create_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
+function create_bonus(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
     // prepare sprites
     let imgName = "stars_";
     let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
@@ -1114,7 +1118,7 @@ function create_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     // create object
     let imgObj = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
-    new Bonus_Invicibility(x, y, imgObj, hitBoxObj)
+    new Bonus(x, y, imgObj, hitBoxObj, "invicibility")
 }
 
 
