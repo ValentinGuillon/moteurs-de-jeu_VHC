@@ -996,7 +996,7 @@ export class Player_Auto extends Player {
     
     //define the velocity based on nearest enemy and bonus
     choose_direction() {
-        const good = ["bonus_invicibility", "bonus_gatling"];
+        const good = ["bonus"];
         const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
         let go_to = []
         let flee_to = []
