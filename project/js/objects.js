@@ -872,71 +872,30 @@ export class Enemy_Chasing extends My_Object {
 }
 
 
-export class Player_Auto extends My_Object {
+export class Player_Auto extends Player {
     constructor(xCenter, yCenter, image, hitBox, speed) {
-        super(xCenter, yCenter, image, hitBox, "player_auto", speed);
-        this.is_invincible = false;
-        this.invicibility_duration = 2; //seconds
-        this.timestampWhenInvicibililtyGiven = undefined;
-    
-        this.shoot = true;
-        this.shot_by_seconds = 1; //1 / x, to shot every x seconds
-        this.timestampWhenLastShot = undefined;
+        super(xCenter, yCenter, image, hitBox, speed);
+        this.group = "player_auto";
     }
 
     generate_on_death() {
         create_menu("game test", false);
     }
-
-
-    give_invicibility(timestamp) {
-        this.is_invincible = true;
-        this.timestampWhenInvicibililtyGiven = timestamp;
-    }
-
-
-    die() {
-        if (this.is_invincible) { return; }
-        this.collision = false;
-        if (this.hitBox) {
-            this.hitBox.collision = false;
-        }
-        this.dying = true;
-        if (this.image instanceof My_Img_Animated) {
-            this.image.die();
-        }
-    }
-
-
-    additionnal_update(timestamp) {
-        if (this.is_invincible) {
-            if (this.timestampWhenInvicibililtyGiven == undefined) {
-                this.timestampWhenInvicibililtyGiven = timestamp;
-                return;
-            }
-            let elapsed = timestamp - this.timestampWhenInvicibililtyGiven;
-            let delay = this.invicibility_duration * 1000
-            if (elapsed >= delay) {
-                this.is_invincible = false;
-            }
-        }
-    }
-
-
+    
     auto_actions(timestamp) {
         this.update_velocity(0, 0);
         this.tirer(timestamp);
         this.choose_direction();
     }
-
-
+    
+    
     //define the velocity based on nearest enemy and bonus
     choose_direction() {
         const good = ["bonus_invicibility"];
         const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
         let go_to = []
         let flee_to = []
-
+    
         //found all targets
         for (const obj of My_Object.instances) {
             if (obj.dying || obj.dead) { continue; }
@@ -954,7 +913,7 @@ export class Player_Auto extends My_Object {
                 go_to.push(obj);
                 continue;
             }
-
+    
             //bad
             if (is_out_of_screen(obj.x, obj.y)) { continue; }
             for (const name of bad) {
@@ -968,12 +927,12 @@ export class Player_Auto extends My_Object {
                 continue;
             }
         }
-
+    
         //nearest
         let weight = 1.2;
         let near_good = undefined;
         let near_bad = undefined;
-
+    
         let near_dist = undefined;
         //good
         for (const obj of go_to) {
@@ -992,7 +951,7 @@ export class Player_Auto extends My_Object {
                 near_bad = obj;
             }
         }
-
+    
         //final direction
         let dir_good = {"x": 0, "y": 0};
         let dir_bad = {"x": 0, "y": 0};
@@ -1011,84 +970,8 @@ export class Player_Auto extends My_Object {
                 weight = 0.6;
             }
         }
-
-        this.update_velocity(dir_good.x*weight + dir_bad.x, dir_good.y*weight + dir_bad.y);
-    }
-
-
-    generate_projectile(x, y){
-        //found the nearest ennemy
-        let nearest_obj = undefined;
-        let smallest_dist = undefined;
-        const targets = ["enemy_chasing", "enemy_turret"];
-        for (const obj of My_Object.instances) {
-            if (obj.is_dead || obj.dying) { continue; }
-            if (is_out_of_screen(obj.x, obj.y)) { continue; }
-            //check if obj is a possible target
-            let is_a_target = false;
-            for (const target of targets) {
-                if (obj.group != target) { continue; }
-                is_a_target = true;
-            }
-            if (!is_a_target) { continue; }
-
-            //obj is a target
-            let dist = distance(this.x, this.y, obj.x, obj.y);
-            //update nearest_obj based on distance
-            if ((smallest_dist == undefined) || (dist < smallest_dist)) {
-                nearest_obj = obj;
-                smallest_dist = dist;
-            }
-        }
-
-        let vel = {"x": 0, "y": 0};
-        //don't shoot if their is no targets
-        if (nearest_obj == undefined) { return; }
-
-        //direction toward nearest_obj
-        else {
-            vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
-        }
     
-        //create projectile
-        create_projectile(x, y, vel.x, vel.y, "ally");
-
-    }
-
-
-    tirer(timestamp){
-        if (!this.shoot) { return; }
-        if (!My_Object.moving) { return; }
-
-        if (this.timestampWhenLastShot == undefined) {
-            this.timestampWhenLastShot = timestamp;
-        }
-        let elapsed = timestamp - this.timestampWhenLastShot;
-        let delay = 1000 / this.shot_by_seconds
-        if (elapsed >= delay){
-            this.generate_projectile(this.x, this.y);
-            this.timestampWhenLastShot = timestamp;
-        }
-    }
-
-
-    draw_invincible() {
-        let radius = (this.image.width+this.image.height) / 4
-        draw_circle_stroke(this.x, this.y, radius, "#AeAeA7", 3)
-    }
-
-
-    draw() {
-        if (this.is_dead) { return ; }
-        if (this.image) { 
-            this.image.draw();
-        }
-        if (this.is_invincible) {
-            this.draw_invincible();
-        }
-        if (this.hitBox) {
-            this.hitBox.draw_contours();
-        }
+        this.update_velocity(dir_good.x*weight + dir_bad.x, dir_good.y*weight + dir_bad.y);
     }
 }
 
