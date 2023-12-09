@@ -59,6 +59,10 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         other.die();
                         obj.give_invicibility(timestamp);
                         break;
+                    case "bonus_gatling":
+                        other.die();
+                        obj.give_gatling(timestamp);
+                        break;
                     case "obstacle":
                         obj.recul(other)
                         break;
@@ -530,7 +534,7 @@ export class Obstacle extends My_Object {
 
 
 export class Bonus extends My_Object {
-    constructor(xCenter, yCenter, image, hitBox, type = {"invicibility ||": undefined}) {
+    constructor(xCenter, yCenter, image, hitBox, type = {"invicibility || gatling ||": undefined}) {
         super(xCenter, yCenter, image, hitBox, "bonus_"+type);
     }
 }
@@ -541,13 +545,15 @@ export class Bonus extends My_Object {
 export class Player extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
         super(xCenter, yCenter, image, hitBox, "player", speed);
-        this.bonus_is_active = {"invicibility": false};
-        this.bonus_duration = {"invicibility": 2}; //seconds
-        this.timestampBonus = {"invicibility": undefined}
+        this.bonus_is_active = {"invicibility": false,     "gatling": false};
+        this.bonus_duration =  {"invicibility": 2,         "gatling": 5}; //seconds
+        this.timestampBonus =  {"invicibility": undefined, "gatling": undefined};
     
         this.shoot = true;
-        this.shot_by_seconds = 1; //1 / x, to shot every x seconds
+        this.shot_by_seconds = 1/2; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
+
+        this.real_values = {"shot_by_seconds": this.shot_by_seconds};
     }
 
 
@@ -560,8 +566,9 @@ export class Player extends My_Object {
         this.timestampBonus["invicibility"] = timestamp;
     }
 
-    give_gatling() {
-
+    give_gatling(timestamp) {
+        this.bonus_is_active["gatling"] = true;
+        this.timestampBonus["gatling"] = timestamp;
     }
 
 
@@ -579,6 +586,7 @@ export class Player extends My_Object {
 
 
     additionnal_update(timestamp) {
+        // update bonuses activity
         if (this.bonus_is_active["invicibility"]) {
             if (this.timestampBonus["invicibility"] == undefined) {
                 this.timestampBonus["invicibility"] = timestamp;
@@ -590,6 +598,27 @@ export class Player extends My_Object {
                 this.bonus_is_active["invicibility"] = false;
             }
         }
+
+        if (this.bonus_is_active["gatling"]) {
+            if (this.timestampBonus["gatling"] == undefined) {
+                this.timestampBonus["gatling"] = timestamp;
+                return;
+            }
+            let elapsed = timestamp - this.timestampBonus["gatling"];
+            let delay = this.bonus_duration["gatling"] * 1000
+            if (elapsed >= delay) {
+                this.bonus_is_active["gatling"] = false;
+            }
+        }
+
+        // update Player properties based on active bonuses
+        if (this.bonus_is_active["gatling"]) {
+            this.real_values["shot_by_seconds"] = this.shot_by_seconds * 5;
+        }
+        else {
+            this.real_values["shot_by_seconds"] = this.shot_by_seconds;
+        }
+        
     }
 
 
@@ -648,7 +677,7 @@ export class Player extends My_Object {
             this.timestampWhenLastShot = timestamp;
         }
         let elapsed = timestamp - this.timestampWhenLastShot;
-        let delay = 1000 / this.shot_by_seconds
+        let delay = 1000 / this.real_values["shot_by_seconds"];
         if (elapsed >= delay){
             this.generate_projectile(this.x, this.y);
             this.timestampWhenLastShot = timestamp;
@@ -861,7 +890,7 @@ export class Enemy_Chasing extends My_Object {
     generate_on_death() {
         const chance_bonus = getRandom(0, 2);
         if (!chance_bonus) {
-            create_bonus(this.x, this.y);
+            create_random_bonus(this.x, this.y);
             return;
         }
         const chance_mobs = getRandom(0, 1);
@@ -895,7 +924,7 @@ export class Player_Auto extends Player {
     
     //define the velocity based on nearest enemy and bonus
     choose_direction() {
-        const good = ["bonus_invicibility"];
+        const good = ["bonus_invicibility", "bonus_gatling"];
         const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
         let go_to = []
         let flee_to = []
@@ -1031,12 +1060,12 @@ export class Moving_Background extends My_Object {
 
 
 
-export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "bonus type": "invicibility"}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
     // console.log("new", name);
     if (changeDefaults) {
         switch (name) {
             case "bonus":
-                create_bonus(x, y, defaults["width"], defaults["height"]);
+                create_random_bonus(x, y, defaults["width"], defaults["height"]);
                 break;
             case "tree":
                 create_tree(x, y, defaults["width"], defaults["height"]);
@@ -1071,7 +1100,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
     else {
         switch (name) {
             case "bonus":
-                create_bonus(x, y, args["bonus type"]);
+                create_random_bonus(x, y);
                 break;
             case "tree":
                 create_tree(x, y);
@@ -1107,7 +1136,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
 
 
 
-function create_bonus(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
+function create_random_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     // prepare sprites
     let imgName = "stars_";
     let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
@@ -1118,7 +1147,10 @@ function create_bonus(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
     // create object
     let imgObj = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
-    new Bonus(x, y, imgObj, hitBoxObj, "invicibility")
+    
+    const bonus = ["invicibility", "gatling"];
+    const b = bonus[getRandom(0, 1)]
+    new Bonus(x, y, imgObj, hitBoxObj, b);
 }
 
 
