@@ -40,13 +40,6 @@ export const PNG_EXT = ".png";
 
 
 
-function get_player() {
-    let obj = My_Object.get_object("player");
-    if (!obj) {
-        obj = My_Object.get_object("player_auto");
-    }
-    return obj;
-}
 
 function update_bools_all_objects() {
     for (const obj of My_Object.instances) {
@@ -55,7 +48,7 @@ function update_bools_all_objects() {
 }
 
 function give_bonus(bonus) {
-    const obj = get_player();
+    const obj = My_Object.get_player();
     if (obj) { obj.give_bonus(bonus); }
 }
 
@@ -80,11 +73,11 @@ let playerFolder = gui.addFolder("Player")
 playerFolder.open()
 
 playerFolder.add(guiVariables, "playerSpeed", 0, 100).onChange(val => {
-    let obj = get_player();
+    let obj = My_Object.get_player();
     if (obj) { obj.speed = val;}
 })
 playerFolder.add(guiVariables, "player_shoot").onChange(val => {
-    let obj = get_player();
+    let obj = My_Object.get_player();
     if (obj) { obj.shoot = val; }
  })
  playerFolder.add(guiVariables, "giveInvicibility");
@@ -185,7 +178,7 @@ function refresh(timestamp) {
     
     //the camera follows either the player or the canvas's center
     if (camera) {
-        let objPlayer = get_player();
+        let objPlayer = My_Object.get_player();
         if (objPlayer) {
             camera.update(objPlayer);
         }

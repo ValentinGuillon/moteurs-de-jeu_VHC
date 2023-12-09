@@ -199,6 +199,14 @@ export class My_Object {
         return undefined;
     }
 
+    static get_player() {
+        let obj = My_Object.get_object("player");
+        if (!obj) {
+            obj = My_Object.get_object("player_auto");
+        }
+        return obj;
+    }
+
 
     //sort My_Objects.instances bases on element.y
     //bubble sort
