@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke, draw_rect } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
-import { My_Button, create_menu } from "./interface.js";
+import { My_Button, create_home_page, create_menu } from "./interface.js";
 import { generate_mobs } from './interface.js';
 
 
@@ -866,9 +866,9 @@ export class Enemy_Turret extends My_Object {
 
 
 
-export class Enemy_Projectile extends My_Object {
+class Projectile extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY) {
-        super(xCenter, yCenter, image, hitBox, "enemy_projectile", speed, velocityX, velocityY);
+        super(xCenter, yCenter, image, hitBox, "", speed, velocityX, velocityY);
     }
 
     auto_actions(timestamp) {
@@ -888,25 +888,43 @@ export class Enemy_Projectile extends My_Object {
 
 
 
+export class Enemy_Projectile extends Projectile {
+    constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY) {
+        super(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY);
+        this.group = "enemy_projectile";
+    }
+}
 
-export class Ally_Projectile extends My_Object {
+
+export class Ally_Projectile extends Projectile {
     constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY)  {
-        super(xCenter, yCenter, image, hitBox, "ally_projectile", speed, velocityX, velocityY);
+        super(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY);
+        this.group = "ally_projectile";
+    }
+}
+
+export class Ally_Projectile_Spliter extends Ally_Projectile {
+    constructor(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY)  {
+        super(xCenter, yCenter, image, hitBox, speed, velocityX, velocityY);
+        this.nb = 4;
     }
 
-    auto_actions(timestamp) {
-        if (this.is_out_of_screen()) {
-            this.die();
+    generate_projectiles() {
+        for (let i = 0; i < this.nb; i++) {
+            let velX = getRandom(0, 1);
+            let velY = getRandom(0, 1);
+            if (getRandom(0, 1)) { velX *= -1; }
+            if (getRandom(0, 1)) { velY *= -1; }
+            create_projectile(this.x+velX, this.y+velY, velX, velY, "ally", this.image.width*0.75, this.image.height*0.75);
         }
     }
 
-    is_out_of_screen() {
-        let out_right = this.x > CNV.width;
-        let out_left = this.x < 0;
-        let out_down = this.y > CNV.height;
-        let out_up = this.y < 0;
-        return out_right || out_left || out_down || out_up;
+    die() {
+        super.die()
+        if (is_out_of_screen(this.x, this.y)) { return; }
+        this.generate_projectiles();
     }
+
 }
 
 
@@ -1342,7 +1360,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
 
 
 
-function create_projectile(x, y, velX, velY, type = {"ally, enemy": undefined}, width = CNV10*0.7, height = CNV10*0.5) {
+function create_projectile(x, y, velX, velY, type = {"ally || enemy || ally spliter": undefined}, width = CNV10*0.7, height = CNV10*0.5) {
     // width = CNV10*0.7, height = CNV10*0.5
     // prepare sprites
     let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
@@ -1358,6 +1376,9 @@ function create_projectile(x, y, velX, velY, type = {"ally, enemy": undefined}, 
     let hitBoxBall = new HitBox_Mask(x, y, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, width, height);
     if (type == "ally") {
         new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
+    }
+    else if (type == "ally spliter") {
+        new Ally_Projectile_Spliter(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
     }
     else if (type == "enemy") {
         new Enemy_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
