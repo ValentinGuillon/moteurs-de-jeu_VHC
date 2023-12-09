@@ -2,7 +2,7 @@
 import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke, draw_rect } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
-import { direction, distance, getRandom, is_out_of_screen, normalize } from "./tools.js";
+import { direction, distance, getRandom, is_in_rect, is_out_of_screen, normalize } from "./tools.js";
 import { My_Button, create_home_page, create_menu } from "./interface.js";
 import { generate_mobs } from './interface.js';
 
@@ -1020,7 +1020,7 @@ export class Player_Auto extends Player {
             }
     
             //bad
-            if (is_out_of_screen(obj.x, obj.y)) { continue; }
+            if (!is_in_rect(obj.x, obj.y, CNV.width*0.25, CNV.height*0.25, CNV.width*0.75, CNV.height*0.75)) { continue; }
             for (const name of bad) {
                 if (obj.group == name) {
                     found = true;
