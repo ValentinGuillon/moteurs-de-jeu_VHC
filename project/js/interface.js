@@ -187,11 +187,13 @@ export class Button_with_Image extends My_Button {
 
 
 
-export function create_menu(name = {"game test": undefined}) {
+export function create_menu(name = {"game test, game over": undefined}) {
     switch (name) {
         case "game test":
             create_game_test();
             break;
+        case "game over":
+            create_game_over();
     
         default:
             break;
@@ -416,3 +418,26 @@ function create_test_maps() {
     //PLAYER
     create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
 }
+
+
+
+
+function create_game_over() {
+    const btnSize = CNV10;
+    jukebox.play_main_menu();
+    My_Button.destroy_buttons();
+    My_Object.destroy_objects();
+    My_Img.destroy_imgs();
+
+    if (jukebox.muted) {
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
+    }
+    else {
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
+    }
+
+
+    new Button_with_text("Game Over", "go_main-menu", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
+
+}
+

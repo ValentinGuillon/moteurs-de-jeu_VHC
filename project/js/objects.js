@@ -551,6 +551,10 @@ export class Player extends My_Object {
     }
 
 
+    generate_on_death() {
+        create_menu("game over");
+    }
+
     give_invicibility(timestamp) {
         this.is_invincible = true;
         this.timestampWhenInvicibililtyGiven = timestamp;
