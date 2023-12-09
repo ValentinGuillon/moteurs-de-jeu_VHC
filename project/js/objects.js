@@ -878,14 +878,14 @@ export class Enemy_Chasing extends My_Object {
     generate_on_death() {
         const chance_bonus = getRandom(0, 2);
         if (!chance_bonus) {
-            create_bonus(this.x, this.y, CNV10*0.75, CNV10*0.75*0.8);
+            create_bonus(this.x, this.y);
             return;
         }
         const chance_mobs = getRandom(0, 1);
         if(!chance_mobs) {
             const nb = getRandom(1, 3);
             for (let i = 0; i < nb; i++) {
-                create_enemy_chasing(this.x+i*1, this.y, CNV10, CNV10, "BAT");
+                create_enemy_chasing(this.x+i*1, this.y);
             }
             return;
         }
@@ -1174,41 +1174,75 @@ export class Moving_Background extends My_Object {
 
 
 
-export function create_object(name, args = {"x": 0, "y": 0, "width": 0, "height": 0, "vassel hitbox": "circle", "filename": "", "player auto": false}) {
-    switch (name) {
-        case "bonus":
-            create_bonus(args.x, args.y, args.width, args.height);
-            break;
-        case "tree":
-            create_tree(args.x, args.y, args.width, args.height);
-            break;
-        case "border":
-            create_border(args.x, args.y, args.width, args.height);
-            break;
-        case "vassel":
-            create_vassel(args["vassel hitbox"], args.x, args.y, args.width, args.height);
-            break;
-        case "tower":
-            create_tower(args.x, args.y, args.width, args.height);
-            break;
-        case "player":
-            return create_player(args.x, args.y, args.width, args.height, args["player auto"]);
-            break;
-        case "obstacle":
-            return create_obstacle(args.x, args.y, args.width, args.height, args["filename"]);
-            break;
-        case "enemy chasing":
-            create_enemy_chasing(args.x, args.y, args.width, args.height, args["filename"])
-        default:
-            console.log("error: there is no method to create this abject (\"" + name + "\").")
-            console.log("In create_object in objects.js.")
-            break;
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+    // console.log("new", name);
+    if (changeDefaults) {
+        switch (name) {
+            case "bonus":
+                create_bonus(x, y, defaults["width"], defaults["height"]);
+                break;
+            case "tree":
+                create_tree(x, y, defaults["width"], defaults["height"]);
+                break;
+            case "border":
+                create_border(x, y, defaults["width"], defaults["height"]);
+                break;
+            case "vassel":
+                create_vassel(x, y, args["vassel hitbox"], defaults["width"], defaults["height"]);
+                break;
+            case "tower":
+                create_tower(x, y, defaults["width"], defaults["height"]);
+                break;
+            case "player":
+                return create_player(x, y, args["player auto"], defaults["width"], defaults["height"]);
+                break;
+            case "obstacle":
+                return create_obstacle(x, y, args["filename"], defaults["width"], defaults["height"]);
+                break;
+            case "enemy chasing":
+                create_enemy_chasing(x, y, args["filename"], defaults["width"], defaults["height"])
+            default:
+                console.log("error: there is no method to create this abject (\"" + name + "\").")
+                console.log("In create_object in objects.js.")
+                break;
+        }
+    }
+    else {
+        switch (name) {
+            case "bonus":
+                create_bonus(x, y);
+                break;
+            case "tree":
+                create_tree(x, y);
+                break;
+            case "border":
+                create_border(x, y);
+                break;
+            case "vassel":
+                create_vassel(x, y, args["vassel hitbox"]);
+                break;
+            case "tower":
+                create_tower(x, y);
+                break;
+            case "player":
+                return create_player(x, y, args["player auto"]);
+                break;
+            case "obstacle":
+                return create_obstacle(x, y, args["filename"]);
+                break;
+            case "enemy chasing":
+                create_enemy_chasing(x, y, args["filename"]);
+            default:
+                console.log("error: there is no method to create this abject (\"" + name + "\").")
+                console.log("In create_object in objects.js.")
+                break;
+        }
     }
 }
 
 
 
-function create_bonus(x, y, width, height) {
+function create_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     // prepare sprites
     let imgName = "stars_";
     let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
@@ -1224,7 +1258,7 @@ function create_bonus(x, y, width, height) {
 
 
 
-function create_tree(x, y, width, height) {
+function create_tree(x, y, width = CNV10, height = CNV10) {
     // prepare sprite
     let imgName = "forest/";
     if (getRandom(0, 1)) {
@@ -1252,7 +1286,7 @@ function create_border(x, y, width, height) {
 
 
 
-function create_vassel(type, x, y, width, height) {
+function create_vassel(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
     // prepare sprites
     let imgName = "vassels_";
     let sprites = {"standing": {"fps": 10, "frames": []}};
@@ -1277,7 +1311,7 @@ function create_vassel(type, x, y, width, height) {
 
 
 
-function create_tower(x, y, width, height) {
+function create_tower(x, y, width = CNV10*1.5, height = CNV10*1.5) {
     // prepare sprites
     let imgName = "towers_";
     let nb = [6, 6, 7, 7, 8, 8, 7, 7];
@@ -1296,7 +1330,7 @@ function create_tower(x, y, width, height) {
 
 
 
-function create_player(x, y, width, height, auto = false) {
+function create_player(x, y, auto = false, width = CNV10*1.6, height = CNV10*2) {
     // prepare sprites
     let imgPlayerName = "RedDeathFrame_";
     let sprites = {"standing": {"fps": 6, "frames": []}, "dying": {"fps": 6, "frames": []}};
@@ -1322,7 +1356,7 @@ function create_player(x, y, width, height, auto = false) {
 
 
 
-function create_obstacle(x, y, width, height, name) {
+function create_obstacle(x, y, name, width = CNV10, height = CNV10) {
     let image = new My_Img(name+PNG_EXT, x, y, width, height);
     let hitBox = new HitBox_Mask(x, y, name+"_mask"+PNG_EXT, width, height);
     new Obstacle(x, y, image, hitBox);
@@ -1331,7 +1365,7 @@ function create_obstacle(x, y, width, height, name) {
 
 
 
-function create_enemy_chasing(x, y, width, height, name) {
+function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10) {
     let sprites = {"standing": {"fps": 10, "frames": []}, "dying": {"fps": 10, "frames": []}};
 
     for (let i = 0; i < 3; i++) {

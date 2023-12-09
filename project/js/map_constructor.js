@@ -132,12 +132,12 @@ export function construct_map() {
             //tree
             if (tile == 0) {
                 if (getRandom(0, 4)) { continue; }
-                create_object("tree", {"x": x, "y": y, "width": tileSize.width, "height": tileSize.height});
+                create_object("tree", x, y);
                 continue;
             }
             //bonus
             else if (tile == 2) {
-                create_object("bonus", {"x": x, "y": y, "width": tileSize.width*0.75, "height": tileSize.height*0.75});
+                create_object("bonus", x, y);
                 
             }
             //border
@@ -145,7 +145,7 @@ export function construct_map() {
                 name = DIR + "ground" + PNG_EXT;
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
-                create_object("border", {"x": x, "y": y, "width": tileSize.width, "height": tileSize.height});
+                create_object("border", x, y);
             }
         }
     }
@@ -248,7 +248,7 @@ export function construct_terrain() {
                 name = getTerrainTile(j, i, "obstacle_1/", tile)
                 if (name != "error") {
                     name = DIR + name;
-                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width+1, "height": tileSize.height+1, "filename": name})
+                    create_object("obstacle", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
                 }
                 else {
                     name = DIR + "terrain";
@@ -262,7 +262,7 @@ export function construct_terrain() {
                 name = getTerrainTile(j, i, "water/", tile)
                 if (name != "error") {
                     name = DIR + name;
-                    create_object("obstacle", {"x": x, "y": y, "width": tileSize.width, "height": tileSize.height, "filename": name});
+                    create_object("obstacle", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1});
                 }
                 else {
                     name = DIR + "terrain";

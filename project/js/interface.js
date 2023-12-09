@@ -270,7 +270,7 @@ function create_game_test() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": btnSize*1.6, "height": btnSize*2, "player auto": true});
+    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
     // Génération des ennemis initiaux
     for (let i = 0; i < 2; i++) {
         generate_mobs(objectPlayer);
@@ -287,16 +287,16 @@ function create_game_test() {
         let y_objs = [y_mid-(CNV10*2), y_mid+(CNV10*2), y_mid+(CNV10*2), y_mid-(CNV10*2)]
         //with circle hitBox
         for (let i = 0; i < 2; i++) {
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "circle"});
+            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "circle"});
         }
         //with mask hitBox
         for (let i = 2; i < 3; i++) {
             console.log(CNV10*1.5)
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "mask"});
+            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "mask"});
         }
         //with rect hitBox
         for (let i = 3; i < 4; i++) {
-            create_object("vassel", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5, "vassel hitbox": "rect"});
+            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "rect"});
         }
     }
 
@@ -307,7 +307,7 @@ function create_game_test() {
         let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
         let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
         for (let i = 0; i < 4; i++) {
-            create_object("tower", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5})
+            create_object("tower", x_objs[i], y_objs[i])
         }
     }
 
@@ -320,7 +320,7 @@ function create_game_test() {
         let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
         let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
         for (let i = 0; i < 4; i++) {
-            create_object("bonus", {"x": x_objs[i], "y": y_objs[i], "width": CNV10*1.5, "height": CNV10*1.5})
+            create_object("bonus", x_objs[i], y_objs[i])
         }
     }
 
@@ -392,7 +392,7 @@ function create_game_survive() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2, "player auto": true});
+    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
     for (let i = 0; i < 2; i++) {
         generate_mobs(objectPlayer);
     }
@@ -417,5 +417,5 @@ function create_test_maps() {
     construct_terrain();
 
     //PLAYER
-    create_object("player", {"x": CNV.width/2, "y": CNV.height/2, "width": CNV10*1.6, "height": CNV10*2});
+    create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
 }
