@@ -253,16 +253,43 @@ export class My_Object {
             if (!obj) { return; }
         }
 
+        //set size
         const bonus = obj.bonus_is_active;
         const len = Object.keys(bonus).length;
         let i = 0;
         const bonusSize = CNV10*1.5;
         const split = (bonusSize/3)
         const barSize = len*bonusSize + (len-1)*split
-        draw_rect(CNV.width/2-barSize/2, CNV10, barSize, bonusSize, "#333333BB")
+        const x = CNV.width/2-barSize/2;
+        const y = CNV10;
+
+        // draw support
+        // draw_rect(CNV.width/2-barSize/2, CNV10, barSize, bonusSize, "#333333BB")
+        const subSize = bonusSize/3
+        const name = ["up-left", "up-right", "down-left", "down-right", "up", "left", "right", "down", "mid"];
+        const coords = {
+            "up-left":    {"x": 0, "y": 0, "w": subSize, "h":subSize},
+            "up-right":   {"x": barSize-subSize, "y": 0, "w": subSize, "h":subSize},
+            "down-left":  {"x": 0, "y": subSize*2, "w": subSize, "h":subSize},
+            "down-right": {"x": barSize-subSize, "y": subSize*2, "w": subSize, "h":subSize},
+            "up":         {"x": subSize, "y": 0, "w": barSize-subSize*2, "h":subSize},
+            "left":       {"x": 0, "y": subSize, "w": subSize, "h":subSize},
+            "right":      {"x": barSize-subSize, "y": subSize, "w": subSize, "h":subSize},
+            "down":       {"x": subSize, "y": subSize*2, "w": barSize-subSize*2, "h":subSize},
+            "mid":    {"x": subSize, "y": subSize, "w": barSize-subSize*2, "h":subSize},
+        }
+
+        for (let i = 0; i < name.length; i++) {
+            let img = new Image();
+            let key = name[i]
+            img.src = ASSETS_DIR + "frame_" + key + PNG_EXT;
+            CTX.drawImage(img, x+coords[key].x, y+coords[key].y, coords[key].w+1, coords[key].h+1);
+        }
+
+        //draw each bonus
         for (const [key, value] of Object.entries(bonus)) {
+            let img = new Image();
             let file = ASSETS_DIR + "bonus_" + key;
-            let img = new Image()
             if (value) {
                 img.src = file + "_on" + PNG_EXT;
             }
@@ -270,7 +297,8 @@ export class My_Object {
                 img.src = file + "_off" + PNG_EXT;
             }
             let xoffset = i * (bonusSize + split)
-            CTX.drawImage(img, CNV.width/2-barSize/2+xoffset, CNV10, bonusSize, bonusSize);
+            CTX.drawImage(img, x+xoffset, y, bonusSize, bonusSize);
+            // draw_rect( x+xoffset, y, bonusSize, bonusSize, "#FF000055")
             
             i++
         }
