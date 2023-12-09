@@ -40,29 +40,13 @@ export const PNG_EXT = ".png";
 
 
 
-//dat.GUI Folders
-//PLAYER
-let playerFolder = gui.addFolder("Player")
-playerFolder.open()
-
-function update_player_speed(new_val) {
-    let player = undefined;
-    for (const obj of My_Object.instances) {
-        if (obj.group != "player") { continue; }
-        player = obj;
-        break;
+function get_player() {
+    let obj = My_Object.get_object("player");
+    if (!obj) {
+        obj = My_Object.get_object("player_auto");
     }
-    if (!player) { return; }
-    My_Object.playerSpeed = new_val;
-    player.speed = new_val;
+    return obj;
 }
-
-playerFolder.add(My_Object, "playerSpeed", 0, 100).onChange(val => { update_player_speed(val) })
-
-
-// OBJECTS
-let objectsFolder = gui.addFolder("Objects")
-objectsFolder.open();
 
 function update_bools_all_objects() {
     for (const obj of My_Object.instances) {
@@ -70,26 +54,54 @@ function update_bools_all_objects() {
     }
 }
 
+
+
+//dat.GUI Folders
+const guiVariables = {
+    "imgVisible": true,
+    "collision": true,
+    "hitBox": false,
+    "player_shoot": true,
+    "turrets_shoot": true,
+    "playerSpeed": 15
+}
+
+
+//PLAYER
+let playerFolder = gui.addFolder("Player")
+playerFolder.open()
+
+playerFolder.add(guiVariables, "playerSpeed", 0, 100).onChange(val => {
+    let obj = get_player();
+    if (obj) { obj.speed = val;}
+})
+playerFolder.add(guiVariables, "player_shoot").onChange(val => {
+    let obj = get_player();
+    if (obj) { obj.shoot = val; }
+ })
+
+
+// OBJECTS
+let objectsFolder = gui.addFolder("Objects")
+objectsFolder.open();
+
 objectsFolder.add(My_Object, "imgVisible").onChange(val => { update_bools_all_objects() } )
 objectsFolder.add(My_Object, "collision").onChange(val => { update_bools_all_objects() } )
 objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => { update_bools_all_objects() } )
 objectsFolder.add(My_Object, "moving").onChange(val =>{ update_bools_all_objects() } )
 
+
 // TOWERS
 let towersFolder = gui.addFolder("Towers")
 towersFolder.open()
 
-function update_towers_shoot() {
+towersFolder.add(guiVariables, "turrets_shoot").onChange(val => {
     for (const obj of My_Object.instances) {
         if (obj.group != "enemy_turret") { continue; }
         if (obj.is_dead || obj.dying) { continue; }
-        obj.shoot = !obj.shoot;
+        obj.shoot = val;
     }
-}
-
-let towersFolderBool = { towersCanShoot: true }
-towersFolder.add(towersFolderBool, "towersCanShoot").onChange(val => { update_towers_shoot() } )
-
+} )
 
 
 //dat.GUI Folders (END)
@@ -142,6 +154,7 @@ function draw() {
     for (const obj of My_Object.instances) {
         obj.draw();
     }
+    update_btn_with_img();
     //draw buttons
     for (const btn of My_Button.instances) {
         btn.draw()
@@ -150,11 +163,6 @@ function draw() {
     My_Object.draw_player_bonus();
 }
 
-
-function updateGui() {
-    // backgroundFolder.updateDisplay();
-    playerFolder.updateDisplay();
-}
 
 
 function refresh(timestamp) {
@@ -166,23 +174,17 @@ function refresh(timestamp) {
     
     //the camera follows either the player or the canvas's center
     if (camera) {
-        let objPlayer = My_Object.get_object("player")
-        let objPlayerAuto = My_Object.get_object("player_auto");
+        let objPlayer = get_player();
         if (objPlayer) {
             camera.update(objPlayer);
-        }
-        else if(objPlayerAuto) {
-            camera.update(objPlayerAuto);
         }
         else {
             camera.update(undefined, CNV.width/2, CNV.height/2);
         }
     }
 
-    update_btn_with_img();
     draw();
 
-    updateGui()
     requestAnimationFrame(refresh);
 }
 
