@@ -837,15 +837,11 @@ export class Enemy_Turret extends My_Object {
 
 
     generate_projectile(x, y){
-        let velX = Math.random();
-        let velY = Math.random();
-        if (getRandom(0, 1)) {
-            velX *= -1;
-        }
-        if (getRandom(0, 1)) {
-            velY *= -1;
-        }
-        create_projectile(x, y, velX, velY, "enemy");
+        const player = My_Object.get_player();
+        if (!player) { return; }
+
+        const vel = direction(x, y, player.x, player.y);
+        create_projectile(x, y, vel.x, vel.y, "enemy");
     }
 
 
