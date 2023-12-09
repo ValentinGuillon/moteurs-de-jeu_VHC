@@ -185,6 +185,21 @@ export class Button_with_Image extends My_Button {
 
 
 
+
+
+export function create_menu(name = {"game test": undefined}) {
+    switch (name) {
+        case "game test":
+            create_game_test();
+            break;
+    
+        default:
+            break;
+    }
+}
+
+
+
 // function create_template {
 //     //buttons
 //     //objects
