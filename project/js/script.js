@@ -54,6 +54,11 @@ function update_bools_all_objects() {
     }
 }
 
+function give_bonus(bonus) {
+    const obj = get_player();
+    if (obj) { obj.give_bonus(bonus); }
+}
+
 
 
 //dat.GUI Folders
@@ -63,7 +68,9 @@ const guiVariables = {
     "hitBox": false,
     "player_shoot": true,
     "turrets_shoot": true,
-    "playerSpeed": 15
+    "playerSpeed": 15,
+    "giveInvicibility": function() {give_bonus("invicibility")},
+    "giveGatling": function() {give_bonus("gatling")},
 }
 
 
@@ -79,6 +86,8 @@ playerFolder.add(guiVariables, "player_shoot").onChange(val => {
     let obj = get_player();
     if (obj) { obj.shoot = val; }
  })
+ playerFolder.add(guiVariables, "giveInvicibility");
+ playerFolder.add(guiVariables, "giveGatling");
 
 
 // OBJECTS
