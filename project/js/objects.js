@@ -48,11 +48,11 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         return 0;
                     case "bonus_invicibility":
                         other.die();
-                        obj.give_invicibility(timestamp);
+                        obj.give_bonus("invicibility", timestamp);
                         break;
                     case "bonus_gatling":
                         other.die();
-                        obj.give_gatling(timestamp);
+                        obj.give_bonus("gatling", timestamp);
                         break;
                     case "obstacle":
                         obj.recul(other)
@@ -621,14 +621,9 @@ export class Player extends My_Object {
         create_menu("game over");
     }
 
-    give_invicibility(timestamp) {
-        this.bonus_is_active["invicibility"] = true;
-        this.timestampBonus["invicibility"] = timestamp;
-    }
-
-    give_gatling(timestamp) {
-        this.bonus_is_active["gatling"] = true;
-        this.timestampBonus["gatling"] = timestamp;
+    give_bonus(bonus, timestamp) {
+        this.bonus_is_active[bonus] = true;
+        this.timestampBonus[bonus] = timestamp;
     }
 
 
