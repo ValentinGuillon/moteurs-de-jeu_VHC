@@ -215,32 +215,14 @@ function create_main_menu() {
     else {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
     }
-    let imgBackgroundName = "arena";
-    let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*1.5, CNV.height*1.2);
-    new Moving_Background(CNV.width/2, CNV.height/2, imgBackground, CNV10*0.02)
+    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
 }
 
 export function generate_mobs(objectPlayer) {
     let enemyX = getRandom((CNV.width/3)*2, CNV.width*1.2);
     let enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
 
-    let imgEnemyName = "BAT";
-    let sprites = {
-        "standing": {"fps": 10, "frames": []},
-        "dying": {"fps": 10, "frames": []}
-    };
-
-    for (let i = 0; i < 3; i++) {
-        sprites["standing"]["frames"].push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
-    }
-    for (let i = 0; i < 8; i++) {
-        sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-    }
-
-    let enemyImage = new My_Img_Animated(enemyX, enemyY, CNV10, CNV10, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
-    let enemyHitBox = new HitBox_Circle(enemyX, enemyY, CNV10*0.2);
-    new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, CNV10*0.2, objectPlayer);
+    create_object("enemy chasing", enemyX, enemyY, {"filename": "BAT"})
 }
 
 
@@ -392,7 +374,7 @@ function create_game_survive() {
 
 
     //PLAYER
-    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
+    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
     for (let i = 0; i < 2; i++) {
         generate_mobs(objectPlayer);
     }

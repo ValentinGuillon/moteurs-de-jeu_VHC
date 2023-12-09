@@ -627,20 +627,7 @@ export class Player extends My_Object {
         }
     
         //create projectile
-        let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
-        for (let i = 0; i < 4; i++) {
-            sprites["standing"]["frames"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
-        }
-
-        for (let i = 0; i < 8; i++) {
-            sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-        }
-
-        const w = CNV10*0.7;
-        const h = CNV10*0.5
-        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
-        let hitBoxBall = new HitBox_Circle(x, y, (w+h)/4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, vel.x, vel.y);
+        create_projectile(x, y, vel.x, vel.y, "ally");
 
     }
 
@@ -763,19 +750,7 @@ export class Enemy_Turret extends My_Object {
         if (getRandom(0, 1)) {
             velY *= -1;
         }
-        let sprites = {"standing": {"fps": 12, "frames": []}, "dying": {"fps": 12, "frames": []}};
-        for (let i = 0; i < 4; i++) {
-            sprites["standing"]["frames"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
-        }
-        for (let i = 0; i < 8; i++) {
-            sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-        }
-
-        const w = CNV10*0.7;
-        const h = CNV10*0.5
-        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
-        let hitBoxBall = new HitBox_Mask(x, y, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, w, h);
-        new Enemy_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
+        create_projectile(x, y, velX, velY, "enemy");
     }
 
 
@@ -1068,20 +1043,7 @@ export class Player_Auto extends My_Object {
         }
     
         //create projectile
-        let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
-        for (let i = 0; i < 4; i++) {
-            sprites["standing"]["frames"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
-        }
-
-        for (let i = 0; i < 8; i++) {
-            sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-        }
-
-        const w = CNV10*0.7;
-        const h = CNV10*0.5
-        let imgBall = new My_Img_Animated(x, y, w, h, sprites)
-        let hitBoxBall = new HitBox_Circle(x, y, (w+h)/4);
-        new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, vel.x, vel.y);
+        create_projectile(x, y, vel.x, vel.y, "ally");
 
     }
 
@@ -1201,6 +1163,10 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 break;
             case "enemy chasing":
                 create_enemy_chasing(x, y, args["filename"], defaults["width"], defaults["height"])
+                break;
+            case "moving background":
+                create_moving_background(x, y, args["filename"], defaults["width"], defaults["height"]);
+                break;
             default:
                 console.log("error: there is no method to create this abject (\"" + name + "\").")
                 console.log("In create_object in objects.js.")
@@ -1232,6 +1198,10 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 break;
             case "enemy chasing":
                 create_enemy_chasing(x, y, args["filename"]);
+                break
+            case "moving background":
+                create_moving_background(x, y, args["filename"]);
+                break;
             default:
                 console.log("error: there is no method to create this abject (\"" + name + "\").")
                 console.log("In create_object in objects.js.")
@@ -1388,3 +1358,34 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
     new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.2, object);
 }
 
+
+
+function create_projectile(x, y, velX, velY, type = {"ally, enemy": undefined}, width = CNV10*0.7, height = CNV10*0.5) {
+    // width = CNV10*0.7, height = CNV10*0.5
+    // prepare sprites
+    let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
+    for (let i = 0; i < 4; i++) {
+        sprites["standing"]["frames"].push(ASSETS_DIR + "fireballs_mid_" + (i+1) + PNG_EXT);
+    }
+
+    for (let i = 0; i < 8; i++) {
+        sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
+    }
+
+    let imgBall = new My_Img_Animated(x, y, width, height, sprites)
+    let hitBoxBall = new HitBox_Mask(x, y, ASSETS_DIR + "fireballs_mid_mask" + PNG_EXT, width, height);
+    if (type == "ally") {
+        new Ally_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
+    }
+    else if (type == "enemy") {
+        new Enemy_Projectile(x, y, imgBall, hitBoxBall, CNV10*0.3, velX, velY);
+    }
+}
+
+
+
+
+function create_moving_background(x, y, name, width = CNV.width*1.5, height = CNV.height*1.2) {
+    let img = new My_Img(ASSETS_DIR+name+PNG_EXT, x, y, width, height);
+    new Moving_Background(x, y, img, CNV10*0.02)
+}
