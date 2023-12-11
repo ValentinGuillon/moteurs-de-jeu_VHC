@@ -1245,7 +1245,7 @@ function create_tree(x, y, width = CNV10, height = CNV10) {
 
 function create_border(x, y, filename, width, height) {
     // create object
-    let imgObj = new My_Img(filename+PNG_EXT, x, y, width, height)
+    let imgObj = new My_Img(ASSETS_DIR+filename+PNG_EXT, x, y, width, height)
     let hitBox = new HitBox_Rect(x, y, width, height)
     new Obstacle(x, y, imgObj, hitBox)
 }
@@ -1323,8 +1323,8 @@ function create_player(x, y, auto = false, width = CNV10*1.6, height = CNV10*2) 
 
 
 function create_obstacle(x, y, name, width = CNV10, height = CNV10) {
-    let image = new My_Img(name+PNG_EXT, x, y, width, height);
-    let hitBox = new HitBox_Mask(x, y, name+"_mask"+PNG_EXT, width, height);
+    let image = new My_Img(ASSETS_DIR+name+PNG_EXT, x, y, width, height);
+    let hitBox = new HitBox_Mask(x, y, ASSETS_DIR+name+"_mask"+PNG_EXT, width, height);
     new Obstacle(x, y, image, hitBox);
 }
 
