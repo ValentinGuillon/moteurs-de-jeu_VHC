@@ -615,7 +615,7 @@ export class Player extends My_Object {
     constructor(xCenter, yCenter, image, hitBox, speed) {
         super(xCenter, yCenter, image, hitBox, "player", speed);
         this.bonus_is_active = {"invicibility": false, "gatling": false, "spliter": false};
-        this.bonus_duration =  {"invicibility": 2, "gatling": 5, "spliter": 2}; //seconds
+        this.bonus_duration =  {"invicibility":5, "gatling": 5, "spliter": 5}; //seconds
         this.timestampBonus =  {"invicibility": undefined, "gatling": undefined, "spliter": undefined};
     
         this.shoot = true;
@@ -633,6 +633,16 @@ export class Player extends My_Object {
     give_bonus(bonus, timestamp) {
         this.bonus_is_active[bonus] = true;
         this.timestampBonus[bonus] = timestamp;
+
+        this.refresh_bonuses(timestamp);
+    }
+
+    refresh_bonuses(timestamp) {
+        for (const effect of Bonus.effects) {
+            if (this.bonus_is_active[effect]) {
+                this.timestampBonus[effect] = timestamp;
+            }
+        }
     }
 
 
@@ -957,10 +967,10 @@ export class Enemy_Chasing extends My_Object {
         }
     }
 
-    die() {
-        super.die();
-        generate_mobs(this.player); // Générer de nouvel ennemi lors de la mort de cet ennemi
-    }
+    // die() {
+    //     super.die();
+    //     generate_mobs(this.player); // Générer de nouvel ennemi lors de la mort de cet ennemi
+    // }
 
     generate_on_death() {
         const chance_bonus = getRandom(0, 2);
@@ -968,12 +978,17 @@ export class Enemy_Chasing extends My_Object {
             create_random_bonus(this.x, this.y);
             return;
         }
-        const chance_mobs = getRandom(0, 1);
-        if(!chance_mobs) {
-            const nb = getRandom(1, 3);
-            for (let i = 0; i < nb; i++) {
-                create_enemy_chasing(this.x+i*1, this.y);
-            }
+        // const chance_mobs = getRandom(0, 1);
+        // if(!chance_mobs) {
+        //     const nb = getRandom(1, 3);
+        //     for (let i = 0; i < nb; i++) {
+        //         create_enemy_chasing(this.x+i*1, this.y);
+        //     }
+        //     return;
+        // }
+        const chance_turret = getRandom(0, 4);
+        if(!chance_turret) {
+            create_tower(this.x+1, this.y+1);
             return;
         }
     }
@@ -999,8 +1014,12 @@ export class Player_Auto extends Player {
     
     //define the velocity based on nearest enemy and bonus
     choose_direction() {
-        const good = ["bonus"];
-        const bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
+        let good = ["bonus"];
+        let bad = ["obstacle", "enemy_turret", "enemy_projectile", "enemy_chasing"]
+        if (this.bonus_is_active["invicibility"]) {
+            good = ["bonus", "enemy_turret", "enemy_chasing"];
+            bad = ["obstacle"]
+        }
         let go_to = []
         let flee_to = []
     
@@ -1121,6 +1140,46 @@ export class Moving_Background extends My_Object {
             default:
                 break;
         }
+    }
+}
+
+
+
+export class Enemy_Generator extends My_Object {
+    constructor(x, y, image, hitBox, targetForChasing) {
+        super(x, y, image, hitBox, "enemy_generator");
+        this.targetForChasing = targetForChasing;
+
+        this.timestampWhenGenerate = undefined;
+        this.spawn_rate = 1; // 1/x for 1 by x seconds
+        this.mobs_dead = 0;
+    }
+
+    //follows this.action(timestamp)
+    //called after collisions has been checked
+    auto_actions(timestamp) {
+        this.generate(timestamp);
+    }
+
+    generate(timestamp) {
+        if (this.timestampWhenGenerate == undefined) {
+            this.timestampWhenGenerate = timestamp;
+        }
+
+        let elapsed = timestamp - this.timestampWhenGenerate;
+        let delay = 1000 / this.spawn_rate
+        if (elapsed < delay){ return; }
+        this.timestampWhenGenerate = timestamp;
+
+        let enemyX = 1;
+        let enemyY = 1;
+
+        while(is_in_rect(enemyX, enemyY, 0, 0, CNV.width, CNV.height)) {
+            enemyX = getRandom(-CNV.width*0.2, CNV.width*1.2);
+            enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
+        }
+
+        create_object("enemy chasing", enemyX, enemyY, {"filename": "BAT"})
     }
 }
 
@@ -1292,7 +1351,7 @@ function create_tower(x, y, width = CNV10*1.5, height = CNV10*1.5) {
         sprites["dying"]["frames"].push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
     }
     // create object
-    let imgObj = new My_Img_Animated(x, y, width, height, sprites);
+    let imgObj = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][0]);
     let hitBoxObj = new HitBox_Mask(x, y, ASSETS_DIR+imgName+"mask_v2"+PNG_EXT, width, height)
     new Enemy_Turret(x, y, imgObj, hitBoxObj)
 }

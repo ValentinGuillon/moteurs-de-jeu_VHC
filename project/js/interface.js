@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object, Moving_Background }
+import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -190,8 +190,15 @@ export class Button_with_Image extends My_Button {
 
 
 export function generate_mobs(objectPlayer) {
-    let enemyX = getRandom((CNV.width/3)*2, CNV.width*1.2);
-    let enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
+    let enemyX = 0;
+    let enemyY = 0;
+
+    while(is_in_rect(enemyX, enemyY, 0, 0, CNV.width, CNV.height)) {
+        enemyX = getRandom(-CNV.width*0.2, CNV.width*1.2);
+        enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
+    }
+
+
 
     create_object("enemy chasing", enemyX, enemyY, {"filename": "BAT"})
 }
@@ -311,9 +318,12 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
     }
     
     //other
-    for (let i = 0; i < 2; i++) {
-        generate_mobs(player);
-    }
+    // for (let i = 0; i < 2; i++) {
+    //     generate_mobs(player);
+    // }
+    new Enemy_Generator(0, 0, undefined, undefined, player);
+
+
     // construct_map();
     construct_terrain();
 }
