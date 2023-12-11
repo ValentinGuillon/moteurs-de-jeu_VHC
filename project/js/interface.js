@@ -423,7 +423,10 @@ function create_test_maps() {
     construct_terrain();
 
     //PLAYER
-    create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
+    const player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
+    for (let i = 0; i < 2; i++) {
+        generate_mobs(player);
+    }
 }
 
 

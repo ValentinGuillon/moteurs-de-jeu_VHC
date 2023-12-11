@@ -276,7 +276,7 @@ export function construct_terrain() {
                     img = new My_Img(img_name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
                     My_Img.add_instance(img);
                     name = TILESET + name;
-                    create_object("obstacle", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
+                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "wall"}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
                 }
                 else {
                     name = ASSETS_DIR + TILESET + "terrain";
@@ -293,7 +293,7 @@ export function construct_terrain() {
                     img = new My_Img(img_name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
                     My_Img.add_instance(img);
                     name = TILESET + name;
-                    create_object("obstacle", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1});
+                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "hole"}, true, {"width": tileSize.width+1, "height": tileSize.height+1});
                 }
                 else {
                     name = ASSETS_DIR + TILESET + "terrain";

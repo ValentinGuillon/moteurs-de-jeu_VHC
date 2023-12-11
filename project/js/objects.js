@@ -71,6 +71,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
                         other.die();
                         return 0;
                     case "obstacle":
+                        if (other.type == "hole") { break; } 
                         obj.die();
                         return 0;
                 }
@@ -96,6 +97,7 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
             case "enemy_projectile":
                 switch (otherGroup) {
                     case "obstacle":
+                        if (other.type == "hole") { break; }
                         obj.die();
                         return 0;
                     case "player":
@@ -588,8 +590,9 @@ export class My_Object {
 
 
 export class Obstacle extends My_Object {
-    constructor(xCenter, yCenter, image, hitBox) {
+    constructor(xCenter, yCenter, image, hitBox, type = {"wall || hole": undefined}) {
         super(xCenter, yCenter, image, hitBox, "obstacle");
+        this.type = type;
     }
 }
 
@@ -1132,7 +1135,7 @@ export class Moving_Background extends My_Object {
 
 
 
-export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "obstacle_type": "wall"}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
     // console.log("new", name);
     if (changeDefaults) {
         switch (name) {
@@ -1155,7 +1158,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 return create_player(x, y, args["player auto"], defaults["width"], defaults["height"]);
                 break;
             case "obstacle":
-                return create_obstacle(x, y, args["filename"], defaults["width"], defaults["height"]);
+                return create_obstacle(x, y, args["filename"], args["obstacle_type"], defaults["width"], defaults["height"]);
                 break;
             case "enemy chasing":
                 create_enemy_chasing(x, y, args["filename"], defaults["width"], defaults["height"])
@@ -1190,7 +1193,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 return create_player(x, y, args["player auto"]);
                 break;
             case "obstacle":
-                return create_obstacle(x, y, args["filename"]);
+                return create_obstacle(x, y, args["filename"], args["obstacle_type"]);
                 break;
             case "enemy chasing":
                 create_enemy_chasing(x, y, args["filename"]);
@@ -1238,7 +1241,7 @@ function create_tree(x, y, width = CNV10, height = CNV10) {
     // create object
     let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
     let hitBox = new HitBox_Circle(x, y, (width+height)/4)
-    new Obstacle(x, y, imgObj, hitBox)
+    new Obstacle(x, y, imgObj, hitBox, "wall")
 }
 
 
@@ -1247,7 +1250,7 @@ function create_border(x, y, filename, width, height) {
     // create object
     let imgObj = new My_Img(ASSETS_DIR+filename+PNG_EXT, x, y, width, height)
     let hitBox = new HitBox_Rect(x, y, width, height)
-    new Obstacle(x, y, imgObj, hitBox)
+    new Obstacle(x, y, imgObj, hitBox, "wall")
 }
 
 
@@ -1271,7 +1274,7 @@ function create_vassel(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
     else if (type == "rect") {
         hitBoxObj = new HitBox_Rect(x, y, width, height)
     }
-    new Obstacle(x, y, imgObj, hitBoxObj)
+    new Obstacle(x, y, imgObj, hitBoxObj, "wall")
 
 }
 
@@ -1322,10 +1325,10 @@ function create_player(x, y, auto = false, width = CNV10*1.6, height = CNV10*2) 
 
 
 
-function create_obstacle(x, y, name, width = CNV10, height = CNV10) {
+function create_obstacle(x, y, name, type, width = CNV10, height = CNV10) {
     let image = new My_Img(ASSETS_DIR+name+PNG_EXT, x, y, width, height);
     let hitBox = new HitBox_Mask(x, y, ASSETS_DIR+name+"_mask"+PNG_EXT, width, height);
-    new Obstacle(x, y, image, hitBox);
+    new Obstacle(x, y, image, hitBox, type);
 }
 
 
