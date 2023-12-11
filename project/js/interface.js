@@ -64,26 +64,21 @@ export class My_Button {
                 create_main_menu()
                 break;
 
-            case "play_test":
-                console.log("plAy game test")
-                create_game_test()
+            case "play_demo":
+                console.log("plAy demo")
+                create_game("demo")
                 break;
 
             case "play_game":
                 console.log("plAy game survive")
-                create_game_survive()
-                break;
-
-            case "play_test_map":
-                console.log("plAy test map")
-                create_test_maps();
+                create_game("play")
                 break;
 
             case "go_main-menu":
                 console.log("back menu")
                 create_main_menu()
                 break;
-            case "exit game over":
+            case "exit_game_over":
                 console.log("exot game over")
                 create_main_menu(false);
                 break;
@@ -190,55 +185,9 @@ export class Button_with_Image extends My_Button {
 
 
 
-export function create_menu(name = {"game test, game over": undefined}, reload_music = true) {
-    switch (name) {
-        case "game test":
-            create_game_test(reload_music);
-            break;
-        case "game over":
-            create_game_over();
-    
-        default:
-            break;
-    }
-}
 
 
 
-// function create_template {
-//     //buttons
-//     //objects
-// }
-
-
-
-export function create_home_page() {
-    const btnSize = CNV10;
-    new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
-    new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
-}
-
-
-
-function create_main_menu(reload_music = true) {
-    const btnSize = CNV10;
-    if (reload_music) {
-        jukebox.play_main_menu()
-    }
-    My_Img.destroy_imgs();
-    My_Button.destroy_buttons();
-    My_Object.destroy_objects();
-    new Button_with_text("Test", "play_test", CNV.width/2, CNV.height*0.3, btnSize*2, btnSize*2, "#00FFFF")
-    new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/2, btnSize*8, btnSize*4)
-    new Button_with_text("Test Map", "play_test_map", CNV.width/2, CNV.height*0.3*3, btnSize*2, btnSize*2, "#00FFFF")
-    if (jukebox.muted) {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
-    }
-    else {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
-    }
-    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
-}
 
 export function generate_mobs(objectPlayer) {
     let enemyX = getRandom((CNV.width/3)*2, CNV.width*1.2);
@@ -250,204 +199,145 @@ export function generate_mobs(objectPlayer) {
 
 
 
-function create_game_test(reload_music = true) {
-    const btnSize = Math.floor(CNV10);
+
+
+
+
+export function create_menu(name = {"home_page || main_menu || play_game || play_demon || game_over": undefined}, reload_music = true) {
+    switch (name) {
+        case "home_page":
+            create_home_page(reload_music);
+            break;
+        case "main_menu":
+            create_main_menu(reload_music);
+            break;
+        case "play_game":
+            create_game("play");
+            break;
+        case "play_demo":
+            create_game("demo", reload_music);
+            break;
+        case "game_over":
+            create_game_over();
+            break;
+    
+        default:
+            console.log("error: in interface.js, create_menu(...).")
+            console.log("There is no menu called \"" + name + "\".")
+            break;
+    }
+}
+
+
+
+// function create_template(reload_music = true) {
+//     const btnSize = CNV10;
+//     if (reload_music) {
+//         jukebox.play_main_menu()
+//     }
+//     My_Img.destroy_imgs();
+//     My_Button.destroy_buttons();
+//     My_Object.destroy_objects();
+// }
+
+
+
+function create_home_page() {
+    const btnSize = CNV10;
+    new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
+    new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
+}
+
+
+
+function create_main_menu(reload_music = true) {
+    const btnSize = CNV10;
+
+    My_Img.destroy_imgs();
+    My_Button.destroy_buttons();
+    My_Object.destroy_objects();
+
     if (reload_music) {
-        jukebox.play_game()
+        jukebox.play_main_menu()
     }
-    My_Button.destroy_buttons()
-    My_Img.destroy_imgs();
-    My_Object.destroy_objects();
-    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
+
+    // buttons
     if (jukebox.muted) {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "off")
     }
     else {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
     }
 
+    const scale = 3;
+    new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/3, btnSize*2*scale, btnSize*scale)
+    new Button_with_Image({"default": ASSETS_DIR+"btn_demo.png", "hover": ASSETS_DIR+"btn_demo_hover.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
 
-    //BACKGROUND
-    // image
-    let imgBackgroundName = "arena";
-    let spriteBackground = ASSETS_DIR + imgBackgroundName + PNG_EXT;
-    let imgBackground = new My_Img(spriteBackground, CNV.width/2, CNV.height/2, CNV.width*2, CNV.height*2, undefined, true);
-    My_Img.add_instance(imgBackground)
-
-
-    //PLAYER
-    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
-    // Génération des ennemis initiaux
-    for (let i = 0; i < 2; i++) {
-        generate_mobs(objectPlayer);
-    }
-
-
-    //(next instances are in another scope so variables can easily be reused by copy/paste)
-
-    // OBSTACLES
-    {
-        let x_mid = CNV.width / 2
-        let y_mid = CNV.height / 2
-        let x_objs = [x_mid+(CNV10*2), x_mid-(CNV10*2), x_mid+(CNV10*2), x_mid-(CNV10*2)]
-        let y_objs = [y_mid-(CNV10*2), y_mid+(CNV10*2), y_mid+(CNV10*2), y_mid-(CNV10*2)]
-        //with circle hitBox
-        for (let i = 0; i < 2; i++) {
-            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "circle"});
-        }
-        //with mask hitBox
-        for (let i = 2; i < 3; i++) {
-            console.log(CNV10*1.5)
-            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "mask"});
-        }
-        //with rect hitBox
-        for (let i = 3; i < 4; i++) {
-            create_object("vassel", x_objs[i], y_objs[i], {"vassel hitbox": "rect"});
-        }
-    }
-
-
-    // TOWERS
-    {
-        let diff = CNV10*1.5;
-        let x_objs = [diff, diff, CNV.width-diff, CNV.width-diff]
-        let y_objs = [diff, CNV.height-diff, diff, CNV.height-diff]
-        for (let i = 0; i < 4; i++) {
-            create_object("tower", x_objs[i], y_objs[i])
-        }
-    }
-
-
-    // BONUS
-    {
-        let x_mid = CNV.width / 2
-        let y_mid = CNV.height / 2
-        let diff = CNV10*1.6;
-        let x_objs = [diff, x_mid, x_mid, CNV.width-diff]
-        let y_objs = [y_mid, diff, CNV.height-diff, y_mid]
-        for (let i = 0; i < 4; i++) {
-            create_object("bonus", x_objs[i], y_objs[i])
-        }
-    }
-
-
-    // instances des mobs
-    // {
-    //     //Ennemis qui poursuivent le joueur
-    //     let nombreEnnemis = 10;
-    //     for (let i = 0; i < nombreEnnemis; i++) {
-    //         let enemyX = getRandom((CNV.width/3)*2, CNV.width); // Position X aléatoire
-    //         let enemyY = getRandom(0, CNV.height); // Position Y aléatoire
-
-    //         let imgEnemyName = "BAT";
-    //         let sprites = {};
-    //         let spritesEnemy = [];
-    //         let spritesEnemyDead = [];
-
-    //         for (let i = 0; i < 3; i++) {
-    //             spritesEnemy.push(ASSETS_DIR + imgEnemyName + (i+1) + PNG_EXT);
-    //         }
-    //         sprites["standing"] = {"fps": 10, "frames": spritesEnemy};
-
-    //         for (let i = 0; i < 8; i++) {
-    //             spritesEnemyDead.push(ASSETS_DIR + "explosion_balle_" + (i+1) + PNG_EXT);
-    //         }
-    //         sprites["dying"] = {"fps": 10, "frames": spritesEnemyDead};
-
-
-    //         let enemyImage = new My_Img_Animated(enemyX, enemyY, 64, 64, sprites);
-    //         //Hitbox sous forme de cercle
-    //         let enemyHitBox = new HitBox_Circle(enemyX, enemyY, 10);
-    //         new Enemy_Chasing(enemyX, enemyY, enemyImage, enemyHitBox, 6, objectPlayer);
-
-    //         // create_object("")
-    //     }
-    // }
+    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
 }
 
 
 
-function create_game_survive() {
+
+function create_game(mode = "play", reload_music = true, choices = {"mode": {"play || demo": undefined}}) {
     const btnSize = CNV10;
-    jukebox.play_game();
+
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
-    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
+
+    if (reload_music) {
+        jukebox.play_game();
+    }
+
+    // buttons
+    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize, btnSize, btnSize*1.5, btnSize*1.5);
     if (jukebox.muted) {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "off")
     }
     else {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
     }
 
-    construct_map();
-
-    // let cnvMidX = CNV.width/2
-    // let cnvMidY = CNV.height/2
-    // let mapWidth = CNV.width*8
-    // let mapHeight = CNV.height*8
-
-    // let limits = {
-    //     "x":      cnvMidX-(mapWidth/2),
-    //     "y":      cnvMidY-(mapHeight/2),
-    //     "width":  mapWidth,
-    //     "height": mapHeight,
-    // }
-
-
-
+    
+    //objects
     //PLAYER
-    let objectPlayer = create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
-    for (let i = 0; i < 2; i++) {
-        generate_mobs(objectPlayer);
+    let player = undefined;
+    if (mode == "play") { 
+        player = create_object("player", CNV.width/2, CNV.height/2);
     }
-}
-
-
-
-function create_test_maps() {
-    const btnSize = CNV10;
-    jukebox.play_game();
-    My_Button.destroy_buttons();
-    My_Object.destroy_objects();
-    My_Img.destroy_imgs();
-    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize*2, btnSize*2, btnSize*2, btnSize*2);
-    if (jukebox.muted) {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
+    else if (mode == "demo") {
+        player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
     }
-    else {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
-    }
-
-    construct_terrain();
-
-    //PLAYER
-    const player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": false});
+    
+    //other
     for (let i = 0; i < 2; i++) {
         generate_mobs(player);
     }
+    // construct_map();
+    construct_terrain();
 }
+
 
 
 
 
 function create_game_over() {
-    const btnSize = CNV10;
-    jukebox.play_main_menu();
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
 
+    const btnSize = CNV10;
+    jukebox.play_main_menu();
+
     if (jukebox.muted) {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "off")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "off")
     }
     else {
-        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize*2, btnSize*2, btnSize*2, btnSize*2, "on")
+        new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
     }
 
 
-    new Button_with_text("Game Over", "exit game over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
-
+    new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
 }
 

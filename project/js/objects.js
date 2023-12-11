@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { My_Img, My_Img_Animated, draw_circle_stroke, draw_rect } from "./imgs.js"
 import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_in_rect, is_out_of_screen, normalize } from "./tools.js";
-import { My_Button, create_home_page, create_menu } from "./interface.js";
+import { My_Button, create_menu } from "./interface.js";
 import { generate_mobs } from './interface.js';
 
 
@@ -266,7 +266,7 @@ export class My_Object {
         const split = (bonusSize/3)
         const barSize = len*bonusSize + (len-1)*split
         const x = CNV.width/2-barSize/2;
-        const y = CNV10;
+        const y = CNV10*0.25;
 
         // draw support
         // draw_rect(CNV.width/2-barSize/2, CNV10, barSize, bonusSize, "#333333BB")
@@ -627,7 +627,7 @@ export class Player extends My_Object {
 
 
     generate_on_death() {
-        create_menu("game over");
+        create_menu("game_over");
     }
 
     give_bonus(bonus, timestamp) {
@@ -987,7 +987,7 @@ export class Player_Auto extends Player {
     }
 
     generate_on_death() {
-        create_menu("game test", false);
+        create_menu("play_demo", false);
     }
     
     auto_actions(timestamp) {

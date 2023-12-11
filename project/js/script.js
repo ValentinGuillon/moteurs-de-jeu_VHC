@@ -10,7 +10,7 @@
 
 
 import { My_Object } from "./objects.js";
-import { My_Button, create_home_page, camera , init_interface, Button_with_Image} from "./interface.js";
+import { My_Button, create_menu, camera , init_interface, Button_with_Image} from "./interface.js";
 import { My_Img } from "./imgs.js";
 import { initialise_listener, execute_inputs, MOUSE } from "./input.js";
 
@@ -194,5 +194,5 @@ function refresh(timestamp) {
 
 init_interface();
 initialise_listener();
-create_home_page();
+create_menu("home_page");
 requestAnimationFrame(refresh);
