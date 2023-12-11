@@ -145,7 +145,7 @@ export function construct_map() {
                 name = DIR + "ground" + PNG_EXT;
                 img = new My_Img(name, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
-                create_object("border", x, y);
+                create_object("border", x, y, {"filename": "forest/tree_large"});
             }
         }
     }
@@ -241,6 +241,20 @@ export function construct_terrain() {
                 name = DIR + "ground"
                 img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
+            }
+
+            // border
+            if (tile == -1) {
+                name = getTerrainTile(j, i, "obstacle_1/", tile)
+                if (name != "error") {
+                    name = DIR + name;
+                    create_object("border", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
+                }
+                else {
+                    name = DIR + "terrain";
+                    img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
+                    My_Img.add_instance(img);
+                }
             }
 
             // obstacle
