@@ -1338,7 +1338,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
     let sprites = {"standing": {"fps": 10, "frames": []}, "dying": {"fps": 10, "frames": []}};
 
     for (let i = 0; i < 3; i++) {
-        sprites["standing"]["frames"].push(ASSETS_DIR + name + (i+1) + PNG_EXT);
+        sprites["standing"]["frames"].push(ASSETS_DIR + name + (i+1) + "_v2" + PNG_EXT);
     }
 
     for (let i = 0; i < 8; i++) {
@@ -1348,7 +1348,8 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
 
     let enemyImage = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
     //Hitbox sous forme de cercle
-    let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
+    // let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
+    let enemyHitBox = new HitBox_Mask(x, y, ASSETS_DIR + name + "_mask" + PNG_EXT, width, height);
     let object = My_Object.get_object("player");
     if (!object) {
         object = My_Object.get_object("player_auto")
