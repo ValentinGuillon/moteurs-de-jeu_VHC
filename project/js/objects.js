@@ -1143,7 +1143,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 create_tree(x, y, defaults["width"], defaults["height"]);
                 break;
             case "border":
-                create_border(x, y, defaults["width"], defaults["height"]);
+                create_border(x, y, args["filename"], defaults["width"], defaults["height"]);
                 break;
             case "vassel":
                 create_vassel(x, y, args["vassel hitbox"], defaults["width"], defaults["height"]);
@@ -1178,7 +1178,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
                 create_tree(x, y);
                 break;
             case "border":
-                create_border(x, y);
+                create_border(x, y, args["filename"]);
                 break;
             case "vassel":
                 create_vassel(x, y, args["vassel hitbox"]);
@@ -1243,11 +1243,9 @@ function create_tree(x, y, width = CNV10, height = CNV10) {
 
 
 
-function create_border(x, y, width, height) {
-    // prepare sprite
-    let imgName = "forest/tree_large";
+function create_border(x, y, filename, width, height) {
     // create object
-    let imgObj = new My_Img(ASSETS_DIR+imgName+PNG_EXT, x, y, width, height)
+    let imgObj = new My_Img(filename+PNG_EXT, x, y, width, height)
     let hitBox = new HitBox_Rect(x, y, width, height)
     new Obstacle(x, y, imgObj, hitBox)
 }
