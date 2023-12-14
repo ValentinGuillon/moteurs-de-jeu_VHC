@@ -352,7 +352,7 @@ function create_game_over(auto_skip = false) {
 
     new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
-    const img = new My_Img(ASSETS_DIR+"arena"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
+    const img = new My_Img(ASSETS_DIR+"game-over_background"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
 
     if(auto_skip) {
