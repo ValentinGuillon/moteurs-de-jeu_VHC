@@ -280,7 +280,8 @@ function create_main_menu(reload_music = true) {
     new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/3, btnSize*2*scale, btnSize*scale)
     new Button_with_Image({"default": ASSETS_DIR+"btn_demo.png", "hover": ASSETS_DIR+"btn_demo_hover.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
 
-    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
+    const file_nb = getRandom(1, 6); 
+    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "main-menu_background_"+file_nb+"_blur"}, true, {"width": CNV.width*2.2, "height": CNV.height*1.5})
     create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 2})
 }
 
