@@ -210,7 +210,7 @@ export function generate_mobs(objectPlayer) {
 
 
 
-export function create_menu(name = {"home_page || main_menu || play_game || play_demon || game_over": undefined}, reload_music = true) {
+export function create_menu(name = {"home_page || main_menu || play_game || play_demon || game_over": undefined}, reload_music = true, auto_skip = false) {
     switch (name) {
         case "home_page":
             create_home_page(reload_music);
@@ -225,7 +225,7 @@ export function create_menu(name = {"home_page || main_menu || play_game || play
             create_game("demo", reload_music);
             break;
         case "game_over":
-            create_game_over();
+            create_game_over(auto_skip);
             break;
     
         default:
@@ -281,6 +281,7 @@ function create_main_menu(reload_music = true) {
     new Button_with_Image({"default": ASSETS_DIR+"btn_demo.png", "hover": ASSETS_DIR+"btn_demo_hover.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
 
     create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
+    create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 2})
 }
 
 
@@ -332,7 +333,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
 
 
 
-function create_game_over() {
+function create_game_over(auto_skip = false) {
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
@@ -352,5 +353,9 @@ function create_game_over() {
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
     const img = new My_Img(ASSETS_DIR+"arena"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
+
+    if(auto_skip) {
+        create_object("timer", 0, 0, {"timer name": "main_menu", "timer duration": 2});
+    }
 }
 

@@ -5,6 +5,7 @@ import { HitBox_Circle, HitBox_Mask, HitBox_Rect } from "./hitBox.js";
 import { direction, distance, getRandom, is_in_rect, is_out_of_screen, normalize } from "./tools.js";
 import { My_Button, create_menu } from "./interface.js";
 import { generate_mobs } from './interface.js';
+import { MOUSE } from "./input.js";
 
 
 
@@ -1002,7 +1003,7 @@ export class Player_Auto extends Player {
     }
 
     generate_on_death() {
-        create_menu("play_demo", false);
+        create_menu("game_over", false, true);
     }
     
     auto_actions(timestamp) {
@@ -1186,6 +1187,68 @@ export class Enemy_Generator extends My_Object {
 
 
 
+export class Timer extends My_Object {
+    constructor(duration_seconds) {
+        super(0, 0, undefined, undefined)
+        this.duration = duration_seconds;
+        this.timestampCreation = undefined;
+    }
+
+
+    generate_on_death() {
+        console.log("Timer without effect ended.")
+    }
+
+
+    auto_actions(timestamp) {
+        this.endTimer(timestamp);
+    }
+
+    endTimer(timestamp) {
+        if (this.timestampCreation == undefined) {
+            this.timestampCreation = timestamp;
+        }
+
+        let elapsed = timestamp - this.timestampCreation;
+        let delay = this.duration * 1000
+        if (elapsed < delay){ return; }
+
+        this.die();
+    }
+}
+
+
+
+export class Timer_Launch_Demo extends Timer {
+    constructor(duration_seconds) {
+        super(duration_seconds)
+    }
+
+    auto_actions(timestamp) {
+        //reset timer if mouve has moved
+        if (MOUSE.moved) {
+            this.timestampCreation = timestamp;
+        }
+        super.auto_actions(timestamp);
+        
+    }
+
+    generate_on_death() {
+        create_menu("play_demo");
+    }
+}
+
+
+
+export class Timer_Launch_Main_Menu extends Timer {
+    constructor(duration_seconds) {
+        super(duration_seconds)
+    }
+
+    generate_on_death() {
+        create_menu("main_menu", false);
+    }
+}
 
 
 
@@ -1194,7 +1257,13 @@ export class Enemy_Generator extends My_Object {
 
 
 
-export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "obstacle_type": "wall"}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+
+
+
+
+
+
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "obstacle_type": "wall", "timer name": {"demo": undefined}, "timer duration": 5}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
     // console.log("new", name);
     if (changeDefaults) {
         switch (name) {
@@ -1225,6 +1294,9 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
             case "moving background":
                 create_moving_background(x, y, args["filename"], defaults["width"], defaults["height"]);
                 break;
+            case "timer":
+                create_timer(args["timer name"], args["timer duration"]);
+                break
             default:
                 console.log("error: there is no method to create this abject (\"" + name + "\").")
                 console.log("In create_object in objects.js.")
@@ -1260,6 +1332,9 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
             case "moving background":
                 create_moving_background(x, y, args["filename"]);
                 break;
+            case "timer":
+                create_timer(args["timer name"], args["timer duration"]);
+                break
             default:
                 console.log("error: there is no method to create this abject (\"" + name + "\").")
                 console.log("In create_object in objects.js.")
@@ -1450,4 +1525,23 @@ function create_projectile(x, y, velX, velY, type = {"ally || enemy || ally spli
 function create_moving_background(x, y, name, width = CNV.width*1.5, height = CNV.height*1.2) {
     let img = new My_Img(ASSETS_DIR+name+PNG_EXT, x, y, width, height);
     new Moving_Background(x, y, img, CNV10*0.02)
+}
+
+
+
+function create_timer(name, duration) {
+    switch (name) {
+        case "demo":
+            new Timer_Launch_Demo(duration);
+            break;
+    
+        case "main_menu":
+            new Timer_Launch_Main_Menu(duration);
+            break;
+    
+        default:
+            console.log("Error: in create_object, in objects.js.")
+            console.log("There is no timer called (\"" + name + "\").")
+            break;
+    }
 }

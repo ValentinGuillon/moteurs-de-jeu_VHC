@@ -188,6 +188,7 @@ function refresh(timestamp) {
     }
 
     draw();
+    MOUSE.moved = false;
 
     requestAnimationFrame(refresh);
 }

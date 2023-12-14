@@ -5,7 +5,7 @@ import { My_Object } from "./objects.js";
 import { My_Button } from "./interface.js";
 
 
-export const MOUSE = {"x": 0, "y": 0};
+export const MOUSE = {"x": 0, "y": 0, "moved": false};
 
 var key_map = {};
 
@@ -27,6 +27,7 @@ export function initialise_listener() {
         var mousePos = getMousePos(event);
         MOUSE.x = mousePos.x
         MOUSE.y = mousePos.y
+        MOUSE.moved = true
       }
 }
 
