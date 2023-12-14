@@ -924,11 +924,16 @@ export class Ally_Projectile_Spliter extends Ally_Projectile {
 
     generate_projectiles() {
         for (let i = 0; i < this.nb; i++) {
-            let velX = getRandom(0, 1);
-            let velY = getRandom(0, 1);
-            if (getRandom(0, 1)) { velX *= -1; }
-            if (getRandom(0, 1)) { velY *= -1; }
-            create_projectile(this.x+velX, this.y+velY, velX, velY, "ally", this.image.width*0.75, this.image.height*0.75);
+            let vel = {"x": 0, "y": 0};
+            while (!vel.x && !vel.x) {
+                vel.x = getRandom(0, 1);
+                vel.y = getRandom(0, 1);
+            }
+            if (getRandom(0, 1)) { vel.x *= -1; }
+            if (getRandom(0, 1)) { vel.y *= -1; }
+        
+            vel = normalize(vel.x, vel.y);
+            create_projectile(this.x+vel.x, this.y+vel.y, vel.x, vel.y, "ally", this.image.width*0.75, this.image.height*0.75);
         }
     }
 
