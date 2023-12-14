@@ -94,9 +94,6 @@ export class My_Img {
     draw() {
         if (!this.imgSrc) { return; }
         if (!this.is_visible) { return; }
-        if (this.iconeSrc && this.is_out_of_canvas()) {
-            this.draw_icone();
-        }
 
         const rect1 = {"x1": this.x, "y1": this.y, "x2": this.x+this.width, "y2": this.y+this.height};
         const rect2 = {"x1": 0, "y1": 0, "x2": CNV.width, "y2": CNV.height};
@@ -106,6 +103,9 @@ export class My_Img {
     }
 
     draw_icone() {
+        if (!(this.iconeSrc && this.is_out_of_canvas())) {
+            return;
+        }
         let target = {"x": this.x+this.width/2, "y": this.y+this.height/2}
         let origin = {"x": CNV.width/2, "y": CNV.height/2}
         let dist = distance(target.x, target.y, origin.x, origin.y)

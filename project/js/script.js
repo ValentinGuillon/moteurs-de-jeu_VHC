@@ -176,6 +176,14 @@ function draw() {
     }
 
     My_Object.draw_player_bonus();
+
+    //draw objects icone
+    for (const obj of My_Object.instances) {
+        if (obj.image) {
+            obj.image.draw_icone();
+        }
+    }
+
 }
 
 
