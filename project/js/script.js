@@ -17,9 +17,20 @@ import { initialise_listener, execute_inputs, MOUSE } from "./input.js";
 
 export const CNV = document.getElementById("myCanvas");
 export const CTX = CNV.getContext("2d");
-let temp = Math.max(Math.min(window.innerWidth, window.innerHeight), 100);
-CNV.width = temp
-CNV.height = temp*0.7
+
+//set canvas size
+const width = window.innerWidth;
+const height = window.innerHeight;
+if (width < height) {
+    let temp = Math.max(Math.min(width, height), 100);
+    CNV.width = temp
+    CNV.height = temp*0.7
+}
+else {
+    let temp = Math.max(Math.min(height*0.9, width), 100)
+    CNV.width = temp*1.42
+    CNV.height = temp
+}
 export const CNV10 = Math.floor(CNV.height * 0.1);
 
 CTX.imageSmoothingEnabled = false;
