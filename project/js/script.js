@@ -19,7 +19,7 @@ export const CNV = document.getElementById("myCanvas");
 export const CTX = CNV.getContext("2d");
 let temp = Math.max(Math.min(window.innerWidth, window.innerHeight), 100);
 CNV.width = temp
-CNV.height = temp * 0.7
+CNV.height = temp*0.7
 export const CNV10 = Math.floor(CNV.height * 0.1);
 
 CTX.imageSmoothingEnabled = false;
