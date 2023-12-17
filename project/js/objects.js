@@ -223,7 +223,8 @@ export class My_Object {
                 }
 
                 let switch_obj = false;
-                if (y1 > y2) { switch_obj = true; }
+                if (obj1.group == "text") { switch_obj = true;}
+                else if (y1 > y2) { switch_obj = true; }
                 if (!switch_obj) { continue; }
                 list[j] = obj2;
                 list[j+1] = obj1;
@@ -1237,6 +1238,63 @@ export class Biome extends My_Object {
 
 
 
+
+export class Game_Infos extends My_Object {
+    constructor() {
+        super(0, 0, undefined, undefined, "game_infos")
+
+        this.timestampWhenGameStarted = undefined;
+        this.lastTimestamp = undefined;
+        this.enemyKilled = 0;
+        this.score = 0;
+        this.bonusAcquired = 0;
+    }
+
+    auto_actions(timestamp) {
+        if (this.timestampWhenGameStarted == undefined) {
+            this.timestampWhenGameStarted = timestamp;
+            this.lastTimestamp = timestamp;
+            return;
+        }
+
+        this.lastTimestamp = timestamp;
+    }
+
+    getTime() {
+        return Math.floor((this.lastTimestamp - this.timestampWhenGameStarted) / 1000);
+    }
+
+    getScore() {
+        return this.score;
+    }
+}
+
+
+
+
+
+export class Text extends My_Object {
+    constructor(x, y, width, height, text) {
+        super(x, y, undefined, undefined, "text")
+
+        this.text = text;
+        this.x = x - width/2;
+        this.y = y - height/2;
+        this.width = width;
+        this.height = height;
+    }
+
+    draw() {
+        draw_rect(this.x, this.y, this.width, this.height, "#000000");
+        CTX.font = CNV10+"px serif";
+        CTX.fillStyle = "#FFFFFF";
+        CTX.fillText(this.text, this.x, this.y+this.height, this.width);
+    }
+
+    add_to_position() {
+        return;
+    }
+}
 
 
 

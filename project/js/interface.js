@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator, Biome }
+import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator, Biome, Game_Infos, Text }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -333,6 +333,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
     }
     else if (mode == "demo") {
         player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
+        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO")
     }
     
     //other
@@ -345,6 +346,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
     // construct_map();
     construct_terrain(biome);
     new Biome(biome);
+    new Game_Infos();
 }
 
 
@@ -361,28 +363,41 @@ function create_game_over(auto_skip = false) {
         biome = obj.biome
     }
 
+    const GAME_INFOS = My_Object.get_object("game_infos");
+
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
 
     const btnSize = CNV10;
     jukebox.play_main_menu();
-
+    
     if (jukebox.muted) {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "off")
     }
     else {
         new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
     }
-
-
-    new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
+    
+    
+    new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize, btnSize, btnSize*1.5, btnSize*1.5);
+    new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/5, btnSize*7, btnSize*3, "#00FFFF")
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
     const img = new My_Img(ASSETS_DIR+"background/game-over_"+biome+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
 
     if(auto_skip) {
+        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO")
         create_object("timer", 0, 0, {"timer name": "main_menu", "timer duration": 2});
     }
+
+    //show scores
+
+    new Text(CNV.width*0.4, CNV10*4, CNV10*3, CNV10, "TIME:")
+    new Text(CNV.width*0.65, CNV10*4, CNV10*3, CNV10, GAME_INFOS.getTime())
+
+
+
+
 }
 
