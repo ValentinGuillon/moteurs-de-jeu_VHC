@@ -247,7 +247,7 @@ export function construct_terrain() {
     PART.hole = TILESET + "hole/" + PART.hole + "/"
 
 
-    const tileSize = {"width": CNV10*2, "height": Math.floor(CNV10*2*0.8)};
+    const tileSize = {"width": CNV10*1, "height": Math.floor(CNV10*1*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
     const rows = TERRAIN.length;
     const cols = TERRAIN[0].length;

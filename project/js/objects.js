@@ -1350,7 +1350,7 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
 
 
 
-function create_random_bonus(x, y, width = CNV10*1.5, height = CNV10*1.5) {
+function create_random_bonus(x, y, width = CNV10*1.2, height = CNV10*1.2) {
     // prepare sprites
     let imgName = "stars_";
     let nb = [1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 3, 3, 2, 2];
@@ -1394,7 +1394,7 @@ function create_border(x, y, filename, width, height) {
 
 
 
-function create_vassel(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
+function create_vassel(x, y, type, width = CNV10*0.75, height = CNV10*0.75) {
     // prepare sprites
     let imgName = "vassels_";
     let sprites = {"standing": {"fps": 10, "frames": []}};
@@ -1419,7 +1419,7 @@ function create_vassel(x, y, type, width = CNV10*1.5, height = CNV10*1.5) {
 
 
 
-function create_tower(x, y, width = CNV10*1.5, height = CNV10*1.5) {
+function create_tower(x, y, width = CNV10*0.8, height = CNV10*0.8) {
     // prepare sprites
     let imgName = "towers_";
     let nb = [6, 6, 7, 7, 8, 8, 7, 7];
@@ -1438,7 +1438,7 @@ function create_tower(x, y, width = CNV10*1.5, height = CNV10*1.5) {
 
 
 
-function create_player(x, y, auto = false, width = CNV10*1.6, height = CNV10*2) {
+function create_player(x, y, auto = false, width = CNV10, height = CNV10*1.4) {
     // prepare sprites
     let imgPlayerName = "RedDeathFrame_";
     let sprites = {"standing": {"fps": 6, "frames": []}, "dying": {"fps": 6, "frames": []}};
@@ -1455,10 +1455,10 @@ function create_player(x, y, auto = false, width = CNV10*1.6, height = CNV10*2) 
     // let hitBoxPerso = new HitBox_Rect(x, y, width, height)
     // return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, 15);
     if (auto) {
-        return new Player_Auto(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.5);
+        return new Player_Auto(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.3);
     }
     else {
-        return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.5);
+        return new Player(x, y, imgAnimatedPlayer, hitBoxPerso, CNV10*0.3);
     }
 }
 
@@ -1473,7 +1473,7 @@ function create_obstacle(x, y, name, type, width = CNV10, height = CNV10) {
 
 
 
-function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10) {
+function create_enemy_chasing(x, y, name = "BAT", width = CNV10*0.5, height = CNV10*0.5) {
     let sprites = {"standing": {"fps": 10, "frames": []}, "dying": {"fps": 10, "frames": []}};
 
     for (let i = 0; i < 3; i++) {
@@ -1494,12 +1494,12 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10, height = CNV10)
         object = My_Object.get_object("player_auto")
     }
     if (!object || object.dying || object.dead) { return; }
-    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.2, object);
+    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.15, object);
 }
 
 
 
-function create_projectile(x, y, velX, velY, type = {"ally || enemy || ally spliter": undefined}, width = CNV10*0.7, height = CNV10*0.5) {
+function create_projectile(x, y, velX, velY, type = {"ally || enemy || ally spliter": undefined}, width = CNV10*0.4, height = CNV10*0.4) {
     // width = CNV10*0.7, height = CNV10*0.5
     // prepare sprites
     let sprites = {"standing": {"fps": 4, "frames": []}, "dying": {"fps": 4, "frames": []}};
