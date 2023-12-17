@@ -27,8 +27,8 @@ export function init_interface() {
 export class My_Button {
     constructor(type, xCenter, yCenter, width, height) {
         this.type = type
-        this.x = xCenter;
-        this.y = yCenter;
+        this.x = xCenter - width/2;
+        this.y = yCenter - height/2;
         this.width = width;
         this.height = height;
         this.add_instance(this);
@@ -122,11 +122,11 @@ export class Button_with_text extends My_Button {
         this.draw_zone();
         CTX.font = this.height*0.5+"px serif";
         CTX.fillStyle = this.font_color;
-        CTX.fillText(this.text, this.x, this.y-this.height*0.25, this.width);
+        CTX.fillText(this.text, this.x, this.y+this.height*0.75, this.width);
     }
 
     draw_zone() {
-        draw_rect(this.x, this.y-this.height, this.width, this.height, this.back_color);
+        draw_rect(this.x, this.y, this.width, this.height, this.back_color);
     }
 
 
@@ -136,7 +136,7 @@ export class Button_with_text extends My_Button {
 
     is_inside(x, y) {
         const X1 = this.x
-        const Y1 = this.y - this.height
+        const Y1 = this.y
         const X2 = X1 + this.width
         const Y2 = Y1 + this.height
         return is_in_rect(x, y, X1, Y1, X2, Y2);
@@ -251,7 +251,7 @@ export function create_menu(name = {"home_page || main_menu || play_game || play
 
 function create_home_page() {
     const btnSize = CNV10;
-    new Button_with_text("Launch Game", "home", CNV.width/2-btnSize/2, CNV.height/2-btnSize/2, btnSize*2, btnSize, "#00FFFF")
+    new Button_with_text("Launch Game", "home", CNV.width/2, CNV.height/2, btnSize*2, btnSize, "#00FFFF")
     new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
 }
 
