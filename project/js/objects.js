@@ -264,18 +264,15 @@ export class My_Object {
 
         // draw support
         // draw_rect(CNV.width/2-barSize/2, CNV10, barSize, bonusSize, "#333333BB")
-        const subSize = bonusSize/3
-        const name = ["up-left", "up-right", "down-left", "down-right", "up", "left", "right", "down", "mid"];
+        const subSize = bonusSize/2
+        const name = ["up-left", "up-right", "down-left", "down-right", "up", "down"];
         const coords = {
             "up-left":    {"x": 0, "y": 0, "w": subSize, "h":subSize},
             "up-right":   {"x": barSize-subSize, "y": 0, "w": subSize, "h":subSize},
-            "down-left":  {"x": 0, "y": subSize*2, "w": subSize, "h":subSize},
-            "down-right": {"x": barSize-subSize, "y": subSize*2, "w": subSize, "h":subSize},
+            "down-left":  {"x": 0, "y": subSize, "w": subSize, "h":subSize},
+            "down-right": {"x": barSize-subSize, "y": subSize, "w": subSize, "h":subSize},
             "up":         {"x": subSize, "y": 0, "w": barSize-subSize*2, "h":subSize},
-            "left":       {"x": 0, "y": subSize, "w": subSize, "h":subSize},
-            "right":      {"x": barSize-subSize, "y": subSize, "w": subSize, "h":subSize},
-            "down":       {"x": subSize, "y": subSize*2, "w": barSize-subSize*2, "h":subSize},
-            "mid":    {"x": subSize, "y": subSize, "w": barSize-subSize*2, "h":subSize},
+            "down":       {"x": subSize, "y": subSize, "w": barSize-subSize*2, "h":subSize},
         }
 
         for (let i = 0; i < name.length; i++) {
@@ -289,11 +286,12 @@ export class My_Object {
         for (const effect of Bonus.effects) {
             let img = new Image();
             let file = ASSETS_DIR + "bonus_" + effect;
+            let add = "_v2"
             if (player.bonus_is_active[effect]) {
-                img.src = file + "_on" + PNG_EXT;
+                img.src = file + "_on" + add + PNG_EXT;
             }
             else {
-                img.src = file + "_off" + PNG_EXT;
+                img.src = file + "_off" + add + PNG_EXT;
             }
             let xoffset = i * (bonusSize + split)
             CTX.drawImage(img, x+xoffset, y, bonusSize, bonusSize);
