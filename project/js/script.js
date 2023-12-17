@@ -13,6 +13,7 @@ import { My_Object } from "./objects.js";
 import { My_Button, create_menu, camera , init_interface, Button_with_Image} from "./interface.js";
 import { My_Img } from "./imgs.js";
 import { initialise_listener, execute_inputs, MOUSE } from "./input.js";
+import { draw_all_images } from "./tools.js";
 
 
 export const CNV = document.getElementById("myCanvas");
@@ -229,6 +230,7 @@ function refresh(timestamp) {
     requestAnimationFrame(refresh);
 }
 
+draw_all_images();
 init_interface();
 initialise_listener();
 create_menu("home_page");
