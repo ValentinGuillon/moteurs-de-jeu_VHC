@@ -201,7 +201,7 @@ function getTerrainTile(col, row, set, tileValue) {
             if (!botLeft) { return tile[12]}
             if (!botRight) { return tile[13]}
         }
-        return tile[ 5];
+        return tile[ 5] + "_" + getRandom(1, 4);
     }
 
     //other tiles
@@ -220,9 +220,10 @@ function getTerrainTile(col, row, set, tileValue) {
 
 function getRandomGround() {
     const nb = getRandom(1, 100);
-    if(nb <= 40) { return 3; }
+    if(nb <= 60) { return 1; }
     else if (nb <= 80) { return 2; }
-    else { return 1; }
+    else if (nb <= 95) { return 3; }
+    else { return 4; }
 }
 
 function create_tile_error(x, y, w, h) {
@@ -235,11 +236,13 @@ function create_tile_error(x, y, w, h) {
 export function construct_terrain() {
     const TILESET = "terrain/"
     const BIOMES = {
-        "size": 4,
+        "size": 6,
         "1": {"ground": "herb", "obstacle": "bush", "hole": "water 1"},
         "2": {"ground": "herb", "obstacle": "bush", "hole": "crevasse 1"},
-        "3": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "lava"},
-        "4": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "water 2"},
+        "3": {"ground": "herb 2", "obstacle": "bush 2", "hole": "water 1"},
+        "4": {"ground": "herb 2", "obstacle": "bush 2", "hole": "water 2"},
+        "5": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "lava"},
+        "6": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "water 2"},
     }
     const PART = BIOMES[getRandom(1, BIOMES["size"])];
     PART.ground = TILESET + "ground/" + PART.ground + "/"
