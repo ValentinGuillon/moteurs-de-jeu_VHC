@@ -253,6 +253,10 @@ function create_home_page() {
     const btnSize = CNV10;
     new Button_with_text("Launch Game", "home", CNV.width/2, CNV.height/2, btnSize*2, btnSize, "#00FFFF")
     new Button_with_Image({"on": ASSETS_DIR+"sound_on.png", "off": ASSETS_DIR+"sound_off.png"}, "mute_music", btnSize, btnSize, btnSize*1.5, btnSize*1.5, "on")
+
+    const filename = ASSETS_DIR + "background/" + "home_" + getRandom(1, 3)+  PNG_EXT;
+    const img = new My_Img(filename, CNV.width/2, CNV.height/2, CNV.width*1.5, CNV.height*1.2, undefined, undefined, true);
+    My_Img.add_instance(img);
 }
 
 
