@@ -233,18 +233,18 @@ function create_tile_error(x, y, w, h) {
 }
 
 
-export function construct_terrain() {
+export function construct_terrain(biome = {"1 || 2 || 3": 0}) {
     const TILESET = "terrain/"
     const BIOMES = {
-        "size": 6,
-        "1": {"ground": "herb", "obstacle": "bush", "hole": "water 1"},
-        "2": {"ground": "herb", "obstacle": "bush", "hole": "crevasse 1"},
-        "3": {"ground": "herb 2", "obstacle": "bush 2", "hole": "water 1"},
-        "4": {"ground": "herb 2", "obstacle": "bush 2", "hole": "water 2"},
-        "5": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "lava"},
-        "6": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "water 2"},
+        "size": 3,
+        1: [{"ground": "herb", "obstacle": "bush", "hole": "water 1"},
+              {"ground": "herb", "obstacle": "bush", "hole": "crevasse 1"}],
+        2: [{"ground": "herb 2", "obstacle": "bush 2", "hole": "water 1"},
+              {"ground": "herb 2", "obstacle": "bush 2", "hole": "water 2"}],
+        3: [{"ground": "dark_rock", "obstacle": "wall_rock", "hole": "lava"},
+              {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "water 2"}],
     }
-    const PART = BIOMES[getRandom(1, BIOMES["size"])];
+    const PART = BIOMES[biome][getRandom(0, 1)];
     PART.ground = TILESET + "ground/" + PART.ground + "/"
     PART.obstacle = TILESET + "obstacle/" + PART.obstacle + "/"
     PART.hole = TILESET + "hole/" + PART.hole + "/"

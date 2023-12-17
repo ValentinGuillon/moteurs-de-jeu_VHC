@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator }
+import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator, Biome }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -289,6 +289,7 @@ function create_main_menu(reload_music = true) {
     const nb = getRandom(1, 2);
     create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "background/main-menu_biome_"+BIOME+"_"+nb+"_blur"}, true, {"width": CNV.width*2.2, "height": CNV.height*1.5})
     create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 2})
+    new Biome(BIOME);
 }
 
 
@@ -296,6 +297,15 @@ function create_main_menu(reload_music = true) {
 
 function create_game(mode = "play", reload_music = true, choices = {"mode": {"play || demo": undefined}}) {
     const btnSize = CNV10;
+
+    let obj = My_Object.get_object("biome");
+    let biome = 0;
+    if (obj == undefined) {
+        biome = 1;
+    }
+    else {
+        biome = obj.biome
+    }
 
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
@@ -333,7 +343,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
 
 
     // construct_map();
-    construct_terrain();
+    construct_terrain(biome);
 }
 
 
@@ -358,7 +368,7 @@ function create_game_over(auto_skip = false) {
 
     new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
-    const img = new My_Img(ASSETS_DIR+"game-over_background"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
+    const img = new My_Img(ASSETS_DIR+"background/game-over"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
 
     if(auto_skip) {

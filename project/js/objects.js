@@ -1230,6 +1230,14 @@ export class Timer_Launch_Main_Menu extends Timer {
 }
 
 
+export class Biome extends My_Object {
+    constructor(biome) {
+        super(0, 0, undefined, undefined, "biome");
+        this.biome = biome;
+    }
+}
+
+
 
 
 
