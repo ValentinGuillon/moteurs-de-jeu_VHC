@@ -7,6 +7,8 @@ export class HitBox_Circle {
     constructor(x, y, radius) {
         this.x = x;
         this.y = y;
+        this.centerX = this.x;
+        this.centerY = this.y;
         this.radius = radius;
 
         this.enabled = true;
@@ -54,6 +56,8 @@ export class HitBox_Rect {
     constructor(xCenter, yCenter, width, height) {
         this.x = xCenter - width/2;
         this.y = yCenter - height/2;
+        this.centerX = this.x;
+        this.centerY = this.y;
         this.width = Math.floor(width);
         this.height = Math.floor(height);
 
@@ -108,8 +112,8 @@ export class HitBox_Mask {
     constructor(xCenter, yCenter, img, width, height) {
         this.x = xCenter - (width/2);
         this.y = yCenter - (height/2);
-        this.centerMaskX = this.x;
-        this.centerMaskY = this.y;
+        this.centerX = this.x;
+        this.centerY = this.y;
         this.maskSquare = {"x1": 0, "y1": 0, "x2": 0, "y2": 0};
         this.width = Math.floor(width);
         this.height = Math.floor(height);
@@ -183,8 +187,8 @@ export class HitBox_Mask {
             }
         }
 
-        this.centerMaskX = this.x + Math.floor((minX + maxX) / 2)
-        this.centerMaskY = this.y + Math.floor((minY + maxY) / 2)
+        this.centerX = this.x + Math.floor((minX + maxX) / 2)
+        this.centerY = this.y + Math.floor((minY + maxY) / 2)
         this.maskSquare.x1 = minX
         this.maskSquare.y1 = minY
         this.maskSquare.x2 = maxX
@@ -267,7 +271,7 @@ export class HitBox_Mask {
             }
         }
 
-        draw_rect(this.centerMaskX-2, this.centerMaskY-2, 4, 4, "#000000")
+        draw_rect(this.centerX-2, this.centerY-2, 4, 4, "#000000")
     }
 }
 

@@ -216,10 +216,10 @@ export class My_Object {
                 let y1 = obj1.y;
                 let y2 = obj2.y;
                 if (obj1.hitBox instanceof HitBox_Mask) {
-                    y1 = obj1.hitBox.centerMaskY;
+                    y1 = obj1.hitBox.centerY;
                 }
                 if (obj2.hitBox instanceof HitBox_Mask) {
-                    y2 = obj2.hitBox.centerMaskY;
+                    y2 = obj2.hitBox.centerY;
                 }
 
                 let switch_obj = false;
@@ -390,18 +390,10 @@ export class My_Object {
 
 
     recul(obj) {
-        let thisX = this.x;
-        let thisY = this.y;
-        let objX = obj.x;
-        let objY = obj.y;
-        if (this.hitBox instanceof HitBox_Mask) {
-            thisX = this.hitBox.centerMaskX;
-            thisY = this.hitBox.centerMaskY;
-        }
-        if (obj.hitBox instanceof HitBox_Mask) {
-            objX = obj.hitBox.centerMaskX;
-            objY = obj.hitBox.centerMaskY;
-        }
+        let thisX = this.hitBox.centerX;
+        let thisY = this.hitBox.centerY;
+        let objX = obj.hitBox.centerX;
+        let objY = obj.hitBox.centerY;
 
         let vel = direction(objX, objY, thisX, thisY);
         vel = normalize(vel.x, vel.y);
@@ -462,10 +454,8 @@ export class My_Object {
         if (this.hitBox) {
             this.hitBox.x += add_X;
             this.hitBox.y += add_Y;
-            if (this.hitBox instanceof HitBox_Mask) {
-                this.hitBox.centerMaskX += add_X;
-                this.hitBox.centerMaskY += add_Y;
-            }
+            this.hitBox.centerX += add_X;
+            this.hitBox.centerY += add_Y;
         }
     }
 
@@ -711,7 +701,7 @@ export class Player extends My_Object {
 
         //direction toward nearest_obj
         else {
-            vel = direction(this.x, this.y, nearest_obj.x, nearest_obj.y);
+            vel = direction(this.x, this.y, nearest_obj.hitBox.centerX, nearest_obj.hitBox.centerY);
         }
     
         //create projectile
@@ -833,7 +823,7 @@ export class Enemy_Turret extends My_Object {
         const player = My_Object.get_player();
         if (!player) { return; }
 
-        const vel = direction(x, y, player.x, player.y);
+        const vel = direction(x, y, player.hitBox.centerX, player.hitBox.centerY);
         create_projectile(x, y, vel.x, vel.y, "enemy");
     }
 
@@ -939,8 +929,8 @@ export class Enemy_Chasing extends My_Object {
 
     chasePlayer() {
         //Calcule la direction vers le joueur
-        let dx = this.player.x - this.x;
-        let dy = this.player.y - this.y;
+        let dx = this.player.hitBox.centerX - this.hitBox.centerX;
+        let dy = this.player.hitBox.centerY - this.hitBox.centerY;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
         //Normalise la direction et applique la vitesse
@@ -1048,7 +1038,7 @@ export class Player_Auto extends Player {
         let near_dist = undefined;
         //good
         for (const obj of go_to) {
-            let dist = distance(obj.x, obj.y, this.x, this.y);
+            let dist = distance(obj.hitBox.centerX, obj.hitBox.centerY, this.hitBox.centerX, this.hitBox.centerY);
             if (near_dist == undefined || dist < near_dist) {
                 near_dist = dist;
                 near_good = obj;
@@ -1057,7 +1047,7 @@ export class Player_Auto extends Player {
         near_dist = undefined;
         //bad
         for (const obj of flee_to) {
-            let dist = distance(obj.x, obj.y, this.x, this.y);
+            let dist = distance(obj.hitBox.centerX, obj.hitBox.centerY, this.hitBox.centerX, this.hitBox.centerY);
             if (near_dist == undefined ||  dist < near_dist) {
                 near_dist = dist;
                 near_bad = obj;
@@ -1069,15 +1059,15 @@ export class Player_Auto extends Player {
         let dir_bad = {"x": 0, "y": 0};
         
         if (near_good) {
-            dir_good = direction(this.x, this.y, near_good.x, near_good.y);
+            dir_good = direction(this.hitBox.centerX, this.hitBox.centerY, near_good.hitBox.centerX, near_good.hitBox.centerY);
         }
         if (near_bad) {
-            dir_bad = direction(near_bad.x, near_bad.y, this.x, this.y);
+            dir_bad = direction(near_bad.hitBox.centerX, near_bad.hitBox.centerX, this.hitBox.centerX, this.hitBox.centerY);
         }
         
         //add weight
         if (near_good && near_bad) {
-            let dist_bad = distance(this.x, this.y, near_bad.x, near_bad.y);
+            let dist_bad = distance(this.hitBox.centerX, this.hitBox.centerY, near_bad.hitBox.centerX, near_bad.hitBox.centerY);
             if (dist_bad < CNV.width*0.1) {
                 weight = 0.6;
             }
