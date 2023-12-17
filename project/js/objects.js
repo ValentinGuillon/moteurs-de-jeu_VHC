@@ -1459,7 +1459,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10*0.5, height = CN
     let sprites = {"standing": {"fps": 10, "frames": []}, "dying": {"fps": 10, "frames": []}};
 
     for (let i = 0; i < 3; i++) {
-        sprites["standing"]["frames"].push(ASSETS_DIR + name + (i+1) + "_v2" + PNG_EXT);
+        sprites["standing"]["frames"].push(ASSETS_DIR + name + (i+1) + PNG_EXT);
     }
 
     for (let i = 0; i < 8; i++) {
