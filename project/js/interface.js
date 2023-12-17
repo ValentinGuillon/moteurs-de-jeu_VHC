@@ -344,6 +344,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
 
     // construct_map();
     construct_terrain(biome);
+    new Biome(biome);
 }
 
 
@@ -351,6 +352,15 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
 
 
 function create_game_over(auto_skip = false) {
+    let obj = My_Object.get_object("biome");
+    let biome = 0;
+    if (obj == undefined) {
+        biome = 1;
+    }
+    else {
+        biome = obj.biome
+    }
+
     My_Button.destroy_buttons();
     My_Object.destroy_objects();
     My_Img.destroy_imgs();
@@ -368,7 +378,7 @@ function create_game_over(auto_skip = false) {
 
     new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/2, btnSize*2, btnSize*2, "#00FFFF")
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
-    const img = new My_Img(ASSETS_DIR+"background/game-over"+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
+    const img = new My_Img(ASSETS_DIR+"background/game-over_"+biome+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
 
     if(auto_skip) {
