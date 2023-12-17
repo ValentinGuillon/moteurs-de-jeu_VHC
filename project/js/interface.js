@@ -281,7 +281,9 @@ function create_main_menu(reload_music = true) {
     new Button_with_Image({"default": ASSETS_DIR+"btn_demo.png", "hover": ASSETS_DIR+"btn_demo_hover.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
 
     const file_nb = getRandom(1, 6); 
-    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "main-menu_background_"+file_nb+"_blur"}, true, {"width": CNV.width*2.2, "height": CNV.height*1.5})
+    const BIOME = getRandom(1, 3);
+    const nb = getRandom(1, 2);
+    create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "background/main-menu_biome_"+BIOME+"_"+nb+"_blur"}, true, {"width": CNV.width*2.2, "height": CNV.height*1.5})
     create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 2})
 }
 
