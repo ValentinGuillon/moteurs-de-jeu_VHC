@@ -1062,7 +1062,7 @@ export class Player_Auto extends Player {
             dir_good = direction(this.hitBox.centerX, this.hitBox.centerY, near_good.hitBox.centerX, near_good.hitBox.centerY);
         }
         if (near_bad) {
-            dir_bad = direction(near_bad.hitBox.centerX, near_bad.hitBox.centerX, this.hitBox.centerX, this.hitBox.centerY);
+            dir_bad = direction(near_bad.hitBox.centerX, near_bad.hitBox.centerY, this.hitBox.centerX, this.hitBox.centerY);
         }
         
         //add weight
