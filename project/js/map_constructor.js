@@ -225,9 +225,28 @@ function getRandomGround() {
     else { return 1; }
 }
 
+function create_tile_error(x, y, w, h) {
+    const name = ASSETS_DIR + "terrain/terrain";
+    const img = new My_Img(name+PNG_EXT, x, y, w, h, undefined, true);
+    My_Img.add_instance(img);
+}
+
 
 export function construct_terrain() {
     const TILESET = "terrain/"
+    const BIOMES = {
+        "size": 4,
+        "1": {"ground": "herb", "obstacle": "bush", "hole": "water 1"},
+        "2": {"ground": "herb", "obstacle": "bush", "hole": "crevasse 1"},
+        "3": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "lava"},
+        "4": {"ground": "dark_rock", "obstacle": "wall_rock", "hole": "water 2"},
+    }
+    const PART = BIOMES[getRandom(1, BIOMES["size"])];
+    PART.ground = TILESET + "ground/" + PART.ground + "/"
+    PART.obstacle = TILESET + "obstacle/" + PART.obstacle + "/"
+    PART.hole = TILESET + "hole/" + PART.hole + "/"
+
+
     const tileSize = {"width": CNV10*2, "height": Math.floor(CNV10*2*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
     const rows = TERRAIN.length;
@@ -242,63 +261,51 @@ export function construct_terrain() {
             const tile = TERRAIN[i][j];
             const x = mapSize.x + (tileSize.width * j) - j;
             const y = mapSize.y + (tileSize.height * i) - i;
-            let name = "";
-            let img = undefined;
 
+            //ground
             if (tile == 0) {
-                name = ASSETS_DIR + TILESET + "ground_" + getRandomGround();
-                img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
+                let name = ASSETS_DIR + PART.ground + getRandomGround();
+                let img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
+                My_Img.add_instance(img);
+                continue;
+            }
+
+            //sub layer (neutral ground)
+            if (tile == 1 || tile == 2 || tile == -1) {
+                let name = ASSETS_DIR + PART.ground + "1";
+                let img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
                 My_Img.add_instance(img);
             }
 
             // border
             if (tile == -1) {
-                name = getTerrainTile(j, i, "obstacle_1/", tile)
-                if (name != "error") {
-                    let img_name = ASSETS_DIR + TILESET + "ground_" + getRandomGround();
-                    img = new My_Img(img_name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
-                    name = TILESET + name;
-                    create_object("border", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
+                let name = getTerrainTile(j, i, PART.obstacle, tile)
+                if (name == "error") {
+                    create_tile_error(x, y, tileSize.width, tileSize.height);
                 }
                 else {
-                    name = ASSETS_DIR + TILESET + "terrain";
-                    img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
+                    create_object("border", x, y, {"filename": name}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
                 }
             }
 
             // obstacle
             if (tile == 1) {
-                name = getTerrainTile(j, i, "obstacle_1/", tile)
-                if (name != "error") {
-                    let img_name = ASSETS_DIR + TILESET + "ground_" + getRandomGround();
-                    img = new My_Img(img_name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
-                    name = TILESET + name;
-                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "wall"}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
+                let name = getTerrainTile(j, i, PART.obstacle, tile)
+                if (name == "error") {
+                    create_tile_error(x, y, tileSize.width, tileSize.height);
                 }
                 else {
-                    name = ASSETS_DIR + TILESET + "terrain";
-                    img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
+                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "wall"}, true, {"width": tileSize.width+1, "height": tileSize.height+1})
                 }
             }
 
-            // water
+            // hole
             if (tile == 2) {
-                name = getTerrainTile(j, i, "water/", tile)
-                if (name != "error") {
-                    let img_name = ASSETS_DIR + TILESET + "ground_1";
-                    img = new My_Img(img_name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
-                    name = TILESET + name;
-                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "hole"}, true, {"width": tileSize.width+1, "height": tileSize.height+1});
+                let name = getTerrainTile(j, i, PART.hole, tile)
+                if (name == "error") {
                 }
                 else {
-                    name = ASSETS_DIR + TILESET + "terrain";
-                    img = new My_Img(name+PNG_EXT, x, y, tileSize.width, tileSize.height, undefined, true);
-                    My_Img.add_instance(img);
+                    create_object("obstacle", x, y, {"filename": name, "obstacle_type": "hole"}, true, {"width": tileSize.width+1, "height": tileSize.height+1});
                 }
             }
 
