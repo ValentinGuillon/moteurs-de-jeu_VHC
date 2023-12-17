@@ -524,6 +524,21 @@ export class My_Object {
     }
 
 
+    is_inside_illegal_tile(x, y) {
+        for (const obj of My_Object.instances) {
+            if (obj.group != "obstacle") { continue; }
+            if (!obj.image) { continue; }
+            const img = obj.image;
+            const x1 = img.x;
+            const y1 = img.y;
+            const x2 = x1 + img.width;
+            const y2 = y1 + img.height;
+            if (is_in_rect(x, y, x1, y1, x2, y2)) { return true; }
+        }
+        return false;
+    }
+
+
 
     /*
      * DEBUG (dat.GUI)
@@ -979,6 +994,7 @@ export class Enemy_Chasing extends My_Object {
     // }
 
     generate_on_death() {
+        if (this.is_inside_illegal_tile(this.x, this.y)) { return; }
         const chance_bonus = getRandom(0, 2);
         if (!chance_bonus) {
             create_random_bonus(this.x, this.y);
@@ -1180,9 +1196,14 @@ export class Enemy_Generator extends My_Object {
         let enemyX = 1;
         let enemyY = 1;
 
-        while(is_in_rect(enemyX, enemyY, 0, 0, CNV.width, CNV.height)) {
+        while(true) {
             enemyX = getRandom(-CNV.width*0.2, CNV.width*1.2);
             enemyY = getRandom(-CNV.height*0.2, CNV.height*1.2);
+            //is in the canvas
+            if (is_in_rect(enemyX, enemyY, 0, 0, CNV.width, CNV.height)) { continue; }
+            //is on an obstacle
+            if (this.is_inside_illegal_tile(enemyX, enemyY)) { continue; }
+            break;
         }
 
         create_object("enemy chasing", enemyX, enemyY, {"filename": "BAT"})
