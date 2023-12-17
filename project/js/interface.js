@@ -120,9 +120,9 @@ export class Button_with_text extends My_Button {
 
     draw() {
         this.draw_zone();
-        CTX.font = "48px serif";
+        CTX.font = this.height*0.5+"px serif";
         CTX.fillStyle = this.font_color;
-        CTX.fillText(this.text, this.x, this.y);
+        CTX.fillText(this.text, this.x, this.y-this.height*0.25, this.width);
     }
 
     draw_zone() {
