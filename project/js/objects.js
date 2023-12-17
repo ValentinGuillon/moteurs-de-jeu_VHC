@@ -29,7 +29,6 @@ function check_collisions(obj = My_Object, other_objects = Array(My_Object) , ti
         if (!other.hitBox) { continue; }
         if (other.is_dead) { continue; }
         if (other.dying) { continue; }
-        if (!other.can_move) { continue; }
         if (!(obj.hitBox.is_colliding(other.hitBox))) { continue; }
 
         let otherGroup = other.group;
@@ -162,22 +161,16 @@ export class My_Object {
 
         this.id = -1;
 
-        this.can_move = true;
         this.dying = false;
         this.is_dead = false;
 
         My_Object.addInstance(this);
-        this.update_bools();
     }
 
 
 
     static instances = [];
     static id = 0;
-    static imgVisible = true;
-    static collision = true;
-    static hitBoxVisible = false;
-    static moving = true;
     static playerSpeed = 15;
 
 
@@ -339,19 +332,19 @@ export class My_Object {
      * MAIN METHODS (called outside)
      */
 
-    action(timestamp) {
-        this.status_update(timestamp);
+    action(timestamp, can_move = true, collision_active = true) {
+        this.status_update(timestamp, collision_active);
         
         if (this.is_dead) { return; }
         if (this.dying) { return; }
-        if (!this.can_move) { 
+        if (!can_move) { 
             this.previousTimestampWhenMoved = timestamp;
             return;
         }
 
         this.move(timestamp);
 
-        if (this.hitBox) {
+        if (collision_active && this.hitBox) {
             let continu = check_collisions(this, My_Object.instances, timestamp);
             if (!continu) { return; }
         }
@@ -362,7 +355,6 @@ export class My_Object {
 
     animate(timestamp) {
         if (!this.image) { return; }
-        if (!this.can_move) { return; }
         if (this.is_dead) { return; }
         if (!(this.image instanceof My_Img_Animated)) { return; }
 
@@ -378,9 +370,6 @@ export class My_Object {
         if (this.image) { 
             this.image.draw();
         }
-        if (this.hitBox) {
-            this.hitBox.draw_contours();
-        }
     }
 
 
@@ -390,9 +379,8 @@ export class My_Object {
      */
 
     die() {
-        this.collision = false;
         if (this.hitBox) {
-            this.hitBox.collision = false;
+            this.hitBox.enabled = false;
         }
         this.dying = true;
         if (this.image instanceof My_Img_Animated) {
@@ -448,7 +436,6 @@ export class My_Object {
      */
 
     move(timestamp) {
-        if (!this.can_move) { return; }
         if (this.is_dead) { return; }
         if (this.dying) { return; }
 
@@ -492,9 +479,12 @@ export class My_Object {
         }
     }
 
-    status_update(timestamp) {
+    status_update(timestamp, collision_active) {
         this.additionnal_update(timestamp);
 
+        if (this.hitBox && !this.dying && !this.is_dead) {
+            this.hitBox.enabled = collision_active;
+        }
         if (this.hitBox instanceof HitBox_Mask) {
             this.hitBox.update_mask();
         }
@@ -536,26 +526,6 @@ export class My_Object {
             if (is_in_rect(x, y, x1, y1, x2, y2)) { return true; }
         }
         return false;
-    }
-
-
-
-    /*
-     * DEBUG (dat.GUI)
-     */
-
-    update_bools() {
-        if (this.image) {
-            this.image.is_visible = My_Object.imgVisible;
-        }
-        this.can_move = My_Object.moving;
-        if (this.hitBox) {
-            this.hitBox.contours = My_Object.hitBoxVisible;
-        }
-        if (this.is_dead || this.dying) { return; }
-        if (this.hitBox) {
-            this.hitBox.collision = My_Object.collision;
-        }
     }
 }
 
@@ -664,9 +634,8 @@ export class Player extends My_Object {
 
     die() {
         if (this.bonus_is_active["invicibility"]) { return; }
-        this.collision = false;
         if (this.hitBox) {
-            this.hitBox.collision = false;
+            this.hitBox.enabled = false;
         }
         this.dying = true;
         if (this.image instanceof My_Img_Animated) {
@@ -758,7 +727,6 @@ export class Player extends My_Object {
 
     tirer(timestamp){
         if (!this.shoot) { return; }
-        if (!My_Object.moving) { return; }
 
         if (this.timestampWhenLastShot == undefined) {
             this.timestampWhenLastShot = timestamp;
@@ -830,9 +798,6 @@ export class Player extends My_Object {
         if (this.bonus_is_active["invicibility"]) {
             this.draw_invincible();
         }
-        if (this.hitBox) {
-            this.hitBox.draw_contours();
-        }
     }
 }
 
@@ -850,9 +815,8 @@ export class Enemy_Turret extends My_Object {
 
     die() {
         this.shoot = false
-        this.collision = false;
         if (this.hitBox) {
-            this.hitBox.collision = false;
+            this.hitBox.enabled = false;
         }
         this.dying = true;
         if (this.image instanceof My_Img_Animated) {
@@ -876,7 +840,6 @@ export class Enemy_Turret extends My_Object {
 
     tirer(timestamp){
         if (!this.shoot) { return; }
-        if (!My_Object.moving) { return; }
 
         if (this.timestampWhenLastShot == undefined) {
             this.timestampWhenLastShot = timestamp;

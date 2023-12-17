@@ -67,12 +67,14 @@ function give_bonus(bonus) {
 
 //dat.GUI Folders
 const guiVariables = {
-    "imgVisible": true,
-    "collision": true,
-    "hitBox": false,
+    "game freezed": false,
+    "show image": true,
+    "collision enabled": true,
+    "show hitBox": false,
     "player_shoot": true,
     "turrets_shoot": true,
     "playerSpeed": 15,
+    "player shot_by_seconds": 1/2,
     "giveInvicibility": function() {give_bonus("invicibility")},
     "giveGatling": function() {give_bonus("gatling")},
     "giveSpliter": function() {give_bonus("spliter")},
@@ -91,6 +93,10 @@ playerFolder.add(guiVariables, "player_shoot").onChange(val => {
     let obj = My_Object.get_player();
     if (obj) { obj.shoot = val; }
  })
+playerFolder.add(guiVariables, "player shot_by_seconds", 0.0, 10.0).onChange(val => {
+    let obj = My_Object.get_player();
+    if (obj) { obj.shot_by_seconds = val; }
+ })
  playerFolder.add(guiVariables, "giveInvicibility");
  playerFolder.add(guiVariables, "giveGatling");
  playerFolder.add(guiVariables, "giveSpliter");
@@ -100,10 +106,10 @@ playerFolder.add(guiVariables, "player_shoot").onChange(val => {
 let objectsFolder = gui.addFolder("Objects")
 objectsFolder.open();
 
-objectsFolder.add(My_Object, "imgVisible").onChange(val => { update_bools_all_objects() } )
-objectsFolder.add(My_Object, "collision").onChange(val => { update_bools_all_objects() } )
-objectsFolder.add(My_Object, "hitBoxVisible").onChange(val => { update_bools_all_objects() } )
-objectsFolder.add(My_Object, "moving").onChange(val =>{ update_bools_all_objects() } )
+objectsFolder.add(guiVariables, "show image")
+objectsFolder.add(guiVariables, "collision enabled")
+objectsFolder.add(guiVariables, "show hitBox")
+objectsFolder.add(guiVariables, "game freezed")
 
 
 // TOWERS
@@ -146,6 +152,7 @@ function update_btn_with_img() {
 
 
 function animations(timestamp) {
+    if (guiVariables["game freezed"]) { return; }
     for (const obj of My_Object.instances) {
         obj.animate(timestamp);
     }
@@ -154,20 +161,22 @@ function animations(timestamp) {
 
 function actions(timestamp) {
     for (const obj of My_Object.instances) {
-        obj.action(timestamp);
+        obj.action(timestamp, !guiVariables["game freezed"], guiVariables["collision enabled"]);
     }
 }
 
 
 function draw() {
     CTX.clearRect(0, 0, CNV.width, CNV.height);
-    //draw imgs (that are not objects component)
-    for (const img of My_Img.instances) {
-        img.draw();
-    }
-    //draw objects
-    for (const obj of My_Object.instances) {
-        obj.draw();
+    if (guiVariables["show image"]) {
+        //draw imgs (that are not objects component)
+        for (const img of My_Img.instances) {
+            img.draw();
+        }
+        //draw objects
+        for (const obj of My_Object.instances) {
+            obj.draw();
+        }
     }
     update_btn_with_img();
     //draw buttons
@@ -184,6 +193,14 @@ function draw() {
         }
     }
 
+
+    if (guiVariables["show hitBox"]) {
+        for (const obj of My_Object.instances) {
+            if (obj.hitBox) {
+                obj.hitBox.draw_contours();
+            }
+        }
+    }
 }
 
 
@@ -196,7 +213,7 @@ function refresh(timestamp) {
     My_Object.sort_objects();
     
     //the camera follows either the player or the canvas's center
-    if (camera) {
+    if (camera && !guiVariables["game freezed"]) {
         let objPlayer = My_Object.get_player();
         if (objPlayer) {
             camera.update(objPlayer);

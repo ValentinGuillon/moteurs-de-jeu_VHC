@@ -9,17 +9,15 @@ export class HitBox_Circle {
         this.y = y;
         this.radius = radius;
 
-        //dat.GUI
-        this.collision = true;
-        this.contours = false;
+        this.enabled = true;
     }
 
 
     is_colliding(obj) {
-        if (!this.collision) { return false; }
+        if (!this.enabled) { return false; }
 
         //collision disabled
-        if (!this.collision) { return false; }
+        if (!this.enabled) { return false; }
         //collide with another mask
         if (obj instanceof HitBox_Mask) {
             // return obj.collide_with_circle(this);
@@ -39,11 +37,9 @@ export class HitBox_Circle {
 
 
     draw_contours() {
-        if (!this.contours) { return; }
-
         let thickness = 2;
-        let color = "#FF0000";
-        if (!this.collision) {
+        let color = "#0000FFBB";
+        if (!this.enabled) {
             thickness = 2;
             color = "#FF0000AA";
         }
@@ -61,17 +57,15 @@ export class HitBox_Rect {
         this.width = Math.floor(width);
         this.height = Math.floor(height);
 
-        //dat.GUI
-        this.collision = true;
-        this.contours = false;
+        this.enabled = true;
     }
 
 
     is_colliding(obj) {
-        if (!this.collision) { return false; }
+        if (!this.enabled) { return false; }
 
         //collision disabled
-        if (!this.collision) { return false; }
+        if (!this.enabled) { return false; }
         //collide with a Mask
         if (obj instanceof HitBox_Mask) {
             // return obj.collide_with_rect(this);
@@ -92,11 +86,9 @@ export class HitBox_Rect {
 
 
     draw_contours() {
-        if (!this.contours) { return; }
-
         let thickness = 2;
-        let color = "#FF0000";
-        if (!this.collision) {
+        let color = "#0000FFBB";
+        if (!this.enabled) {
             thickness = 2;
             color = "#FF0000AA";
         }
@@ -128,9 +120,7 @@ export class HitBox_Mask {
         this.img = new Image();
         this.img.src = img;
 
-        //dat.GUI
-        this.collision = true;
-        this.contours = false;
+        this.enabled = true;
     }
 
     is_mask_empty() {
@@ -144,7 +134,7 @@ export class HitBox_Mask {
 
     is_colliding(obj) {
         //collision disabled
-        if (!this.collision) { return false; }
+        if (!this.enabled) { return false; }
 
         //collide with other mask
         if (obj instanceof HitBox_Mask) {
@@ -239,10 +229,10 @@ export class HitBox_Mask {
     }
 
 
-    draw_mask() {
+    draw_contours() {
         // draw_rect_stroke(this.x+this.maskSquare.x1, this.y+this.maskSquare.y1, this.maskSquare.x2-this.maskSquare.x1, this.maskSquare.y2-this.maskSquare.y1, "#00FF00", 1);
-        let color = "#FF0000BB"
-        if (!this.collision) {
+        let color = "#0000FFBB"
+        if (!this.enabled) {
             color = "#FF000055";
         }
         let i = 0;
@@ -278,15 +268,6 @@ export class HitBox_Mask {
         }
 
         draw_rect(this.centerMaskX-2, this.centerMaskY-2, 4, 4, "#000000")
-    }
-
-
-
-    draw_contours() {
-        if (!this.contours) { return; }
-        if (this instanceof HitBox_Mask) {
-        }
-        this.draw_mask()
     }
 }
 

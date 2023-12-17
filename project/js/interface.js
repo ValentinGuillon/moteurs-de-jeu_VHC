@@ -2,7 +2,7 @@
 import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
-import { HitBox_Circle, HitBox_Mask } from "./hitBox.js";
+import { HitBox_Mask } from "./hitBox.js";
 import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator }
     from "./objects.js";
 import { Camera } from "./camera.js";
