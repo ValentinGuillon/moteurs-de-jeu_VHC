@@ -224,7 +224,10 @@ export class My_Object {
                 }
 
                 let switch_obj = false;
+                if (obj2.group == "text") { switch_obj = false;}
                 if (obj1.group == "text") { switch_obj = true;}
+                else if (obj2.group == "tuto_button") { switch_obj = false;}
+                else if (obj1.group == "tuto_button") { switch_obj = true;}
                 else if (y1 > y2) { switch_obj = true; }
                 if (!switch_obj) { continue; }
                 list[j] = obj2;
@@ -1352,6 +1355,45 @@ export class Text extends My_Object {
 
     add_to_position() {
         return;
+    }
+}
+
+
+export class Tuto_Button extends My_Object {
+    constructor(image, letter) {
+        super(0, 0, image, undefined, "tuto_button")
+        this.letter = letter;
+    }
+
+    move() {
+        const player = My_Object.get_player();
+
+        let addX = 0;
+        let addY = 0;
+
+        switch (this.letter) {
+            case "z":
+                addY = -CNV10;
+                break;
+            case "q":
+                addX = -CNV10;
+                break;
+            case "s":
+                addY = CNV10;
+                break;
+            case "d":
+                addX = CNV10;
+                break;
+        
+            default:
+                console.log("Letter " + this.letter + "not set up")
+                break;
+        }
+
+        this.x = player.x + addX;
+        this.y = player.y + addY;
+        this.image.x = player.x + addX - this.image.width/2
+        this.image.y = player.y + addY - this.image.height/2
     }
 }
 

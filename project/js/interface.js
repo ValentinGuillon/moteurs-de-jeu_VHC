@@ -3,7 +3,7 @@ import { CNV, CTX, ASSETS_DIR, PNG_EXT, CNV10 } from "./script.js";
 import { direction, getRandom, is_in_rect } from "./tools.js";
 import { My_Img, My_Img_Animated, My_Circle, draw_rect, draw_point } from "./imgs.js";
 import { HitBox_Mask } from "./hitBox.js";
-import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator, Biome, Game_Infos, Text }
+import { My_Object, Enemy_Chasing, create_object, Moving_Background, Enemy_Generator, Biome, Game_Infos, Text, Tuto_Button }
     from "./objects.js";
 import { Camera } from "./camera.js";
 import { Jukebox } from "./audio.js";
@@ -330,6 +330,14 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
     let player = undefined;
     if (mode == "play") { 
         player = create_object("player", CNV.width/2, CNV.height/2);
+        {
+            const letters = ["z", "q", "s", "d"];
+            for (let i = 0; i < 4; i++) {
+                let letter = letters[i]
+                let image = new My_Img(ASSETS_DIR+"tuto_"+letter+PNG_EXT, 0, 0, CNV10*0.7, CNV10*0.7)
+                new Tuto_Button(image, letter)
+            }
+        }
     }
     else if (mode == "demo") {
         player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});

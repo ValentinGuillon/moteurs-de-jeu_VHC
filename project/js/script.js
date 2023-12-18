@@ -272,7 +272,7 @@ function refresh(timestamp) {
     requestAnimationFrame(refresh);
 }
 
-draw_all_images();
+
 init_interface();
 initialise_listener();
 create_menu("home_page");
