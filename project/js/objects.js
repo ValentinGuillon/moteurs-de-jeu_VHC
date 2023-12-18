@@ -598,7 +598,7 @@ export class Player extends My_Object {
         this.timestampBonus =  {"invicibility": undefined, "gatling": undefined, "spliter": undefined};
     
         this.shoot = true;
-        this.shot_by_seconds = 1/2; //1 / x, to shot every x seconds
+        this.shot_by_seconds = 2.6; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
 
         this.real_values = {"shot_by_seconds": this.shot_by_seconds};
@@ -1141,7 +1141,7 @@ export class Enemy_Generator extends My_Object {
         this.targetForChasing = targetForChasing;
 
         this.timestampWhenGenerate = undefined;
-        this.spawn_rate = 1; // 1/x for 1 by x seconds
+        this.spawn_rate = 5; // 1/x for 1 by x seconds
         this.mobs_dead = 0;
     }
 
@@ -1367,6 +1367,7 @@ export class Tuto_Button extends My_Object {
 
     move() {
         const player = My_Object.get_player();
+        if (!player) { return; }
 
         let addX = 0;
         let addY = 0;
@@ -1639,7 +1640,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10*0.5, height = CN
         object = My_Object.get_object("player_auto")
     }
     if (!object || object.dying || object.dead) { return; }
-    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.15, object);
+    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.08, object);
 }
 
 
