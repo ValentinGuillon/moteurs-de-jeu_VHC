@@ -64,6 +64,11 @@ function give_bonus(bonus) {
     if (obj) { obj.give_bonus(bonus); }
 }
 
+function killPlayer() {
+    const obj = My_Object.get_player();
+    if (obj) { obj.bonus_is_active["invicibility"] = false; obj.die(); }
+}
+
 
 
 //dat.GUI Folders
@@ -79,6 +84,7 @@ const guiVariables = {
     "giveInvicibility": function() {give_bonus("invicibility")},
     "giveGatling": function() {give_bonus("gatling")},
     "giveSpliter": function() {give_bonus("spliter")},
+    "kill_Player": function() {killPlayer()},
 }
 
 
@@ -101,6 +107,7 @@ playerFolder.add(guiVariables, "player shot_by_seconds", 0.0, 10.0).onChange(val
  playerFolder.add(guiVariables, "giveInvicibility");
  playerFolder.add(guiVariables, "giveGatling");
  playerFolder.add(guiVariables, "giveSpliter");
+ playerFolder.add(guiVariables, "kill_Player");
 
 
 // OBJECTS
