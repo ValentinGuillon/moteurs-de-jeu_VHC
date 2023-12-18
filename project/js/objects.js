@@ -172,6 +172,7 @@ export class My_Object {
     static instances = [];
     static id = 0;
     static playerSpeed = 15;
+    static game_infos = undefined;
 
 
     static destroy_objects () {
@@ -606,6 +607,7 @@ export class Player extends My_Object {
     }
 
     give_bonus(bonus, timestamp) {
+        My_Object.game_infos.bonusAcquired++;
         this.bonus_is_active[bonus] = true;
         this.timestampBonus[bonus] = timestamp;
 
@@ -841,6 +843,16 @@ export class Enemy_Turret extends My_Object {
             this.timestampWhenLastShot = timestamp;
         }
     }
+
+    generate_on_death() {
+        My_Object.game_infos.turretKilled++;
+        if (this.is_inside_illegal_tile(this.x, this.y)) { return; }
+        const chance_bonus = getRandom(0, 2);
+        if (!chance_bonus) {
+            create_random_bonus(this.x, this.y);
+            return;
+        }
+    }
 }
 
 
@@ -946,6 +958,7 @@ export class Enemy_Chasing extends My_Object {
     // }
 
     generate_on_death() {
+        My_Object.game_infos.enemyChasingKilled++;
         if (this.is_inside_illegal_tile(this.x, this.y)) { return; }
         const chance_bonus = getRandom(0, 2);
         if (!chance_bonus) {
@@ -1245,9 +1258,13 @@ export class Game_Infos extends My_Object {
 
         this.timestampWhenGameStarted = undefined;
         this.lastTimestamp = undefined;
-        this.enemyKilled = 0;
-        this.score = 0;
+        this.enemyChasingKilled = 0;
+        this.turretKilled = 0;
         this.bonusAcquired = 0;
+        this.multiplier = 1.0;
+        this.timestampSinceMultiplierIncreaded = undefined;
+        this.score = 0;
+        My_Object.game_infos = this;
     }
 
     auto_actions(timestamp) {
@@ -1257,7 +1274,46 @@ export class Game_Infos extends My_Object {
             return;
         }
 
+        this.update_multiplier(timestamp);
+        this.update_score(timestamp);
         this.lastTimestamp = timestamp;
+    }
+
+    update_multiplier(timestamp) {
+        //check that all bonus are active on the player
+        const obj = My_Object.get_player();
+        for (const effect of Bonus.effects) {
+            if(!obj.bonus_is_active[effect]) {
+                this.multiplier = 1.0;
+                this.timestampSinceMultiplierIncreaded = undefined
+                return;
+            }
+        }
+
+        //increase multiplier if 1 seconds passed
+        if (this.timestampSinceMultiplierIncreaded == undefined) {
+            this.timestampSinceMultiplierIncreaded = timestamp;
+            this.multiplier += 0.1;
+            return;
+        }
+        let elapsed = timestamp - this.timestampSinceMultiplierIncreaded
+
+        if (elapsed <= 1000) { return; }
+        this.timestampSinceMultiplierIncreaded = timestamp;
+
+
+        this.multiplier += 0.1;
+    }
+
+    update_score(timestamp) {
+        let elapsed = timestamp - this.lastTimestamp;
+
+        const score = elapsed*2 + this.enemyChasingKilled*1000 + this.turretKilled * 10*1000 + this.bonusAcquired * 5 * 1000;
+        this.score += score * this.multiplier;
+
+        this.enemyChasingKilled = 0;
+        this.turretKilled = 0;
+        this.bonusAcquired = 0;
     }
 
     getTime() {
@@ -1265,7 +1321,7 @@ export class Game_Infos extends My_Object {
     }
 
     getScore() {
-        return this.score;
+        return Math.floor(this.score / 1000);
     }
 }
 

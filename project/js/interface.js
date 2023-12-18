@@ -398,6 +398,8 @@ function create_game_over(auto_skip = false) {
 
     new Text(CNV.width*0.4, CNV10*4, CNV10*3, CNV10, "TIME:")
     new Text(CNV.width*0.65, CNV10*4, CNV10*3, CNV10, GAME_INFOS.getTime())
+    new Text(CNV.width*0.4, CNV10*6, CNV10*3, CNV10, "SCORE:")
+    new Text(CNV.width*0.65, CNV10*6, CNV10*3, CNV10, GAME_INFOS.getScore())
 
 
 
