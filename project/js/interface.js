@@ -381,10 +381,13 @@ function create_game_over(auto_skip = false) {
     
     
     new Button_with_Image({"default": ASSETS_DIR+"close.png"}, "go_main-menu", CNV.width-btnSize, btnSize, btnSize*1.5, btnSize*1.5);
-    new Button_with_text("Game Over", "exit_game_over", CNV.width/2, CNV.height/5, btnSize*7, btnSize*3, "#00FFFF")
     // create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "arena"})
     const img = new My_Img(ASSETS_DIR+"background/game-over_"+biome+PNG_EXT, CNV.width/2, CNV.height/2, CNV.width, CNV.height, undefined, undefined, true);
     My_Img.add_instance(img);
+    {
+        const img = new My_Img(ASSETS_DIR+"title_game-over"+PNG_EXT, CNV.width/2, CNV.height/5, btnSize*7, btnSize*2, undefined, undefined, true);
+        My_Img.add_instance(img);
+    }
 
     if(auto_skip) {
         new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO")
