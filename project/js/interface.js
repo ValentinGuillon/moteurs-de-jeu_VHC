@@ -281,8 +281,8 @@ function create_main_menu(reload_music = true) {
     }
 
     const scale = 3;
-    new Button_with_Image({"default": ASSETS_DIR+"btn_play.png", "hover": ASSETS_DIR+"btn_play_hover.png"}, "play_game", CNV.width/2, CNV.height/3, btnSize*2*scale, btnSize*scale)
-    new Button_with_Image({"default": ASSETS_DIR+"btn_demo.png", "hover": ASSETS_DIR+"btn_demo_hover.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
+    new Button_with_Image({"default": ASSETS_DIR+"btn_play_v2.png", "hover": ASSETS_DIR+"btn_play_hover_v2.png"}, "play_game", CNV.width/2, CNV.height/3, btnSize*2*scale, btnSize*scale)
+    new Button_with_Image({"default": ASSETS_DIR+"btn_demo_v2.png", "hover": ASSETS_DIR+"btn_demo_hover_v2.png"}, "play_demo", CNV.width/2, (CNV.height/3)*2, btnSize*2*scale, btnSize*scale)
 
     const file_nb = getRandom(1, 6); 
     const BIOME = getRandom(1, 3);
