@@ -56,8 +56,8 @@ export class HitBox_Rect {
     constructor(xCenter, yCenter, width, height) {
         this.x = xCenter - width/2;
         this.y = yCenter - height/2;
-        this.centerX = this.x;
-        this.centerY = this.y;
+        this.centerX = xCenter;
+        this.centerY = yCenter;
         this.width = Math.floor(width);
         this.height = Math.floor(height);
 
