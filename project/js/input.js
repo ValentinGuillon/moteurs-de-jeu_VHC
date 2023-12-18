@@ -141,4 +141,26 @@ export function execute_inputs() {
             objPlayer.give_direction("up")
         }
     }
+
+    const tuto_button = {"z": undefined, "q": undefined, "s": undefined, "d": undefined};
+
+    for (const obj of My_Object.instances) {
+        if (!obj.group == "tuto_button") { continue; }
+        tuto_button[obj.letter] = obj;
+    }
+
+    if (rightPressed && tuto_button["d"]) {
+        tuto_button["d"].die();
+    }
+    if (leftPressed && tuto_button["q"]) {
+        tuto_button["q"].die();
+    }
+    if (downPressed && tuto_button["s"]) {
+        tuto_button["s"].die();
+    }
+    if (upPressed && tuto_button["z"]) {
+        tuto_button["z"].die();
+    }
+
+
 }
