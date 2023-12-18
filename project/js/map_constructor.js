@@ -173,11 +173,11 @@ function getTerrainTile(col, row, set, tileValue) {
             //ignore center
             if(i == 1 && j == 1) { continue;}
             //row index out of range
-            if (TERRAIN[row+i] == undefined) { continue;  }
+            if (TERRAIN["map"][row+i] == undefined) { continue;  }
             //column index out of range
-            if (TERRAIN[row+i][col+j] == undefined) {continue; }
+            if (TERRAIN["map"][row+i][col+j] == undefined) {continue; }
 
-            adjacents[i][j] = TERRAIN[row+i][col+j]
+            adjacents[i][j] = TERRAIN["map"][row+i][col+j]
         }
     }
 
@@ -252,8 +252,8 @@ export function construct_terrain(biome = {"1 || 2 || 3": 0}) {
 
     const tileSize = {"width": CNV10*1, "height": Math.floor(CNV10*1*0.8)};
     const cnvMid = {"x": CNV.width/2, "y": CNV.height/2};
-    const rows = TERRAIN.length;
-    const cols = TERRAIN[0].length;
+    const rows = TERRAIN["map"].length;
+    const cols = TERRAIN["map"][0].length;
     let mapSize = {"x": cnvMid.x, "y": cnvMid.y, "width": tileSize.width * cols, "height": tileSize.height * rows}
     mapSize.x -= mapSize.width/2 - tileSize.width
     mapSize.y -= mapSize.height/2 - tileSize.height
@@ -261,7 +261,7 @@ export function construct_terrain(biome = {"1 || 2 || 3": 0}) {
     //create corresponding tile(s)
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
-            const tile = TERRAIN[i][j];
+            const tile = TERRAIN["map"][i][j];
             const x = mapSize.x + (tileSize.width * j) - j;
             const y = mapSize.y + (tileSize.height * i) - i;
 
@@ -314,4 +314,14 @@ export function construct_terrain(biome = {"1 || 2 || 3": 0}) {
 
         }
     }
+
+    // const width = TERRAIN["size"]["width"] * tileSize["width"]
+    // const height = TERRAIN["size"]["height"] * tileSize["height"]
+    // const x1 = TERRAIN["start"]["x"] * tileSize["width"] - width/2 + tileSize["width"]*6;
+    // const y1 = TERRAIN["start"]["x"] * tileSize["height"] - height/2 + tileSize["height"]*6;
+    // const x2 = x1 + width;
+    // const y2 = y1 + height;
+    // const rect = {"x1": x1, "y1": y1, "x2": x2, "y2": y2}
+    // console.log(rect)
+    // return rect;
 }
