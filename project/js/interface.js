@@ -252,7 +252,7 @@ export function create_menu(name = {"home_page || main_menu || play_game || play
 function create_home_page() {
     const btnSize = CNV10;
     new Button_with_text("", "home", CNV.width/2, CNV.height/2, CNV.width, CNV.height, "#00FFFF00", "#00FFFF00")
-    new Text(CNV.width/2, CNV.height/2, btnSize*6, btnSize, "Click to Launch Game")
+    new Text(CNV.width/2, CNV.height/2, btnSize*8, btnSize, "Click to Launch Game", "#BBBBBB", "#00000000")
 
     const filename = ASSETS_DIR + "background/" + "home_" + getRandom(1, 3)+  PNG_EXT;
     const img = new My_Img(filename, CNV.width/2, CNV.height/2, CNV.width*1.5, CNV.height*1.2, undefined, undefined, true);
@@ -333,7 +333,7 @@ function create_game(mode = "play", reload_music = true, choices = {"mode": {"pl
     }
     else if (mode == "demo") {
         player = create_object("player", CNV.width/2, CNV.height/2, {"player auto": true});
-        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO")
+        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO", "#BBBBBB", "#00000000")
     }
     
     //other
@@ -390,16 +390,16 @@ function create_game_over(auto_skip = false) {
     }
 
     if(auto_skip) {
-        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO")
+        new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO", "#BBBBBB", "#00000000")
         create_object("timer", 0, 0, {"timer name": "main_menu", "timer duration": 2});
     }
 
     //show scores
 
-    new Text(CNV.width*0.4, CNV10*4, CNV10*3, CNV10, "TIME:")
-    new Text(CNV.width*0.65, CNV10*4, CNV10*3, CNV10, GAME_INFOS.getTime())
-    new Text(CNV.width*0.4, CNV10*6, CNV10*3, CNV10, "SCORE:")
-    new Text(CNV.width*0.65, CNV10*6, CNV10*3, CNV10, GAME_INFOS.getScore())
+    new Text(CNV.width*0.4, CNV10*4, CNV10*3, CNV10*0.8, "TIME:", "#BBBBBB", "#00000000")
+    new Text(CNV.width*0.65, CNV10*4, CNV10*3, CNV10*0.8, GAME_INFOS.getTime(), "#CCCCCC", "#00000000")
+    new Text(CNV.width*0.4, CNV10*6, CNV10*3, CNV10*0.8, "SCORE:", "#BBBBBB", "#00000000")
+    new Text(CNV.width*0.65, CNV10*6, CNV10*3, CNV10*0.8, GAME_INFOS.getScore(), "#CCCCCC", "#00000000")
 
 
 
