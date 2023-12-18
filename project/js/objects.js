@@ -1365,7 +1365,7 @@ export class Text extends My_Object {
 
 
 
-export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "obstacle_type": "wall", "timer name": {"demo": undefined}, "timer duration": 5}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
+export function create_object(name, x, y, args = {"vassel hitbox": "circle", "filename": ASSETS_DIR+"terrain/terrain", "player auto": false, "obstacle_type": "wall", "timer name": {"demo": undefined}, "timer duration": 5, "vel": {"x":1, "y":1}}, changeDefaults = false, defaults = {"width": CNV10, "height": CNV10}) {
     // console.log("new", name);
     if (changeDefaults) {
         switch (name) {
@@ -1437,6 +1437,12 @@ export function create_object(name, x, y, args = {"vassel hitbox": "circle", "fi
             case "timer":
                 create_timer(args["timer name"], args["timer duration"]);
                 break
+            case "projectile ally":
+                create_projectile(x, y, args["vel"].x, args["vel"].y, "ally")
+                break;
+            case "projectile enemy":
+                create_projectile(x, y, args["vel"].x, args["vel"].y, "enemy")
+                break;
             default:
                 console.log("error: there is no method to create this abject (\"" + name + "\").")
                 console.log("In create_object in objects.js.")

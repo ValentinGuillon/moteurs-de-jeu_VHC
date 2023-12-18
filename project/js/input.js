@@ -1,8 +1,9 @@
 
 
-import { CNV, gui } from "./script.js";
-import { My_Object } from "./objects.js";
+import { CNV, gui, guiVariables } from "./script.js";
+import { My_Object, create_object } from "./objects.js";
 import { My_Button } from "./interface.js";
+import { getRandom } from "./tools.js";
 
 
 export const MOUSE = {"x": 0, "y": 0, "moved": false};
@@ -15,7 +16,32 @@ export function initialise_listener() {
     CNV.addEventListener('click', function(evt) {
         var mousePos = getMousePos(evt);
         execute_click(mousePos, My_Button.instances)
-    }, false);
+        if (guiVariables["generate_BAT"]) {
+            create_object("enemy chasing", mousePos.x, mousePos.y, {"filename": "BAT"});
+        }
+        else if (guiVariables["generate_TURRET"]) {
+            create_object("tower", mousePos.x, mousePos.y)
+            return;
+        }
+        else if (guiVariables["generate_BONUS"]) {
+            create_object("bonus", mousePos.x, mousePos.y)
+            return;
+        }
+        else if (guiVariables["generate_ALLY_PROJ"]) {
+            let vel = {"x": 1, "y": 1};
+            if (getRandom(0, 1)) { vel.x *= -1; }
+            if (getRandom(0, 1)) { vel.y *= -1; }
+            create_object("projectile ally", mousePos.x, mousePos.y, {"vel": vel})
+            return;
+        }
+        else if (guiVariables["generate_ENEMY_PROJ"]) {
+            let vel = {"x": 1, "y": 1};
+            if (getRandom(0, 1)) { vel.x *= -1; }
+            if (getRandom(0, 1)) { vel.y *= -1; }
+            create_object("projectile enemy", mousePos.x, mousePos.y, {"vel": vel})
+            return;
+        }
+    }, false)
 
     // keys detection
     onkeydown = onkeyup = function(e){

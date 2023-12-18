@@ -28,7 +28,7 @@ if (width < height) {
     CNV.height = temp*0.7
 }
 else {
-    let temp = Math.max(Math.min(height*0.9, width), 100)
+    let temp = Math.max(Math.min(height*0.95, width), 100)
     CNV.width = temp*1.42
     CNV.height = temp
 }
@@ -72,7 +72,7 @@ function killPlayer() {
 
 
 //dat.GUI Folders
-const guiVariables = {
+export const guiVariables = {
     "game freezed": false,
     "show image": true,
     "collision enabled": true,
@@ -85,12 +85,27 @@ const guiVariables = {
     "giveGatling": function() {give_bonus("gatling")},
     "giveSpliter": function() {give_bonus("spliter")},
     "kill_Player": function() {killPlayer()},
+    "generate_BAT": false,
+    "generate_TURRET": false,
+    "generate_BONUS": false,
+    "generate_ALLY_PROJ": false,
+    "generate_ENEMY_PROJ": false,
+}
+
+function reset_generator(but) {
+    const generator = ["BAT", "TURRET", "BONUS", "ALLY_PROJ", "ENEMY_PROJ"];
+    for (const obj of generator) {
+        let temp = "generate_" + obj
+        if (temp == but) { continue;}
+        guiVariables[temp] = false;
+    }
+    objectsFolder.updateDisplay()
 }
 
 
 //PLAYER
 let playerFolder = gui.addFolder("Player")
-playerFolder.open()
+// playerFolder.open()
 
 playerFolder.add(guiVariables, "playerSpeed", 0, 100).onChange(val => {
     let obj = My_Object.get_player();
@@ -118,11 +133,31 @@ objectsFolder.add(guiVariables, "show image")
 objectsFolder.add(guiVariables, "collision enabled")
 objectsFolder.add(guiVariables, "show hitBox")
 objectsFolder.add(guiVariables, "game freezed")
+objectsFolder.add(guiVariables, "generate_BAT").onChange(val => {
+    if (!val) { return; }
+    reset_generator("generate_BAT");
+})
+objectsFolder.add(guiVariables, "generate_TURRET").onChange(val => {
+    if (!val) { return; }
+    reset_generator("generate_TURRET");
+})
+objectsFolder.add(guiVariables, "generate_BONUS").onChange(val => {
+    if (!val) { return; }
+    reset_generator("generate_BONUS");
+})
+objectsFolder.add(guiVariables, "generate_ALLY_PROJ").onChange(val => {
+    if (!val) { return; }
+    reset_generator("generate_ALLY_PROJ");
+})
+objectsFolder.add(guiVariables, "generate_ENEMY_PROJ").onChange(val => {
+    if (!val) { return; }
+    reset_generator("generate_ENEMY_PROJ");
+})
 
 
 // TOWERS
 let towersFolder = gui.addFolder("Towers")
-towersFolder.open()
+// towersFolder.open()
 
 towersFolder.add(guiVariables, "turrets_shoot").onChange(val => {
     for (const obj of My_Object.instances) {
