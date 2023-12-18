@@ -1330,7 +1330,7 @@ export class Game_Infos extends My_Object {
 
 
 export class Text extends My_Object {
-    constructor(x, y, width, height, text) {
+    constructor(x, y, width, height, text, color_font = "#FFFFFF", color_back = "#000000") {
         super(x, y, undefined, undefined, "text")
 
         this.text = text;
@@ -1338,12 +1338,14 @@ export class Text extends My_Object {
         this.y = y - height/2;
         this.width = width;
         this.height = height;
+        this.color_font = color_font;
+        this.color_back = color_back;
     }
 
     draw() {
-        draw_rect(this.x, this.y, this.width, this.height, "#000000");
-        CTX.font = CNV10+"px serif";
-        CTX.fillStyle = "#FFFFFF";
+        draw_rect(this.x, this.y, this.width, this.height, this.color_back);
+        CTX.font = this.height+"px serif";
+        CTX.fillStyle = this.color_font;
         CTX.fillText(this.text, this.x, this.y+this.height, this.width);
     }
 
