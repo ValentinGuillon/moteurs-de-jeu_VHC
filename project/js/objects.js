@@ -1282,6 +1282,7 @@ export class Game_Infos extends My_Object {
     update_multiplier(timestamp) {
         //check that all bonus are active on the player
         const obj = My_Object.get_player();
+        if (!obj) { return; }
         for (const effect of Bonus.effects) {
             if(!obj.bonus_is_active[effect]) {
                 this.multiplier = 1.0;
