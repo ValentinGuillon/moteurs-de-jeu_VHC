@@ -1582,7 +1582,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10*0.5, height = CN
     }
 
 
-    let enemyImage = new My_Img_Animated(x, y, width, height, sprites, sprites["standing"]["frames"][2], {"in": "#FFFFFF", "border": "#000000"});
+    let enemyImage = new My_Img_Animated(x, y, width, height, sprites);
     //Hitbox sous forme de cercle
     // let enemyHitBox = new HitBox_Circle(x, y, (width+height)/4);
     let enemyHitBox = new HitBox_Mask(x, y, ASSETS_DIR + name + "_mask" + PNG_EXT, width, height);
