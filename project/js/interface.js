@@ -288,7 +288,7 @@ function create_main_menu(reload_music = true) {
     const BIOME = getRandom(1, 3);
     const nb = getRandom(1, 2);
     create_object("moving background", CNV.width/2, CNV.height/2, {"filename": "background/main-menu_biome_"+BIOME+"_"+nb+"_blur"}, true, {"width": CNV.width*2.2, "height": CNV.height*1.5})
-    create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 2})
+    create_object("timer", 0, 0, {"timer name": "demo", "timer duration": 10})
     new Biome(BIOME);
 }
 
@@ -399,7 +399,7 @@ function create_game_over(auto_skip = false) {
 
     if(auto_skip) {
         new Text(CNV.width*0.85, CNV10*9, CNV10*3, CNV10, "DEMO", "#BBBBBB", "#00000000")
-        create_object("timer", 0, 0, {"timer name": "main_menu", "timer duration": 2});
+        create_object("timer", 0, 0, {"timer name": "main_menu", "timer duration": 5});
     }
 
     //show scores

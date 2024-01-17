@@ -598,7 +598,7 @@ export class Player extends My_Object {
         this.timestampBonus =  {"invicibility": undefined, "gatling": undefined, "spliter": undefined};
     
         this.shoot = true;
-        this.shot_by_seconds = 2.6; //1 / x, to shot every x seconds
+        this.shot_by_seconds = 1.2; //1 / x, to shot every x seconds
         this.timestampWhenLastShot = undefined;
 
         this.real_values = {"shot_by_seconds": this.shot_by_seconds};
@@ -658,7 +658,7 @@ export class Player extends My_Object {
 
         // update Player properties based on active bonuses
         if (this.bonus_is_active["gatling"]) {
-            this.real_values["shot_by_seconds"] = this.shot_by_seconds * 5;
+            this.real_values["shot_by_seconds"] = this.shot_by_seconds * 3;
         }
         else {
             this.real_values["shot_by_seconds"] = this.shot_by_seconds;
@@ -803,7 +803,7 @@ export class Enemy_Turret extends My_Object {
         super(xCenter, yCenter, image, hitBox, "enemy_turret");
 
         this.shoot = true;
-        this.shot_by_seconds = 3; // 1/X, to shot every X seconds
+        this.shot_by_seconds = 2.5; // 1/X, to shot every X seconds
         this.timestampWhenLastShot = undefined;
     }
 
@@ -850,7 +850,7 @@ export class Enemy_Turret extends My_Object {
     generate_on_death() {
         My_Object.game_infos.turretKilled++;
         if (this.is_inside_illegal_tile(this.x, this.y)) { return; }
-        const chance_bonus = getRandom(0, 2);
+        const chance_bonus = getRandom(0, 1);
         if (!chance_bonus) {
             create_random_bonus(this.x, this.y);
             return;
@@ -963,7 +963,7 @@ export class Enemy_Chasing extends My_Object {
     generate_on_death() {
         My_Object.game_infos.enemyChasingKilled++;
         if (this.is_inside_illegal_tile(this.x, this.y)) { return; }
-        const chance_bonus = getRandom(0, 2);
+        const chance_bonus = getRandom(0, 9);
         if (!chance_bonus) {
             create_random_bonus(this.x, this.y);
             return;
@@ -976,7 +976,7 @@ export class Enemy_Chasing extends My_Object {
         //     }
         //     return;
         // }
-        const chance_turret = getRandom(0, 4);
+        const chance_turret = getRandom(0, 3);
         if(!chance_turret) {
             create_tower(this.x+1, this.y+1);
             return;
@@ -1141,14 +1141,19 @@ export class Enemy_Generator extends My_Object {
         this.targetForChasing = targetForChasing;
 
         this.timestampWhenGenerate = undefined;
-        this.spawn_rate = 5; // 1/x for 1 by x seconds
+        this.spawn_rate = 2.5; // 1/x for 1 by x seconds
         this.mobs_dead = 0;
+        
+        this.timestampRateIncreased = undefined;
+        this.increaseRate = 5; //each x seconds
+        this.increaseAmount = 0.2;
     }
 
     //follows this.action(timestamp)
     //called after collisions has been checked
     auto_actions(timestamp) {
         this.generate(timestamp);
+        this.increaseSpawnRate(timestamp);
     }
 
     generate(timestamp) {
@@ -1175,6 +1180,20 @@ export class Enemy_Generator extends My_Object {
         }
 
         create_object("enemy chasing", enemyX, enemyY, {"filename": "BAT"})
+    }
+    
+    
+    increaseSpawnRate(timestamp) {
+        if (this.timestampRateIncreased == undefined) {
+            this.timestampRateIncreased = timestamp;
+        }
+
+        let elapsed = timestamp - this.timestampRateIncreased;
+        let delay = this.increaseRate * 1000
+        if (elapsed < delay){ return; }
+        this.timestampRateIncreased = timestamp;
+        
+        this.spawn_rate += this.increaseAmount;
     }
 }
 
@@ -1640,7 +1659,7 @@ function create_enemy_chasing(x, y, name = "BAT", width = CNV10*0.5, height = CN
         object = My_Object.get_object("player_auto")
     }
     if (!object || object.dying || object.dead) { return; }
-    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.08, object);
+    new Enemy_Chasing(x, y, enemyImage, enemyHitBox, CNV10*0.07, object);
 }
 
 
